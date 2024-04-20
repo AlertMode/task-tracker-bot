@@ -4,33 +4,45 @@
 TaskTracker Bot: A Telegram bot for efficient task management. Add, list, mark, and remove tasks with ease. Set reminders and manage custom lists.
 
 ## Features
+* **Start:** 
+    * ```/start``` - Get started with the bot.
 
-- **Add Tasks Effortlessly**: Use simple commands to add tasks to your default list or specific custom lists.
-  - Example: `/add groceries buy milk` or `/add work finish report`.
+* **Add Tasks:**
+    * ```/add [task]``` - Add a new task to your default list.
+    * ```/add [list name] [task]``` - Add a task to a specific list (e.g., /add groceries buy milk).
 
-- **List Tasks at a Glance**: View all tasks in your default list or any custom list.
-  - Example: `/list` or `/list work`.
+* **List Tasks:**
+    * ```/list``` - View all tasks in your default list.
+    * ```/list [list name]``` - View all tasks in a specific list.
 
-- **Mark Tasks Complete**: Mark completed tasks with ease.
-  - Example: `/done 2` or `/done work 1`.
+* **Mark Tasks Complete:**
+    * ```/done [task number]``` - Mark a task as completed in your default list.
+    * ```/done [list name] [task number]``` - Mark a task as completed in a specific list.
 
-- **Remove Tasks**: Delete tasks you no longer need.
-  - Example: `/remove 3` or `/remove work 2`.
+* **Remove Tasks:**
+    * ```/remove [task number]``` - Remove a task from your default list.
+    * ```/remove [list name] [task number]``` - Remove a task from a specific list.
 
-- **Show Lists**: See all your created lists.
-  - Example: `/showlists`.
+* **Get Help:**
+    * ```/help``` - See a list of all available commands and their functionalities.
 
-- **Manage Lists**: Create new lists or delete existing ones.
-  - Example: `/newlist personal` or `/deletelist work`.
+* **Show Lists:**
+  * ```/showlists``` - View all your created lists.
 
-- **Clear Tasks (New!)**: Wipe out all tasks from a specific list.
-  - Example: `/clear work`.
+* **Manage Lists:**
+    * ```/newlist [list name]``` - Create a new list.
+    * ```/deletelist [list name]``` - Delete a specific list (including its tasks).
 
-- **Set Reminders (New!)**: Schedule one-time or recurring reminders for tasks.
-  - Example: `/remind 1 tomorrow at 8:00 AM` or `/remind work 3 in 1 hour`.
+* **Clear Tasks:**
+    * ```/clear [list name]``` - Clear all tasks from a specific list. If no list is provided, it clears your default list.
 
-- **Make Tasks Repeatable (New!)**: Set tasks to repeat at specified intervals.
-  - Example: `/repeat 2 daily` or `/repeat work 1 weekly`.
+* **Set Reminders:**
+    * ```/remind [task number] [time] [repeat (optional)]``` - Set a one-time or recurring reminder for a task. [time] format will be specified later.
+    * ```/remind [list name] [task number] [time] [repeat (optional)]``` - Similar to above, but for a specific list.
+
+* **Make Tasks Repeatable:**
+    * ```/repeat [task number] [interval]``` - Make a specific task repeat at a set interval which will be specified a bit later.
+    * ```/repeat [list name] [task number] [interval]``` - Similar to above, but for a specific list.
 
 ## Installation and Usage
 
