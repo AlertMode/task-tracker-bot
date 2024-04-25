@@ -161,3 +161,6 @@ cython_debug/
 
 # Bot token information
 token_api.py
+
+#Data Bases
+*.db
