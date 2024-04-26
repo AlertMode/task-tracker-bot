@@ -1,46 +1,29 @@
-import sqlite3
-
+from datetime import datetime
 from aiogram.filters import Command
 from aiogram import Router, types
 
-from database.database import create_list_table, create_task_table, create_list, create_task, create_default_list
+from database.models import User, List, Task
 
 user_router = Router()
-
-
-# Initialize the database
-connection = sqlite3.connect("tasks.db")
-create_list_table(connection)
-create_task_table(connection)
-create_default_list(connection)
+DEFAULT_LIST_NAME = 'default'
 
 @user_router.message(Command('start'))
-async def cmd_start(msg: types.Message) -> None:
-    """Processes the `start` command"""
-    await msg.answer(
-        """
-            Hi there\! I\'m *TaskTracker* \- a Telegram bot for efficient task management\.
-        """
+async def cmd_start(message: types.Message) -> None:
+    user = User.get(User.id == message.chat.id)
+    if not User.select().where(User.id == message.chat.id):
+        User.create(
+            id=message.chat.id,
+            date_of_registration=datetime.today()
+        )
+
+    if not List.select().where(List.name == DEFAULT_LIST_NAME):
+        List.create(
+            name = DEFAULT_LIST_NAME,
+            date_of_creation = datetime.today(),
+            user_id = user.id
+        )
+    await message.answer(
+        f"Hi, {message.chat.first_name}!\n"
+        "I'm <b>TaskTracker</b> - a Telegram bot for efficient task management!"
     )
-
-@user_router.message(Command("newlist"))
-async def cmd_new_list(msg: types.Message) -> None:
-    """Process the `newlist` command"""
-    try:
-        list_name = msg.text.split("/newlist", 1)[1]
-        create_list(connection, list_name)
-        await msg.answer(f"List '{list_name}' has been created\!")
-    except IndexError:
-        await msg.answer("Please, provide a list name after `addlist`")
-
-#TODO
-# @user_router.message(Command("addtask"))
-# async def cmd_add_task(msg: types.Message) -> None:
-#     """Processes the `addtask` command"""
-#     try:
-#         task_description = msg.text.split("/addtask", 1)[1]
-#         create_task(connection, task_description)
-#         await msg.answer(f"Task '{task_description}' has been added!")
-#     except IndexError:
-#         await msg.answer("Please, provide a task description after `add_task`")
-        
+    
