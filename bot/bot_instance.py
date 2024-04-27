@@ -1,9 +1,13 @@
+import os
 from aiogram import Bot
 from aiogram.enums import ParseMode
+from dotenv import load_dotenv
 
-from token_api import TOKEN_API
+load_dotenv()
+
+TOKEN = os.getenv('TOKEN')
 
 bot = Bot(
-    token=TOKEN_API,
+    token=TOKEN,
     parse_mode=ParseMode.HTML
 )
