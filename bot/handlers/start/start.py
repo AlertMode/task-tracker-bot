@@ -1,0 +1,27 @@
+import re
+from datetime import datetime
+from aiogram import Bot, Router, F
+from aiogram.filters import Command
+from aiogram.types import Message, CallbackQuery
+from aiogram.fsm.context import FSMContext
+from handlers.start.start_kb import *
+from database.database import DataBase
+
+start_router = Router()
+DEFAULT_LIST_NAME = 'default'
+
+@start_router.message(Command(commands='start'))
+async def cmd_start(message: Message, bot: Bot):
+    db = DataBase()
+    if not await db.get_user(message.from_user.id):
+        await db.add_user(
+            message.from_user.first_name,
+            message.from_user.last_name,
+            message.from_user.username,
+            message.from_user.id
+        )
+    await bot.send_message(
+        message.from_user.id,
+        start_message,
+        reply_markup=start_kb()
+    )
