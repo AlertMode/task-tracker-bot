@@ -1,27 +1,51 @@
-from peewee import SqliteDatabase, AutoField, Model, CharField, DateField, IntegerField, ForeignKeyField, BooleanField
+from sqlalchemy import String, Integer, Text, DateTime, ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.ext.asyncio import AsyncAttrs
 
-db = SqliteDatabase('task_tracker.db')
+class Base(AsyncAttrs, DeclarativeBase):
+    pass
 
-class BaseModel(Model):
-    class Meta:
-        database = db
+class Users(Base):
+    __tablename__ = 'users'
 
-class User(BaseModel):
-    id = CharField(null=False)
-    date_of_registration = DateField(null=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    first_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(100))
+    username: Mapped[str] = mapped_column(String(100))
+    telegram_id: Mapped [str] = mapped_column(String(100), nullable=False)
 
-class List(BaseModel):
-    id = AutoField(primary_key=True, null=False)
-    user_id = ForeignKeyField(User.id)
-    name = CharField(null=False, unique=True)
-    date_of_creation = DateField(null=False)
+    list: Mapped[list['Lists']] = relationship( # type: ignore
+        'Lists',
+        back_populates='user',
+        cascade='all, delete'
+    )
 
-class Task(BaseModel):
-    id = AutoField(primary_key=True, null=False)
-    user_id = ForeignKeyField(User.id)
-    list_id = ForeignKeyField(List.id)
-    description = CharField(null=False)
-    date_of_creation = DateField(null=False)
-    date_of_completion = DateField()
+class Lists(Base):
+    __tablename__ = 'lists'
 
-db.create_tables([User, List, Task])
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    creation_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    update_date: Mapped[DateTime] = mapped_column(DateTime)
+    completion_date: Mapped[DateTime] = mapped_column(DateTime)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
+    
+    user: Mapped[Users] = relationship('Users', foreign_keys='Lists.user_id')
+    task: Mapped[list['Tasks']] = relationship( # type: ignore
+        'Tasks',
+        back_populates='list',
+        cascade='all, delete'
+    )
+    
+class Tasks(Base):
+    __tablename__ = 'tasks'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    creation_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    update_date: Mapped[DateTime] = mapped_column(DateTime)
+    completion_date: Mapped[DateTime] = mapped_column(DateTime)
+    list_id: Mapped[int] = mapped_column(Integer, ForeignKey('lists.id'))
+
+    list: Mapped[Lists] = relationship('Lists', foreign_keys='Tasks.list_id') # type: ignore
