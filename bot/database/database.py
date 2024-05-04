@@ -39,3 +39,21 @@ class DataBase():
                 )
             )
             await request.commit()
+
+
+    async def get_table(self, table_name):
+        async with self.Session() as request:
+            result = await request.execute(select(table_name))
+        return result.scalars().all()
+    
+    
+    async def add_task(self, description, creation_date, user_id):
+        async with self.Session() as request:
+            request.add(
+                Tasks(
+                    description=description,
+                    creation_date=creation_date,
+                    user_id=user_id
+                )
+            )
+            await request.commit()
