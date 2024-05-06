@@ -11,8 +11,17 @@ start_message = (
 start_tasks_text = 'Show tasks'
 start_add_task_text = 'New task'
 
+
 #Task creation
 
 cmd_cancel_create_task = '❌ Task creation has been cancelled'
-task_creation_completed = '📋 Task has been created'
+task_creation_completed = '📝 Task has been created'
 task_creation_error = '⚠️ Something went wrong! Please, try again'
+
+
+#Task management
+
+button_task_done = '✔️ Mark as completed'
+button_task_undone = '❌ Mark as uncompleted'
+button_task_edit = '✏️ Edit'
+button_task_delete = '🗑️ Delete'

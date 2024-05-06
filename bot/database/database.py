@@ -1,5 +1,5 @@
 from msilib import make_id
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, not_
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from database.models import *
 import os
@@ -57,3 +57,13 @@ class DataBase():
                 )
             )
             await request.commit()
+    
+
+    async def get_tasks(self, areCompleted):
+        async with self.Session() as request:
+            result = await request.execute(
+                select(Tasks).filter(
+                    Tasks.completion_date.isnot(None) if areCompleted else Tasks.completion_date == None
+                )
+            )
+            return result.scalars().all()

@@ -5,7 +5,6 @@ from handlers.start.start_kb import *
 from database.database import DataBase
 
 start_router = Router()
-DEFAULT_LIST_NAME = 'default'
 
 @start_router.message(Command(commands='start'))
 async def cmd_start(message: Message, bot: Bot):
