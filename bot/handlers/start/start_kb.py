@@ -1,8 +1,13 @@
-from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from core.dictionary import *
 
+
 def start_kb():
-    kb = ReplyKeyboardBuilder()
-    kb.button(text=start_tasks_text)
-    kb.button(text=start_add_task_text)
-    return kb.as_markup(resize_keyboard=True)
+    button_new_task = KeyboardButton(text=NEW_TASK)
+    button_get_tasks = KeyboardButton(text=GET_TASKS)
+    buttons_first_row = [button_new_task, button_get_tasks]
+    markup = ReplyKeyboardMarkup(
+        keyboard=[buttons_first_row],
+        resize_keyboard=True
+    )
+    return markup
