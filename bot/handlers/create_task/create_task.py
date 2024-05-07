@@ -12,7 +12,8 @@ from handlers.create_task.create_task_state import CreateState
 
 create_task_router = Router()
 
-@create_task_router.message(F.text.lower() == 'cancel')
+
+@create_task_router.message(F.text.lower()=='cancel')
 async def cmd_cancel(message: Message, state: FSMContext, bot: Bot):
     """
         Clears component's state and
@@ -21,10 +22,11 @@ async def cmd_cancel(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
     await bot.send_message(message.from_user.id, cmd_cancel_create_task, reply_markup=start_kb())
 
+
 @create_task_router.message(
         or_f(
             F.text == '/createtask',
-            F.text == f'{start_add_task_text}'
+            F.text == f'{NEW_TASK}'
             )
         )
 async def create_task(message: Message, state: FSMContext, bot: Bot):
