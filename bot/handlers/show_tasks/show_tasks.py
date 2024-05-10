@@ -1,7 +1,7 @@
 from aiogram import Bot, Router, F
 from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from handlers.show_tasks.show_tasks_kb import *
 from core.dictionary import *
@@ -26,7 +26,14 @@ async def get_ongoing_tasks_handler(message: Message, bot: Bot) -> None:
     tasks = await db.get_tasks(areCompleted=False)
     if (tasks):
         for task in tasks:
-            await bot.send_message(message.from_user.id, text=task_ongoing % (task.creation_date, task.description))
+            await bot.send_message(
+                message.from_user.id,
+                text=task_ongoing % (
+                    task.creation_date,
+                    task.description
+                ),
+                reply_markup=ongoing_tasks_actions_kb(task.id)
+            )
     else:
         await bot.send_message(message.from_user.id, text=no_tasks_message)
 
@@ -36,6 +43,27 @@ async def get_completed_tasks_handler(message: Message, bot: Bot) -> None:
     tasks = await db.get_tasks(areCompleted=True)
     if (tasks):
         for task in tasks:
-            await bot.send_message(message.from_user.id, text=task_completed % (task.creation_date, task.description, task.completion_date))
+            await bot.send_message(
+                message.from_user.id,
+                text=task_completed % (
+                    task.creation_date,
+                    task.description,
+                    task.completion_date
+                ),
+                reply_markup=completed_tasks_actions_kb(task.id)
+            )
     else:
         await bot.send_message(message.from_user.id, text=no_tasks_message)
+
+
+@show_tasks_router.callback_query(F.data.startswith('task_delete_'))
+async def delete_task(call: CallbackQuery):
+    task_id = call.data.split('_')[-1]
+    try:
+        await db.delete_task(task_id)
+        await call.message.answer(task_deletion_completed)
+    except Exception as error:
+        print(f'Database Deletion Error: {error}')
+        await call.message.answer(error_message)
+
+    
