@@ -6,6 +6,11 @@ start_message = (
 )
 
 
+#Error
+
+error_message = '⚠️ Something went wrong! Please, try again'
+
+
 #Main menu
 
 GET_TASKS = '🗃️ Show tasks'
@@ -16,7 +21,6 @@ NEW_TASK = '✒️ New task'
 
 cmd_cancel_create_task = '❌ Task creation has been cancelled'
 task_creation_completed = '✔️ Task has been created'
-task_creation_error = '⚠️ Something went wrong! Please, try again'
 
 
 #Task management
@@ -29,3 +33,5 @@ button_task_done = '✔️ Mark as completed'
 button_task_undone = '❌ Mark as uncompleted'
 button_task_edit = '✏️ Edit'
 button_task_delete = '🗑️ Delete'
+
+task_deletion_completed = '🚮 Task has been deleted'

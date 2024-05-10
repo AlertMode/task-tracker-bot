@@ -50,6 +50,6 @@ async def input_description_task(message: Message, state: FSMContext, bot: Bot):
         await bot.send_message(message.from_user.id, task_creation_completed, reply_markup=None)
     except Exception as error:
         print(f'Database Insertion Error: {error}')
-        await bot.send_message(message.from_user.id, task_creation_error, reply_markup=None)
+        await bot.send_message(message.from_user.id, error_message, reply_markup=None)
     finally:
         await state.clear()

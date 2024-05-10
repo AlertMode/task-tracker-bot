@@ -67,3 +67,11 @@ class DataBase():
                 )
             )
             return result.scalars().all()
+        
+    
+    async def delete_task(self, task_id):
+        async with self.Session() as request:
+            request.execute(
+                delete(Tasks).where(Tasks.id == task_id)
+            )
+            await request.commit()

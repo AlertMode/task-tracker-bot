@@ -20,7 +20,16 @@ def choose_task_type_kb() -> ReplyKeyboardMarkup:
     return markup
 
 
-def actions_kb(task_id) -> InlineKeyboardMarkup:
+def ongoing_tasks_actions_kb(task_id) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text=f'{button_task_done}', callback_data=f'task_done_{task_id}')
+    keyboard.button(text=f'{button_task_edit}', callback_data=f'task_edit_{task_id}')
+    keyboard.button(text=f'{button_task_delete}', callback_data=f'task_delete_{task_id}')
+    keyboard.adjust(2)
+    return keyboard.as_markup()
+
+
+def completed_tasks_actions_kb(task_id) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
     keyboard.button(text=f'{button_task_done}', callback_data=f'task_done_{task_id}')
     keyboard.button(text=f'{button_task_edit}', callback_data=f'task_edit_{task_id}')
