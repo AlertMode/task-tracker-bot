@@ -5,28 +5,16 @@ from aiogram import Dispatcher
 from core.menu import set_commands
 from database.database import DataBase
 from bot_instance import bot
-from handlers.start.start import start_router
-from handlers.create_task.create_task import create_task_router
-from handlers.show_tasks.show_tasks import show_tasks_router
+from core.routers import router
 
 
-def register_routers(dp: Dispatcher) -> None:
-    """Register routers"""
-
-    dp.include_router(start_router)
-    dp.include_router(create_task_router)
-    dp.include_router(show_tasks_router)
-
-
-async def start() -> None:
-    """Entry Point"""
-    
+async def start() -> None:  
     try:
         database = DataBase()
         await database.create_db()
         await set_commands(bot) 
         dp = Dispatcher()
-        register_routers(dp)
+        dp.include_router(router)
         await set_commands(bot)
         await dp.start_polling(bot, skip_updates=True)
     finally:

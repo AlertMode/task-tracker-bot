@@ -59,19 +59,23 @@ class DataBase():
             await request.commit()
     
 
-    async def get_tasks(self, areCompleted):
+    async def get_tasks(self, user_id, areCompleted):
         async with self.Session() as request:
             result = await request.execute(
                 select(Tasks).filter(
+                    Tasks.user_id == user_id,
                     Tasks.completion_date.isnot(None) if areCompleted else Tasks.completion_date == None
                 )
             )
             return result.scalars().all()
         
     
-    async def delete_task(self, task_id):
+    async def delete_task(self, user_id, task_id):
         async with self.Session() as request:
-            request.execute(
-                delete(Tasks).where(Tasks.id == task_id)
+            await request.execute(
+                delete(Tasks).where(
+                    Tasks.user_id == user_id,
+                    Tasks.id == task_id
+                )
             )
             await request.commit()
