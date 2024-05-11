@@ -41,7 +41,8 @@ async def input_description_task(message: Message, state: FSMContext, bot: Bot):
     task = await state.get_data()
     try:
         db = DataBase()
-        user = await  db.get_user(message.from_user.id)
+        user = await db.get_user(message.from_user.id)
+        print(user)
         await db.add_task( 
                           task['description_task'], 
                           datetime.today(), 

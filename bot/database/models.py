@@ -25,5 +25,3 @@ class Tasks(Base):
     update_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     completion_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
-    
-    user: Mapped[Users] = relationship('Users', foreign_keys='Tasks.user_id')

@@ -23,7 +23,8 @@ async def choose_task_type(message: Message, bot: Bot) -> None:
 
 @show_tasks_router.message(F.text == ONGOING_TASKS)
 async def get_ongoing_tasks_handler(message: Message, bot: Bot) -> None:
-    tasks = await db.get_tasks(areCompleted=False)
+    user = await db.get_user(message.from_user.id)
+    tasks = await db.get_tasks(user_id=user.id, areCompleted=False)
     if (tasks):
         for task in tasks:
             await bot.send_message(
@@ -40,7 +41,8 @@ async def get_ongoing_tasks_handler(message: Message, bot: Bot) -> None:
 
 @show_tasks_router.message(F.text == COMPLETED_TASKS)
 async def get_completed_tasks_handler(message: Message, bot: Bot) -> None:
-    tasks = await db.get_tasks(areCompleted=True)
+    user = await db.get_user(message.from_user.id)
+    tasks = await db.get_tasks(user_id=user.id, areCompleted=True)
     if (tasks):
         for task in tasks:
             await bot.send_message(
@@ -58,9 +60,10 @@ async def get_completed_tasks_handler(message: Message, bot: Bot) -> None:
 
 @show_tasks_router.callback_query(F.data.startswith('task_delete_'))
 async def delete_task(call: CallbackQuery):
+    user = await db.get_user(call.from_user.id)
     task_id = call.data.split('_')[-1]
     try:
-        await db.delete_task(task_id)
+        await db.delete_task(user_id=user.id, task_id=task_id)
         await call.message.answer(task_deletion_completed)
     except Exception as error:
         print(f'Database Deletion Error: {error}')
