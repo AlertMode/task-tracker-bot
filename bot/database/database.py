@@ -1,8 +1,12 @@
-from msilib import make_id
-from sqlalchemy import select, delete, not_
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from database.models import *
+import datetime
 import os
+
+from msilib import make_id
+from sqlalchemy import select, delete, update
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+from database.models import *
+
 
 class DataBase():
     def __init__(self):
@@ -74,6 +78,36 @@ class DataBase():
         async with self.Session() as request:
             await request.execute(
                 delete(Tasks).where(
+                    Tasks.user_id == user_id,
+                    Tasks.id == task_id
+                )
+            )
+            await request.commit()
+
+
+    async def set_task_done(self, user_id, task_id):
+        async with self.Session() as request:
+            await request.execute(
+                update(Tasks)
+                .values(
+                    completion_date=datetime.datetime.now()
+                )
+                .where(
+                    Tasks.user_id == user_id,
+                    Tasks.id == task_id
+                )
+            )
+            await request.commit()
+
+
+    async def set_task_undone(self, user_id, task_id):
+        async with self.Session() as request:
+            await request.execute(
+                update(Tasks)
+                .values(
+                    completion_date=None
+                )
+                .where(
                     Tasks.user_id == user_id,
                     Tasks.id == task_id
                 )

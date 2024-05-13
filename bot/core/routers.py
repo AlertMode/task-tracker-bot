@@ -9,8 +9,9 @@ from handlers.show_tasks.show_tasks import show_tasks_router
 
 router = Router()
 
+
 router.include_routers(
     start_router,
-    show_tasks_router,
-    create_task_router
+    create_task_router,
+    show_tasks_router
 )
