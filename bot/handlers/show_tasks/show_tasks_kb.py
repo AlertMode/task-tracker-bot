@@ -8,7 +8,7 @@ ONGOING_TASKS = '▶️ Ongoing'
 COMPLETED_TASKS = '⏹️ Completed'
 
 
-def choose_task_type_kb() -> ReplyKeyboardMarkup:
+def task_choose_type_kb() -> ReplyKeyboardMarkup:
     button_ongoing_tasks = KeyboardButton(text=ONGOING_TASKS)
     button_compeleted_tasks = KeyboardButton(text=COMPLETED_TASKS)
     buttons_first_row = [button_ongoing_tasks]
@@ -20,7 +20,7 @@ def choose_task_type_kb() -> ReplyKeyboardMarkup:
     return markup
 
 
-def ongoing_tasks_actions_kb(task_id) -> InlineKeyboardMarkup:
+def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
     button_task_done_kb = InlineKeyboardButton(
         text=button_task_done,
         callback_data=f'task_done_{task_id}'
@@ -44,7 +44,7 @@ def ongoing_tasks_actions_kb(task_id) -> InlineKeyboardMarkup:
     return markup
 
 
-def completed_tasks_actions_kb(task_id) -> InlineKeyboardMarkup:
+def task_completed_kb(task_id) -> InlineKeyboardMarkup:
     button_task_undone_kb = InlineKeyboardButton(
         text=button_task_undone,
         callback_data=f'task_undone_{task_id}'

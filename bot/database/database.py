@@ -1,11 +1,16 @@
 import datetime
 import os
 
-from msilib import make_id
-from sqlalchemy import select, delete, update
+from enum import Enum, auto
+from sqlalchemy import Sequence, select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from database.models import *
+
+
+class TaskStatus:
+    ONGOING = auto()
+    COMPLETED = auto()
 
 
 class DataBase():
@@ -24,7 +29,7 @@ class DataBase():
             await connect.run_sync(Base.metadata.create_all)
 
 
-    async def get_user(self, user_id):
+    async def get_user(self, user_id) -> Users:
         async with self.Session() as request:
             result = await request.execute(
                 select(Users).where(Users.telegram_id == user_id)
@@ -32,7 +37,7 @@ class DataBase():
         return result.scalar()
     
 
-    async def add_user(self, first_name, last_name, user_name, telegram_id):
+    async def add_user(self, first_name, last_name, user_name, telegram_id) -> None:
         async with self.Session() as request:
             request.add(
                 Users(
@@ -51,7 +56,7 @@ class DataBase():
         return result.scalars().all()
     
     
-    async def add_task(self, description, creation_date, user_id):
+    async def add_task(self, description, creation_date, user_id) -> None:
         async with self.Session() as request:
             request.add(
                 Tasks(
@@ -63,18 +68,34 @@ class DataBase():
             await request.commit()
     
 
-    async def get_tasks(self, user_id, areCompleted):
+    async def get_tasks(self, user_id: int, status: TaskStatus) -> Sequence[Tasks]:
+        """
+            Retrieve tasks for a given user based on task status.
+
+            Args:
+                user_id (int): The ID of the user.
+                status (TaskStatus): The status of tasks to retrieve (ONGOING or COMPLETED).
+
+            Returns:
+                Sequence[Tasks]: A sequence of tasks matching the specified status.
+        """
         async with self.Session() as request:
-            result = await request.execute(
-                select(Tasks).filter(
-                    Tasks.user_id == user_id,
-                    Tasks.completion_date.isnot(None) if areCompleted else Tasks.completion_date == None
+            try:
+                result = await request.execute(
+                    select(Tasks).filter(
+                        Tasks.user_id == user_id,
+                        Tasks.completion_date.isnot(None) 
+                            if status == TaskStatus.COMPLETED
+                            else Tasks.completion_date == None
+                    )
                 )
-            )
-            return result.scalars().all()
+            except Exception as error:
+                print(f'get_tasks() error: {error}')
+            finally:
+                return result.scalars().all()
         
     
-    async def delete_task(self, user_id, task_id):
+    async def delete_task(self, user_id, task_id) -> None:
         async with self.Session() as request:
             await request.execute(
                 delete(Tasks).where(
@@ -85,7 +106,7 @@ class DataBase():
             await request.commit()
 
 
-    async def set_task_done(self, user_id, task_id):
+    async def set_task_done(self, user_id, task_id) -> None:
         async with self.Session() as request:
             await request.execute(
                 update(Tasks)
@@ -100,7 +121,7 @@ class DataBase():
             await request.commit()
 
 
-    async def set_task_undone(self, user_id, task_id):
+    async def set_task_undone(self, user_id, task_id) -> None:
         async with self.Session() as request:
             await request.execute(
                 update(Tasks)

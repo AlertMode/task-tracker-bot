@@ -5,7 +5,10 @@ from aiogram.types import Message, CallbackQuery
 
 from handlers.show_tasks.show_tasks_kb import *
 from core.dictionary import *
-from database.database import DataBase
+from database.database import (
+    TaskStatus,
+    DataBase
+)
 from handlers.start.start_kb import start_kb
 
 show_tasks_router = Router()
@@ -19,44 +22,43 @@ db = DataBase()
         )
     )
 async def choose_task_type(message: Message, bot: Bot) -> None:
-   await bot.send_message(message.from_user.id, text='Please, make a choice:', reply_markup=choose_task_type_kb())
+   await bot.send_message(message.from_user.id,
+                          text='Please, make a choice:',
+                          reply_markup=task_choose_type_kb())
 
 
-@show_tasks_router.message(F.text == ONGOING_TASKS)
-async def get_ongoing_tasks_handler(message: Message, bot: Bot) -> None:
+@show_tasks_router.message(
+        or_f(
+            F.text == ONGOING_TASKS,
+            F.text == COMPLETED_TASKS
+        )
+)
+async def tasks_list_handler(message: Message, bot: Bot) -> None:
     user = await db.get_user(message.from_user.id)
-    tasks = await db.get_tasks(user_id=user.id, areCompleted=False)
-    if (tasks):
-        for task in tasks:
-            await bot.send_message(
-                message.from_user.id,
-                text=task_ongoing % (
-                    task.creation_date,
-                    task.description
-                ),
-                reply_markup=ongoing_tasks_actions_kb(task.id)
-            )
-    else:
-        await bot.send_message(message.from_user.id, text=no_tasks_message)
-
-
-@show_tasks_router.message(F.text == COMPLETED_TASKS)
-async def get_completed_tasks_handler(message: Message, bot: Bot) -> None:
-    user = await db.get_user(message.from_user.id)
-    tasks = await db.get_tasks(user_id=user.id, areCompleted=True)
-    if (tasks):
-        for task in tasks:
-            await bot.send_message(
-                message.from_user.id,
-                text=task_completed % (
-                    task.creation_date,
-                    task.description,
-                    task.completion_date
-                ),
-                reply_markup=completed_tasks_actions_kb(task.id)
-            )
-    else:
-        await bot.send_message(message.from_user.id, text=no_tasks_message)
+    task_status = TaskStatus.COMPLETED if message.text == COMPLETED_TASKS else TaskStatus.ONGOING
+    print(task_status)
+    
+    try:
+        tasks = await db.get_tasks(user_id=user.id, status=task_status)
+        if tasks:
+            for task in tasks:
+                await bot.send_message(
+                    message.from_user.id,
+                    text=(task_completed
+                          if task_status == TaskStatus.COMPLETED
+                          else task_ongoing) % (
+                                task.creation_date,
+                                task.description,
+                                task.completion_date
+                            ),
+                    reply_markup=task_completed_kb(task.id)
+                        if task_status == TaskStatus.COMPLETED
+                        else task_ongoing_kb(task.id)
+                )
+        else:
+            await bot.send_message(message.from_user.id, text=task_void_message)
+    except Exception as error:
+        print(f'Error: tasks_list_handler(): {error}')
 
 
 @show_tasks_router.callback_query(
@@ -86,4 +88,4 @@ async def task_actions_handler(callback: CallbackQuery) -> None:
 
     except Exception as error:
         print(f'Database Query Error: {error}')
-        await callback.message.answer(error_message)   
+        await callback.message.answer(error_message)
