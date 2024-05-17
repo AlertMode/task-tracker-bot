@@ -4,7 +4,7 @@ from aiogram import Router
 
 from handlers.start.start import start_router
 from handlers.create_task.create_task import create_task_router
-from handlers.show_tasks.show_tasks import show_tasks_router 
+from handlers.show_tasks.tasks_alter import show_tasks_router 
 
 
 router = Router()

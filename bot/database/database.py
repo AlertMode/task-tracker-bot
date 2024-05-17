@@ -1,14 +1,14 @@
 import datetime
 import os
 
-from enum import Enum, auto
+from enum import IntEnum, auto
 from sqlalchemy import Sequence, select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from database.models import *
 
 
-class TaskStatus:
+class TaskStatus(IntEnum):
     ONGOING = auto()
     COMPLETED = auto()
 

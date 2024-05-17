@@ -1,4 +1,6 @@
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from enum import IntEnum, auto
+
+from aiogram.filters.callback_data import CallbackData
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 
 from core.dictionary import *
@@ -6,6 +8,18 @@ from core.dictionary import *
 
 ONGOING_TASKS = '▶️ Ongoing'
 COMPLETED_TASKS = '⏹️ Completed'
+
+
+class TaskAlterationAction(IntEnum):
+    done = auto()
+    undone = auto()
+    edit = auto()
+    delete = auto()
+
+
+class TaskAlterationCallbackData(CallbackData, prefix='task_alteration'):
+    action: TaskAlterationAction
+    id: int
 
 
 def task_choose_type_kb() -> ReplyKeyboardMarkup:
@@ -23,15 +37,24 @@ def task_choose_type_kb() -> ReplyKeyboardMarkup:
 def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
     button_task_done_kb = InlineKeyboardButton(
         text=button_task_done,
-        callback_data=f'task_done_{task_id}'
+        callback_data=TaskAlterationCallbackData(
+            action=TaskAlterationAction.done,
+            id=task_id
+        ).pack()
     )
     button_task_edit_kb = InlineKeyboardButton(
         text=button_task_edit,
-        callback_data=f'task_edit_{task_id}'
+        callback_data=TaskAlterationCallbackData(
+            action=TaskAlterationAction.edit,
+            id=task_id
+        ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
-        callback_data=f'task_delete_{task_id}'
+        callback_data=TaskAlterationCallbackData(
+            action=TaskAlterationAction.delete,
+            id=task_id
+        ).pack()
     )
     buttons_first_row_kb = [button_task_done_kb, button_task_edit_kb]
     buttons_second_row_kb = [button_task_delete_kb]
@@ -47,11 +70,17 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
 def task_completed_kb(task_id) -> InlineKeyboardMarkup:
     button_task_undone_kb = InlineKeyboardButton(
         text=button_task_undone,
-        callback_data=f'task_undone_{task_id}'
+        callback_data=TaskAlterationCallbackData(
+            action=TaskAlterationAction.undone,
+            id=task_id
+        ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
-        callback_data=f'task_delete_{task_id}'
+        callback_data=TaskAlterationCallbackData(
+            action=TaskAlterationAction.delete,
+            id=task_id
+        ).pack()
     )
     buttons_row_kb = [
         button_task_undone_kb,
