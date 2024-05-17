@@ -3,7 +3,7 @@ from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from handlers.show_tasks.show_tasks_kb import *
+from handlers.show_tasks.tasks_alter_kb import *
 from core.dictionary import *
 from database.database import (
     TaskStatus,
@@ -61,31 +61,29 @@ async def tasks_list_handler(message: Message, bot: Bot) -> None:
         print(f'Error: tasks_list_handler(): {error}')
 
 
-@show_tasks_router.callback_query(
-    or_f(
-        F.data.startswith('task_done_'),
-        F.data.startswith('task_undone_'),
-        F.data.startswith('task_delete_')
-    )
-)
-async def task_actions_handler(callback: CallbackQuery) -> None:
+@show_tasks_router.callback_query(TaskAlterationCallbackData.filter(
+        F.action.in_(TaskAlterationAction)
+))
+async def task_actions_handler(
+    callback: CallbackQuery,
+    callback_data: TaskAlterationCallbackData
+) -> None:
     user = await db.get_user(callback.from_user.id)
-    task_id = callback.data.split('_')[-1]
+    task_id = callback_data.id
     message = None
 
     try:
-        if (callback.data.startswith('task_done_')):
+        if (callback_data.action == TaskAlterationAction.done):
             await db.set_task_done(user_id=user.id, task_id=task_id)
             message = task_setting_done_completed
-        elif (callback.data.startswith('task_undone_')):
+        elif (callback_data.action == TaskAlterationAction.undone):
             await db.set_task_undone(user_id=user.id, task_id=task_id)
             message = task_setting_undone_completed
-        elif (callback.data.startswith('task_delete_')):
+        elif (callback_data.action == TaskAlterationAction.delete):
             await db.delete_task(user_id=user.id, task_id=task_id)
             message = task_deletion_completed
         
         await callback.message.answer(message)
-
     except Exception as error:
         print(f'Database Query Error: {error}')
         await callback.message.answer(error_message)
