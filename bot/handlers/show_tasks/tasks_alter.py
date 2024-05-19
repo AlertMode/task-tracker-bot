@@ -61,9 +61,11 @@ async def tasks_list_handler(message: Message, bot: Bot) -> None:
         print(f'Error: tasks_list_handler(): {error}')
 
 
-@show_tasks_router.callback_query(TaskAlterationCallbackData.filter(
-        F.action.in_(TaskAlterationAction)
-))
+@show_tasks_router.callback_query(
+        TaskAlterationCallbackData.filter(
+            F.action.in_(TaskAlterationAction)
+        )
+)
 async def task_actions_handler(
     callback: CallbackQuery,
     callback_data: TaskAlterationCallbackData

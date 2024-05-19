@@ -19,8 +19,10 @@ NEW_TASK = '✒️ New task'
 
 #Task creation
 
-cmd_cancel_create_task = '❌ Task creation has been cancelled'
+task_creation_cancel_cmd = '❌ Task creation has been cancelled'
 task_creation_completed = '☑️ Task has been created'
+task_createion_invalid_content_type = '❓ Please, type in a text'
+
 
 
 #Task management
