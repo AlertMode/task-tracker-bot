@@ -1,8 +1,9 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
+from core.dictionary import *
 
-cancel_kb = ReplyKeyboardMarkup(keyboard=[
+return_to_main_menu_kb = ReplyKeyboardMarkup(keyboard=[
     [
-        KeyboardButton(text='cancel')
+        KeyboardButton(text=MainMenuReplyKeyboard.MAIN_MENU)
     ]
 ], resize_keyboard=True, one_time_keyboard=True)

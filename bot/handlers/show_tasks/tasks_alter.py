@@ -11,14 +11,15 @@ from database.database import (
 )
 from handlers.start.start_kb import start_kb
 
+
 show_tasks_router = Router()
 db = DataBase()
 
 
 @show_tasks_router.message(
     or_f(
-        F.text == '/gettasks',
-        F.text == f'{GET_TASKS}'
+        F.text == MenuCommands.GET_TASKS,
+        F.text == MainMenuReplyKeyboard.GET_TASKS
         )
     )
 async def choose_task_type(message: Message, bot: Bot) -> None:
