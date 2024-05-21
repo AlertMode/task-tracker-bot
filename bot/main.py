@@ -3,7 +3,7 @@ import logging
 
 from aiogram import Dispatcher
 
-from core.menu import set_commands
+from core.menu import set_menu
 from database.database import DataBase
 from bot_instance import bot
 from core.routers import router
@@ -14,12 +14,12 @@ async def main() -> None:
         database = DataBase()
         await database.create_db()
 
-        await set_commands(bot)
+        await set_menu(bot)
 
         dp = Dispatcher()
         dp.include_router(router)
 
-        await set_commands(bot)
+        await set_menu(bot)
         await dp.start_polling(bot, skip_updates=True)
     finally:
         await bot.session.close()

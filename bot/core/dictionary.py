@@ -1,5 +1,4 @@
 # Greeting message
-
 start_message = (
     f'Hi!'
     'I\'m <b>TaskTracker</b> - a Telegram bot for efficient task management!'
@@ -7,18 +6,25 @@ start_message = (
 
 
 #Error
-
 error_message = '⚠️ Something went wrong! Please, try again'
 
 
-#Main menu
+#Menu commands
+class MenuCommands:
+    START = '/start'
+    CREATE_TASK = '/create_task'
+    GET_TASKS = '/get_tasks'
 
-GET_TASKS = '🗃️ Show tasks'
-NEW_TASK = '✒️ New task'
+
+#Reply main menu commands
+class MainMenuReplyKeyboard:
+    GET_TASKS = '🗃️ Show tasks'
+    NEW_TASK = '✒️ New task'
+    MAIN_MENU = '↩️ Main Menu'
 
 
 #Task creation
-
+task_creation_description_prompt = '✍ Write your task\'s description'
 task_creation_cancel_cmd = '❌ Task creation has been cancelled'
 task_creation_completed = '☑️ Task has been created'
 task_createion_invalid_content_type = '❓ Please, type in a text'
@@ -26,7 +32,6 @@ task_createion_invalid_content_type = '❓ Please, type in a text'
 
 
 #Task management
-
 task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
 task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
 task_void_message = '🚧 No tasks were found! 🚧'
