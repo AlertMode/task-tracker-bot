@@ -1,9 +1,10 @@
 from enum import IntEnum, auto
 
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, KeyboardButton, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from core.dictionary import *
+from database.database import TaskStatus
 
 
 ONGOING_TASKS = '▶️ Ongoing'
@@ -17,19 +18,31 @@ class TaskAlterationAction(IntEnum):
     delete = auto()
 
 
+class TaskStatusCallbackData(CallbackData, prefix='task_type'):
+    type: TaskStatus
+
+
 class TaskAlterationCallbackData(CallbackData, prefix='task_alteration'):
     action: TaskAlterationAction
     id: int
 
 
-def task_choose_type_kb() -> ReplyKeyboardMarkup:
-    button_ongoing_tasks = KeyboardButton(text=ONGOING_TASKS)
-    button_compeleted_tasks = KeyboardButton(text=COMPLETED_TASKS)
-    buttons_first_row = [button_ongoing_tasks]
-    buttons_second_row = [button_compeleted_tasks]
-    markup = ReplyKeyboardMarkup(
-        keyboard=[buttons_first_row, buttons_second_row],
-        resize_keyboard=True
+def task_type_kb() -> InlineKeyboardMarkup:
+    button_ongoing_tasks = InlineKeyboardButton(
+        text=ONGOING_TASKS,
+        callback_data=TaskStatusCallbackData(
+            type=TaskStatus.ONGOING
+        ).pack()
+    )
+    button_completed_tasks = InlineKeyboardButton(
+        text=COMPLETED_TASKS,
+        callback_data=TaskStatusCallbackData(
+            type=TaskStatus.COMPLETED
+        ).pack()
+    )
+    row = [button_ongoing_tasks, button_completed_tasks]
+    markup = InlineKeyboardMarkup(
+        inline_keyboard=[row]
     )
     return markup
 

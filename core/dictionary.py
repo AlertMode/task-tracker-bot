@@ -1,4 +1,7 @@
 # Greeting message
+from enum import Enum
+
+
 start_message = (
     f'Hi!'
     'I\'m <b>TaskTracker</b> - a Telegram bot for efficient task management!'
@@ -10,14 +13,14 @@ error_message = '⚠️ Something went wrong! Please, try again'
 
 
 #Menu commands
-class MenuCommands:
+class MenuCommands(Enum):
     START = '/start'
     CREATE_TASK = '/create_task'
     GET_TASKS = '/get_tasks'
 
 
 #Reply main menu commands
-class MainMenuReplyKeyboard:
+class MenuNames:
     GET_TASKS = '🗃️ Show tasks'
     NEW_TASK = '✒️ New task'
     MAIN_MENU = '↩️ Main Menu'
