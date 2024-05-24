@@ -1,12 +1,12 @@
 from aiogram import Bot, Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
-from handlers.start.start_kb import *
+from keyboards.start_kb import *
 from database.database import DataBase
 
-start_router = Router()
+router = Router(name=__name__)
 
-@start_router.message(Command(commands='start'))
+@router.message(Command(commands='start'))
 async def cmd_start(message: Message, bot: Bot):
     db = DataBase()
     if not await db.get_user(message.from_user.id):
