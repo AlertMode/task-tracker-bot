@@ -1,20 +1,20 @@
 from aiogram import Bot, Router, F
 from aiogram.filters import or_f
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
 
 from database.database import DataBase
 from core.dictionary import *
 from keyboards.task_creation_kb import return_to_main_menu_kb
-from keyboards.start_kb import start_kb
+from keyboards.start_kb import MenuCommandsCallback, start_kb
 from states.task_creation_state import CreateState
 
 
 router = Router(name=__name__)
 
 
-@router.message(F.text==MainMenuReplyKeyboard.MAIN_MENU)
+@router.message(F.text==MenuNames.MAIN_MENU)
 async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: Bot) -> None:
     """
         Clears component's state and
@@ -28,20 +28,43 @@ async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: 
     )
 
 
-@router.message(
-        or_f(
-            F.text == MenuCommands.CREATE_TASK,
-            F.text == MainMenuReplyKeyboard.NEW_TASK
-            )
-        )
-async def create_task(message: Message, state: FSMContext, bot: Bot) -> None:
+async def create_task_handler(user_id: int, state: FSMContext, bot: Bot) -> None:
     await bot.send_message(
-        message.from_user.id,
-        task_creation_description_prompt,
+        chat_id=user_id,
+        text=task_creation_description_prompt,
         reply_markup=return_to_main_menu_kb
     )
     await state.set_state(CreateState.description_task)
 
+
+@router.message(F.text == MenuCommands.CREATE_TASK.value)
+async def create_task_command(message: Message, state: FSMContext, bot: Bot) -> None:
+    await create_task_handler(
+        user_id = message.from_user.id,
+        state=state,
+        bot=bot
+    )
+    message.delete()
+
+
+@router.callback_query(
+        MenuCommandsCallback.filter(
+            F.action == MenuCommands.CREATE_TASK
+        )
+)
+async def create_task_callback(
+    callback: CallbackQuery,
+    state: FSMContext,
+    bot: Bot
+) -> None:
+    await create_task_handler(
+        user_id=callback.from_user.id,
+        state=state,
+        bot=bot    
+    )
+    await callback.answer()
+    await callback.message.delete()
+    
 
 @router.message(CreateState.description_task, F.text)
 async def input_description_task(message: Message, state: FSMContext, bot: Bot) -> None:

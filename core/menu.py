@@ -18,7 +18,7 @@ async def set_menu(bot: Bot):
 
         BotCommand(
             command=MenuCommands.GET_TASKS,
-            description='Show all the lists with tasks'
+            description='Show tasks'
         )
     ]
 

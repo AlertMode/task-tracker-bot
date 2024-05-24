@@ -3,48 +3,63 @@ from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from keyboards.task_alteration_kb import *
 from core.dictionary import *
 from database.database import (
     TaskStatus,
     DataBase
 )
-from keyboards.start_kb import start_kb
+from keyboards.task_alteration_kb import *
+from keyboards.start_kb import MenuCommandsCallback
+
 
 
 router = Router(name=__name__)
 db = DataBase()
 
 
-@router.message(
-    or_f(
-        F.text == MenuCommands.GET_TASKS,
-        F.text == MainMenuReplyKeyboard.GET_TASKS
-        )
+async def task_type_selection_handler(user_id: int, bot: Bot) -> None:
+    await bot.send_message(
+        user_id,
+        text='Select the task status:',
+        reply_markup=task_type_kb()
     )
-async def choose_task_type(message: Message, bot: Bot) -> None:
-   await bot.send_message(message.from_user.id,
-                          text='Please, make a choice:',
-                          reply_markup=task_choose_type_kb())
+   
+
+@router.callback_query(F.text == MenuCommands.GET_TASKS.value)
+async def task_type_selection_command(message: Message, bot: Bot) -> None:
+    await task_type_selection_handler(message.from_user.id, bot)
+    await message.delete()
 
 
-@router.message(
-        or_f(
-            F.text == ONGOING_TASKS,
-            F.text == COMPLETED_TASKS
+@router.callback_query(
+    MenuCommandsCallback.filter(
+        F.action == MenuCommands.GET_TASKS
+    )
+)
+async def task_type_selection_callback(callback: CallbackQuery, bot: Bot) -> None:
+    await task_type_selection_handler(callback.from_user.id, bot)
+    await callback.answer()
+    await callback.message.delete()
+
+
+@router.callback_query(
+        TaskStatusCallbackData.filter(
+            F.type.in_(TaskStatus)
         )
 )
-async def tasks_list_handler(message: Message, bot: Bot) -> None:
-    user = await db.get_user(message.from_user.id)
-    task_status = TaskStatus.COMPLETED if message.text == COMPLETED_TASKS else TaskStatus.ONGOING
+async def tasks_list_handler(
+    callback: CallbackQuery,
+    callback_data: TaskStatusCallbackData
+) -> None:
+    user = await db.get_user(callback.from_user.id)
+    task_status = TaskStatus.COMPLETED if callback_data.type == TaskStatus.COMPLETED else TaskStatus.ONGOING
     print(task_status)
     
     try:
         tasks = await db.get_tasks(user_id=user.id, status=task_status)
         if tasks:
             for task in tasks:
-                await bot.send_message(
-                    message.from_user.id,
+                await callback.message.answer(
                     text=(task_completed
                           if task_status == TaskStatus.COMPLETED
                           else task_ongoing) % (
@@ -57,7 +72,7 @@ async def tasks_list_handler(message: Message, bot: Bot) -> None:
                         else task_ongoing_kb(task.id)
                 )
         else:
-            await bot.send_message(message.from_user.id, text=task_void_message)
+            await callback.message.answer(callback.from_user.id, text=task_void_message)
     except Exception as error:
         print(f'Error: tasks_list_handler(): {error}')
 

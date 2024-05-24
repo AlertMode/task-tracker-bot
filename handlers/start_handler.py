@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from keyboards.start_kb import *
 from database.database import DataBase
+from core.dictionary import *
 
 router = Router(name=__name__)
 
