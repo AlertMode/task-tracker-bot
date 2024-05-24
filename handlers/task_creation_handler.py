@@ -6,15 +6,15 @@ from datetime import datetime
 
 from database.database import DataBase
 from core.dictionary import *
-from handlers.create_task.create_task_kb import return_to_main_menu_kb
-from handlers.start.start_kb import start_kb
-from handlers.create_task.create_task_state import CreateState
+from keyboards.task_creation_kb import return_to_main_menu_kb
+from keyboards.start_kb import start_kb
+from states.task_creation_state import CreateState
 
 
-create_task_router = Router()
+router = Router(name=__name__)
 
 
-@create_task_router.message(F.text==MainMenuReplyKeyboard.MAIN_MENU)
+@router.message(F.text==MainMenuReplyKeyboard.MAIN_MENU)
 async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: Bot) -> None:
     """
         Clears component's state and
@@ -28,7 +28,7 @@ async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: 
     )
 
 
-@create_task_router.message(
+@router.message(
         or_f(
             F.text == MenuCommands.CREATE_TASK,
             F.text == MainMenuReplyKeyboard.NEW_TASK
@@ -43,7 +43,7 @@ async def create_task(message: Message, state: FSMContext, bot: Bot) -> None:
     await state.set_state(CreateState.description_task)
 
 
-@create_task_router.message(CreateState.description_task, F.text)
+@router.message(CreateState.description_task, F.text)
 async def input_description_task(message: Message, state: FSMContext, bot: Bot) -> None:
     await state.update_data(description_task=message.text)
     
@@ -71,7 +71,7 @@ async def input_description_task(message: Message, state: FSMContext, bot: Bot) 
         await state.clear()
 
 
-@create_task_router.message(CreateState.description_task)
+@router.message(CreateState.description_task)
 async def input_description_task_invalid_content_type(message: Message, bot: Bot) -> None:
     await bot.send_message(
         message.from_user.id,

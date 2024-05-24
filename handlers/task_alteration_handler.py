@@ -3,20 +3,20 @@ from aiogram.filters import or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from handlers.show_tasks.tasks_alter_kb import *
+from keyboards.task_alteration_kb import *
 from core.dictionary import *
 from database.database import (
     TaskStatus,
     DataBase
 )
-from handlers.start.start_kb import start_kb
+from keyboards.start_kb import start_kb
 
 
-show_tasks_router = Router()
+router = Router(name=__name__)
 db = DataBase()
 
 
-@show_tasks_router.message(
+@router.message(
     or_f(
         F.text == MenuCommands.GET_TASKS,
         F.text == MainMenuReplyKeyboard.GET_TASKS
@@ -28,7 +28,7 @@ async def choose_task_type(message: Message, bot: Bot) -> None:
                           reply_markup=task_choose_type_kb())
 
 
-@show_tasks_router.message(
+@router.message(
         or_f(
             F.text == ONGOING_TASKS,
             F.text == COMPLETED_TASKS
@@ -62,7 +62,7 @@ async def tasks_list_handler(message: Message, bot: Bot) -> None:
         print(f'Error: tasks_list_handler(): {error}')
 
 
-@show_tasks_router.callback_query(
+@router.callback_query(
         TaskAlterationCallbackData.filter(
             F.action.in_(TaskAlterationAction)
         )
