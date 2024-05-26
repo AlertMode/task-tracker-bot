@@ -22,3 +22,4 @@ async def cmd_start(message: Message, bot: Bot):
         start_message,
         reply_markup=start_kb()
     )
+    await message.delete()

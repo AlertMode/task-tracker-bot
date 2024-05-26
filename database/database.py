@@ -50,7 +50,10 @@ class DataBase():
             raise
 
 
-    async def get_user(self, user_id: int) -> Users:
+    async def get_user(
+            self,
+            user_id: int
+    ) -> Users:
         """
         Retrieves a user by user ID.
 
@@ -71,7 +74,8 @@ class DataBase():
     
 
     async def add_user(
-            self, first_name: str,
+            self,
+            first_name: str,
             last_name: str,
             user_name: str,
             telegram_id: str
@@ -106,7 +110,8 @@ class DataBase():
     
     
     async def add_task(
-            self, description: str,
+            self,
+            description: str,
             creation_date: str,
             user_id: int
         ) -> None:
@@ -137,7 +142,25 @@ class DataBase():
             raise
     
 
-    async def get_tasks(
+    async def get_task_by_id(
+            self,
+            task_id: int
+    ) -> Tasks:
+        """
+        Retrieve a single task based on its ID.
+        """
+        try:
+            async with self.Session() as session:
+                result = await session.execute(
+                    select(Tasks).filter(Tasks.id == task_id)
+                )
+                return result.scalar()
+        except SQLAlchemyError as error:
+            logger.error(f'get_task_by_id() error: {error}')
+            raise
+
+
+    async def get_tasks_by_user(
             self,
             user_id: int,
             status: TaskStatus
@@ -169,7 +192,11 @@ class DataBase():
             return result.scalars().all()
         
     
-    async def delete_task(self, user_id: int, task_id: int) -> None:
+    async def delete_task(
+            self,
+            user_id: int,
+            task_id: int
+    ) -> None:
         """
         Deletes a task from the database.
 
@@ -195,7 +222,11 @@ class DataBase():
             raise
 
 
-    async def set_task_done(self, user_id, task_id) -> None:
+    async def set_task_done(
+            self,
+            user_id: int,
+            task_id: int
+    ) -> None:
         """
         Marks a task as completed.
 
@@ -225,7 +256,11 @@ class DataBase():
             raise
 
 
-    async def set_task_undone(self, user_id, task_id) -> None:
+    async def set_task_undone(
+            self,
+            user_id: int,
+            task_id: int
+    ) -> None:
         """
         Marks a task as incomplete.
 

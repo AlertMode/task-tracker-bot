@@ -8,20 +8,20 @@ from core.dictionary import (
 
 
 class MenuCommandsCallback(CallbackData, prefix='main_menu'):
-    action: MenuCommands
+    option: MenuCommands
 
 
 def start_kb() -> InlineKeyboardMarkup:
     button_new_task = InlineKeyboardButton(
         text=MenuNames.NEW_TASK,
         callback_data=MenuCommandsCallback(
-            action=MenuCommands.CREATE_TASK
+            option=MenuCommands.CREATE_TASK
         ).pack()
     )
     button_get_tasks = InlineKeyboardButton(
         text=MenuNames.GET_TASKS,
         callback_data=MenuCommandsCallback(
-            action=MenuCommands.GET_TASKS
+            option=MenuCommands.GET_TASKS
         ).pack()
     )
     row = [button_new_task, button_get_tasks]
