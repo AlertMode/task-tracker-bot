@@ -35,6 +35,8 @@ task_createion_invalid_content_type = '❓ Please, type in a text'
 
 
 #Task management
+task_status_message = '📁 Task status:'
+
 task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
 task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
 task_void_message = '🚧 No tasks were found! 🚧'

@@ -1,13 +1,19 @@
-from aiogram import Bot, Router, F
-from aiogram.filters import or_f
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
 from datetime import datetime
+
+from aiogram import Bot, Router, F
+from aiogram.types import (
+    Message,
+    CallbackQuery
+)
+from aiogram.fsm.context import FSMContext
 
 from database.database import DataBase
 from core.dictionary import *
 from keyboards.task_creation_kb import return_to_main_menu_kb
-from keyboards.start_kb import MenuCommandsCallback, start_kb
+from keyboards.start_kb import (
+    MenuCommandsCallback,
+    start_kb
+)
 from states.task_creation_state import CreateState
 
 
@@ -49,7 +55,7 @@ async def create_task_command(message: Message, state: FSMContext, bot: Bot) -> 
 
 @router.callback_query(
         MenuCommandsCallback.filter(
-            F.action == MenuCommands.CREATE_TASK
+            F.option == MenuCommands.CREATE_TASK
         )
 )
 async def create_task_callback(

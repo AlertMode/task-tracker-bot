@@ -1,10 +1,16 @@
 from enum import IntEnum, auto
 
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.fsm.context import FSMContext
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from core.dictionary import *
 from database.database import TaskStatus
+from keyboards.start_kb import MenuCommandsCallback
 
 
 ONGOING_TASKS = '▶️ Ongoing'
@@ -12,10 +18,11 @@ COMPLETED_TASKS = '⏹️ Completed'
 
 
 class TaskAlterationAction(IntEnum):
-    done = auto()
-    undone = auto()
-    edit = auto()
-    delete = auto()
+    DONE = auto()
+    UNDONE = auto()
+    EDIT = auto()
+    DELETE = auto()
+    SKIP = auto()
 
 
 class TaskStatusCallbackData(CallbackData, prefix='task_type'):
@@ -40,32 +47,53 @@ def task_type_kb() -> InlineKeyboardMarkup:
             type=TaskStatus.COMPLETED
         ).pack()
     )
-    row = [button_ongoing_tasks, button_completed_tasks]
+    button_start = InlineKeyboardButton(
+        text=MenuNames.MAIN_MENU,
+        callback_data=MenuCommandsCallback(
+            option=MenuCommands.START
+        ).pack()
+    )
+    row_one = [button_ongoing_tasks, button_completed_tasks]
+    row_two = [button_start]
     markup = InlineKeyboardMarkup(
-        inline_keyboard=[row]
+        inline_keyboard=[row_one, row_two]
     )
     return markup
+
+
+def task_list_kb(tasks) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    for task in tasks:
+        builder.button(
+            text=task.description,
+            callback_data=TaskAlterationCallbackData(
+                action=TaskAlterationAction.SKIP,
+                id=task.id
+            )
+        )
+    builder.adjust(1)
+    return builder.as_markup()
 
 
 def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
     button_task_done_kb = InlineKeyboardButton(
         text=button_task_done,
         callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.done,
+            action=TaskAlterationAction.DONE,
             id=task_id
         ).pack()
     )
     button_task_edit_kb = InlineKeyboardButton(
         text=button_task_edit,
         callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.edit,
+            action=TaskAlterationAction.EDIT,
             id=task_id
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
         callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.delete,
+            action=TaskAlterationAction.DELETE,
             id=task_id
         ).pack()
     )
@@ -84,14 +112,14 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
     button_task_undone_kb = InlineKeyboardButton(
         text=button_task_undone,
         callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.undone,
+            action=TaskAlterationAction.UNDONE,
             id=task_id
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
         callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.delete,
+            action=TaskAlterationAction.DELETE,
             id=task_id
         ).pack()
     )
