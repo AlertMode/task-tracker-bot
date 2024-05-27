@@ -18,7 +18,17 @@ router = Router(name=__name__)
 db = DataBase()
 
 
-async def start_command(user_id: int, bot: Bot) -> None:
+async def start_handler(user_id: int, chat_id: int, message_id: int, bot: Bot) -> None:
+    """
+    Sends the start message with the start keyboard to the user.
+
+    Args:
+        user_id (int): The ID of the user.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await bot.send_message(
         user_id,
         text=start_message,
@@ -35,12 +45,32 @@ async def start_callback(
     callback: CallbackQuery,
     bot: Bot
 ) -> None:
+    """
+    Handles the start callback query.
+
+    Args:
+        callback (CallbackQuery): The callback query instance.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await callback.answer()
-    await start_command(user_id=callback.from_user.id, bot=bot)
+    await start_handler(user_id=callback.from_user.id, bot=bot)
     await callback.message.delete()
 
 
 async def task_type_selection_handler(user_id: int, bot: Bot) -> None:
+    """
+    Sends the task status selection message with the task type keyboard to the user.
+
+    Args:
+        user_id (int): The ID of the user.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await bot.send_message(
         user_id,
         text=task_status_message,
@@ -50,6 +80,16 @@ async def task_type_selection_handler(user_id: int, bot: Bot) -> None:
 
 @router.message(F.text == MenuCommands.GET_TASKS.value)
 async def task_type_selection_command(message: Message, bot: Bot) -> None:
+    """
+    Handles the task type selection command from the user.
+
+    Args:
+        message (Message): The message instance.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await task_type_selection_handler(user_id=message.from_user.id, bot=bot)
     await message.delete()
 
@@ -60,6 +100,16 @@ async def task_type_selection_command(message: Message, bot: Bot) -> None:
     )
 )
 async def task_type_selection_callback(callback: CallbackQuery, bot: Bot) -> None:
+    """
+    Handles the task type selection callback query.
+
+    Args:
+        callback (CallbackQuery): The callback query instance.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await callback.answer()
     await task_type_selection_handler(user_id=callback.from_user.id, bot=bot)
     await callback.message.delete()
@@ -74,6 +124,16 @@ async def task_list_handler(
     callback: CallbackQuery,
     callback_data: TaskStatusCallbackData
 ) -> None:
+    """
+    Handles the task list callback query.
+
+    Args:
+        callback (CallbackQuery): The callback query instance.
+        callback_data (TaskStatusCallbackData): The task status callback data.
+
+    Returns:
+        None
+    """
     try:
         callback.answer()
         user = await db.get_user(callback.from_user.id)
@@ -103,6 +163,16 @@ async def task_full_information_handler(
     callback: CallbackQuery,
     callback_data: TaskAlterationCallbackData
 ) -> None:
+    """
+    Handles the task full information callback query.
+
+    Args:
+        callback (CallbackQuery): The callback query instance.
+        callback_data (TaskAlterationCallbackData): The task alteration callback data.
+
+    Returns:
+        None
+    """
     try:
         callback.answer()
         task = await db.get_task_by_id(task_id=callback_data.id)
@@ -132,6 +202,16 @@ async def task_actions_handler(
     callback: CallbackQuery,
     callback_data: TaskAlterationCallbackData
 ) -> None:
+    """
+    Handles the task actions callback query (done, undone, delete).
+
+    Args:
+        callback (CallbackQuery): The callback query instance.
+        callback_data (TaskAlterationCallbackData): The task alteration callback data.
+
+    Returns:
+        None
+    """
     callback.answer()
     user = await db.get_user(callback.from_user.id)
     task_id = callback_data.id
