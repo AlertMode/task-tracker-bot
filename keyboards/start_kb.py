@@ -1,7 +1,7 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from core.dictionary import (
+from utils.dictionary import (
     MenuCommands,
     MenuNames
 )

@@ -1,8 +1,8 @@
 from aiogram import Bot, Router, F
 from aiogram.types import Message, CallbackQuery
 
-from core.dictionary import *
-from core.logging_config import logger
+from utils.dictionary import *
+from utils.logging_config import logger
 from database.database import (
     TaskStatus,
     DataBase
@@ -18,7 +18,7 @@ router = Router(name=__name__)
 db = DataBase()
 
 
-async def start_handler(user_id: int, chat_id: int, message_id: int, bot: Bot) -> None:
+async def start_handler(user_id: int, bot: Bot) -> None:
     """
     Sends the start message with the start keyboard to the user.
 
