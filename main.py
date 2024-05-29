@@ -3,10 +3,10 @@ import logging
 
 from aiogram import Dispatcher
 
-from core.menu import set_menu
+from utils.menu import set_menu
 from database.database import DataBase
 from bot_instance import bot
-from core.routers import router
+from utils.routers import router
 
 
 async def main() -> None:  

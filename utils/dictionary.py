@@ -4,7 +4,7 @@ from enum import Enum
 
 start_message = (
     f'Hi!'
-    'I\'m <b>TaskTracker</b> - a Telegram bot for efficient task management!'
+    'I\'m <b>TaskTracker</b> - a bot for a simple task management.'
 )
 
 

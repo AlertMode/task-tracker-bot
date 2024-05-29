@@ -8,7 +8,7 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from core.dictionary import *
+from utils.dictionary import *
 from database.database import TaskStatus
 from keyboards.start_kb import MenuCommandsCallback
 
@@ -71,6 +71,12 @@ def task_list_kb(tasks) -> InlineKeyboardMarkup:
                 id=task.id
             )
         )
+    builder.button(
+        text='🔙',
+        callback_data=MenuCommandsCallback(
+            option=MenuCommands.GET_TASKS
+        )
+    )
     builder.adjust(1)
     return builder.as_markup()
 

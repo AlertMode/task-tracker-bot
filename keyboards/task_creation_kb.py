@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-from core.dictionary import *
+from utils.dictionary import *
 
 return_to_main_menu_kb = ReplyKeyboardMarkup(keyboard=[
     [
