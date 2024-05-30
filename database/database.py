@@ -173,19 +173,17 @@ class DataBase():
         """
         try:
             async with self.Session() as session:
-                result = await session.execute(
-                    select(Tasks).filter(
-                        Tasks.user_id == user_id,
-                        Tasks.completion_date.isnot(None) 
-                            if status == TaskStatus.COMPLETED
-                            else Tasks.completion_date == None
-                    )
-                )
+                query = select(Tasks).filter(Tasks.user_id == user_id)
+                if status == TaskStatus.COMPLETED:
+                    query = query.filter(Tasks.completion_date.isnot(None))
+                else:
+                    query = query.filter(Tasks.completion_date.is_(None))
+
+                result = await session.execute(query)
+                return result.scalars().all()
         except SQLAlchemyError as error:
             logger.error(f'get_tasks() error: {error}')
             raise
-        finally:
-            return result.scalars().all()
         
     
     async def delete_task(
