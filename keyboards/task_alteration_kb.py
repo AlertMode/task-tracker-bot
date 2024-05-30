@@ -1,13 +1,19 @@
-from enum import IntEnum, auto
-
-from aiogram.filters.callback_data import CallbackData
-from aiogram.fsm.context import FSMContext
 from aiogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from callbacks.common_commands_callback import (
+    MenuCommands,
+    MenuCommandsCallback
+)
+from callbacks.task_alteration_callback import (
+    TaskStatus,
+    TaskAlterationAction,
+    TaskStatusCallbackData,
+    TaskAlterationCallbackData
+)
 from utils.dictionary import *
 from database.database import TaskStatus
 from keyboards.start_kb import MenuCommandsCallback
@@ -15,23 +21,6 @@ from keyboards.start_kb import MenuCommandsCallback
 
 ONGOING_TASKS = '▶️ Ongoing'
 COMPLETED_TASKS = '⏹️ Completed'
-
-
-class TaskAlterationAction(IntEnum):
-    DONE = auto()
-    UNDONE = auto()
-    EDIT = auto()
-    DELETE = auto()
-    SKIP = auto()
-
-
-class TaskStatusCallbackData(CallbackData, prefix='task_type'):
-    type: TaskStatus
-
-
-class TaskAlterationCallbackData(CallbackData, prefix='task_alteration'):
-    action: TaskAlterationAction
-    id: int
 
 
 def task_type_kb() -> InlineKeyboardMarkup:

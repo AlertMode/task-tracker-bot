@@ -1,14 +1,11 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from utils.dictionary import (
+from callbacks.common_commands_callback import (
     MenuCommands,
-    MenuNames
+    MenuCommandsCallback
 )
-
-
-class MenuCommandsCallback(CallbackData, prefix='main_menu'):
-    option: MenuCommands
+from utils.dictionary import MenuNames
 
 
 def start_kb() -> InlineKeyboardMarkup:

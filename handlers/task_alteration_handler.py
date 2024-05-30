@@ -7,11 +7,18 @@ from database.database import (
     TaskStatus,
     DataBase
 )
-from keyboards.task_alteration_kb import *
-from keyboards.start_kb import (
-    MenuCommandsCallback,
-    start_kb
+from callbacks.common_commands_callback import (
+    MenuCommands,
+    MenuCommandsCallback
 )
+from callbacks.task_alteration_callback import (
+    TaskStatus,
+    TaskAlterationAction,
+    TaskStatusCallbackData,
+    TaskAlterationCallbackData
+)
+from keyboards.task_alteration_kb import *
+from keyboards.start_kb import start_kb
 
 
 router = Router(name=__name__)

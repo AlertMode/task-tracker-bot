@@ -3,20 +3,12 @@ from enum import Enum
 
 
 start_message = (
-    f'Hi!'
-    'I\'m <b>TaskTracker</b> - a bot for a simple task management.'
+    f'<b>TaskTracker</b> - a task management bot.'
 )
 
 
 #Error
 error_message = '⚠️ Something went wrong! Please, try again'
-
-
-#Menu commands
-class MenuCommands(Enum):
-    START = '/start'
-    CREATE_TASK = '/create_task'
-    GET_TASKS = '/get_tasks'
 
 
 #Reply main menu commands
