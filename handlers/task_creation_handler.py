@@ -8,12 +8,14 @@ from aiogram.types import (
 from aiogram.fsm.context import FSMContext
 
 from database.database import DataBase
+from callbacks.common_commands_callback import (
+    MenuCommands,
+    MenuCommandsCallback
+)
 from utils.dictionary import *
 from keyboards.task_creation_kb import return_to_main_menu_kb
-from keyboards.start_kb import (
-    MenuCommandsCallback,
-    start_kb
-)
+from keyboards.start_kb import start_kb
+
 from states.task_creation_state import CreateState
 
 
