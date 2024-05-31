@@ -16,7 +16,6 @@ from callbacks.task_alteration_callback import (
 )
 from utils.dictionary import *
 from database.database import TaskStatus
-from keyboards.start_kb import MenuCommandsCallback
 
 
 ONGOING_TASKS = '▶️ Ongoing'
@@ -61,7 +60,7 @@ def task_list_kb(tasks) -> InlineKeyboardMarkup:
             )
         )
     builder.button(
-        text='🔙',
+        text=button_tasks_back,
         callback_data=MenuCommandsCallback(
             option=MenuCommands.GET_TASKS
         )
@@ -92,12 +91,20 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
             id=task_id
         ).pack()
     )
-    buttons_first_row_kb = [button_task_done_kb, button_task_edit_kb]
-    buttons_second_row_kb = [button_task_delete_kb]
+    button_ongoing_tasks = InlineKeyboardButton(
+        text=button_tasks_back,
+        callback_data=TaskStatusCallbackData(
+            type=TaskStatus.ONGOING
+        ).pack()
+    )
+    buttons_row_one = [button_task_done_kb, button_task_edit_kb]
+    buttons_row_two = [button_task_delete_kb]
+    button_row_three = [button_ongoing_tasks]
     markup = InlineKeyboardMarkup(
         inline_keyboard=[
-            buttons_first_row_kb,
-            buttons_second_row_kb
+            buttons_row_one,
+            buttons_row_two,
+            button_row_three
         ]
     )
     return markup
@@ -118,13 +125,23 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
             id=task_id
         ).pack()
     )
-    buttons_row_kb = [
+    button_completed_tasks = InlineKeyboardButton(
+        text=button_tasks_back,
+        callback_data=TaskStatusCallbackData(
+            type=TaskStatus.COMPLETED
+        ).pack()
+    )
+    buttons_row_one = [
         button_task_undone_kb,
         button_task_delete_kb
     ]
+    buttons_row_two = [
+        button_completed_tasks
+    ]
     markup = InlineKeyboardMarkup(
         inline_keyboard=[
-            buttons_row_kb
+            buttons_row_one,
+            buttons_row_two
         ]
     )
     return markup

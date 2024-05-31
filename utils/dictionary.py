@@ -1,7 +1,3 @@
-# Greeting message
-from enum import Enum
-
-
 start_message = (
     f'<b>TaskTracker</b> - a task management bot.'
 )
@@ -37,6 +33,7 @@ button_task_done = '✅ Done'
 button_task_undone = '🔁 Restore'
 button_task_edit = '✏️ Edit'
 button_task_delete = '🗑️ Delete'
+button_tasks_back = '🔙'
 
 task_setting_done_completed = (f'Congratulations! 🎉\n\n'
                                'Task has been done!')
