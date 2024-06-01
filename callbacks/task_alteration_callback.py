@@ -13,6 +13,7 @@ class TaskStatus(IntEnum):
 
 class TaskStatusCallbackData(CallbackData, prefix='task_type'):
     type: TaskStatus
+    page: int = 0
 
 
 class TaskAlterationAction(IntEnum):

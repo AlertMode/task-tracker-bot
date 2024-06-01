@@ -7,26 +7,37 @@ from aiogram.types import (
 )
 from aiogram.fsm.context import FSMContext
 
-from database.database import DataBase
 from callbacks.common_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
-from utils.dictionary import *
-from keyboards.task_creation_kb import return_to_main_menu_kb
+from database.database import DataBase
 from keyboards.start_kb import start_kb
-
+from keyboards.task_creation_kb import return_to_main_menu_kb
 from states.task_creation_state import CreateState
+from utils.dictionary import *
+
 
 
 router = Router(name=__name__)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
-async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: Bot) -> None:
+async def return_to_main_menu_handler(
+    message: Message,
+    state: FSMContext,
+    bot: Bot
+) -> None:
     """
-        Clears component's state and
-        returns to the start keyborad
+    Handler function to return to the main menu.
+
+    Args:
+        message (Message): The incoming message object.
+        state (FSMContext): The state machine context.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
     """
     await state.clear()
     await bot.send_message(
@@ -36,7 +47,22 @@ async def return_to_main_menu_handler(message: Message, state: FSMContext, bot: 
     )
 
 
-async def create_task_handler(user_id: int, state: FSMContext, bot: Bot) -> None:
+async def create_task_handler(
+        user_id: int,
+        state: FSMContext,
+        bot: Bot
+) -> None:
+    """
+    Handles the creation of a new task.
+
+    Args:
+        user_id (int): The ID of the user creating the task.
+        state (FSMContext): The state of the conversation.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
     await bot.send_message(
         chat_id=user_id,
         text=task_creation_description_prompt,
@@ -46,7 +72,22 @@ async def create_task_handler(user_id: int, state: FSMContext, bot: Bot) -> None
 
 
 @router.message(F.text == MenuCommands.CREATE_TASK.value)
-async def create_task_command(message: Message, state: FSMContext, bot: Bot) -> None:
+async def create_task_command(
+    message: Message,
+    state: FSMContext,
+    bot: Bot
+) -> None:
+    """
+    Handles the command to create a new task.
+
+    Args:
+        message (Message): The message object representing the command.
+        state (FSMContext): The state object for the conversation.
+        bot (Bot): The bot object for sending messages.
+
+    Returns:
+        None
+    """
     await create_task_handler(
         user_id = message.from_user.id,
         state=state,
@@ -65,6 +106,17 @@ async def create_task_callback(
     state: FSMContext,
     bot: Bot
 ) -> None:
+    """
+    Callback function for handling the creation of a task.
+
+    Args:
+        callback (CallbackQuery): The callback query object.
+        state (FSMContext): The FSM context object.
+        bot (Bot): The bot object.
+
+    Returns:
+        None
+    """
     await create_task_handler(
         user_id=callback.from_user.id,
         state=state,
@@ -75,7 +127,22 @@ async def create_task_callback(
     
 
 @router.message(CreateState.description_task, F.text)
-async def input_description_task(message: Message, state: FSMContext, bot: Bot) -> None:
+async def input_description_task(
+    message: Message,
+    state: FSMContext,
+    bot: Bot
+) -> None:
+    """
+    Handles the input of the description for a new task.
+
+    Args:
+        message (Message): The message object containing the user's input.
+        state (FSMContext): The state object for the conversation.
+        bot (Bot): The bot object for sending messages.
+
+    Returns:
+        None
+    """
     await state.update_data(description_task=message.text)
     
     task = await state.get_data()
@@ -104,6 +171,16 @@ async def input_description_task(message: Message, state: FSMContext, bot: Bot) 
 
 @router.message(CreateState.description_task)
 async def input_description_task_invalid_content_type(message: Message, bot: Bot) -> None:
+    """
+    Handler function for handling invalid content type when inputting description for a task.
+
+    Args:
+        message (Message): The incoming message object.
+        bot (Bot): The bot object used to send messages.
+
+    Returns:
+        None
+    """
     await bot.send_message(
         message.from_user.id,
         task_createion_invalid_content_type
