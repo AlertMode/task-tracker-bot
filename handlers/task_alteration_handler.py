@@ -150,7 +150,7 @@ async def task_list_handler(
         if tasks:
             await callback.message.answer(
                 text=f'Tasks:',
-                reply_markup=task_list_kb(tasks)
+                reply_markup=task_list_kb(tasks, current_page=callback_data.page)
             )
         else:
             await callback.message.answer(

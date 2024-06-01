@@ -49,24 +49,78 @@ def task_type_kb() -> InlineKeyboardMarkup:
     return markup
 
 
-def task_list_kb(tasks) -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    for task in tasks:
-        builder.button(
-            text=task.description,
-            callback_data=TaskAlterationCallbackData(
-                action=TaskAlterationAction.SKIP,
-                id=task.id
+# def task_list_kb(tasks) -> InlineKeyboardMarkup:
+#     builder = InlineKeyboardBuilder()
+#     for task in tasks:
+#         builder.button(
+#             text=task.description,
+#             callback_data=TaskAlterationCallbackData(
+#                 action=TaskAlterationAction.SKIP,
+#                 id=task.id
+#             )
+#         )
+#     builder.button(
+#         text=button_tasks_back,
+#         callback_data=MenuCommandsCallback(
+#             option=MenuCommands.GET_TASKS
+#         )
+#     )
+#     builder.adjust(1)
+#     return builder.as_markup()
+
+
+def task_list_kb(tasks, current_page=0) -> InlineKeyboardMarkup:
+    tasks_per_page = 10
+    start_index = current_page * tasks_per_page
+    end_index = start_index + tasks_per_page
+    paginated_tasks = tasks[start_index:end_index]
+
+    buttons = []
+    for task in paginated_tasks:
+        buttons.append([
+            InlineKeyboardButton(
+                text=task.description,
+                callback_data=TaskAlterationCallbackData(
+                    action=TaskAlterationAction.SKIP,
+                    id=task.id
+                ).pack()
+            )
+        ])
+
+    total_pages = (len(tasks) - 1) // tasks_per_page + 1
+    navigation_buttons = []
+
+    if current_page > 0:
+        navigation_buttons.append(
+            InlineKeyboardButton(
+                text="⬅️",
+                callback_data=TaskStatusCallbackData(
+                    type=TaskStatus.ONGOING,
+                    page=current_page - 1
+                ).pack()
             )
         )
-    builder.button(
-        text=button_tasks_back,
-        callback_data=MenuCommandsCallback(
-            option=MenuCommands.GET_TASKS
+    navigation_buttons.append(
+        InlineKeyboardButton(
+            text=f"{current_page + 1}/{total_pages}",
+            callback_data="page_info"
         )
     )
-    builder.adjust(1)
-    return builder.as_markup()
+    if end_index < len(tasks):
+        navigation_buttons.append(
+            InlineKeyboardButton(
+                text="➡️",
+                callback_data=TaskStatusCallbackData(
+                    type=TaskStatus.ONGOING,
+                    page=current_page + 1
+                ).pack()
+            )
+        )
+
+    if navigation_buttons:
+        buttons.append(navigation_buttons)
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
