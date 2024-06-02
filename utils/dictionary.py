@@ -25,6 +25,9 @@ task_createion_invalid_content_type = '❓ Please, type in a text'
 #Task management
 task_status_message = '📁 Task status:'
 
+task_list_nav_forward = '➡️'
+task_list_nav_backwards = '⬅️'
+
 task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
 task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
 task_void_message = '🚧 No tasks were found! 🚧'
@@ -33,7 +36,7 @@ button_task_done = '✅ Done'
 button_task_undone = '🔁 Restore'
 button_task_edit = '✏️ Edit'
 button_task_delete = '🗑️ Delete'
-button_tasks_back = '🔙'
+button_tasks_return = '🔙'
 
 task_setting_done_completed = (f'Congratulations! 🎉\n\n'
                                'Task has been done!')

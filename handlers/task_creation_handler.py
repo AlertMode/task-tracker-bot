@@ -150,7 +150,7 @@ async def input_description_task(
         db = DataBase()
         user = await db.get_user(message.from_user.id)
         await db.add_task(
-            task['description_task'], 
+            task.description_task, 
             datetime.today(), 
             user.id
         )
