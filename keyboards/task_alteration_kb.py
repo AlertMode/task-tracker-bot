@@ -49,27 +49,7 @@ def task_type_kb() -> InlineKeyboardMarkup:
     return markup
 
 
-# def task_list_kb(tasks) -> InlineKeyboardMarkup:
-#     builder = InlineKeyboardBuilder()
-#     for task in tasks:
-#         builder.button(
-#             text=task.description,
-#             callback_data=TaskAlterationCallbackData(
-#                 action=TaskAlterationAction.SKIP,
-#                 id=task.id
-#             )
-#         )
-#     builder.button(
-#         text=button_tasks_back,
-#         callback_data=MenuCommandsCallback(
-#             option=MenuCommands.GET_TASKS
-#         )
-#     )
-#     builder.adjust(1)
-#     return builder.as_markup()
-
-
-def task_list_kb(tasks, current_page=0) -> InlineKeyboardMarkup:
+def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING) -> InlineKeyboardMarkup:
     tasks_per_page = 10
     start_index = current_page * tasks_per_page
     end_index = start_index + tasks_per_page
@@ -88,37 +68,47 @@ def task_list_kb(tasks, current_page=0) -> InlineKeyboardMarkup:
         ])
 
     total_pages = (len(tasks) - 1) // tasks_per_page + 1
-    navigation_buttons = []
+    navigation_buttons_row_one = []
+    navigation_buttons_row_two = []
 
     if current_page > 0:
-        navigation_buttons.append(
+        navigation_buttons_row_one.append(
             InlineKeyboardButton(
-                text="⬅️",
+                text=task_list_nav_backwards,
                 callback_data=TaskStatusCallbackData(
-                    type=TaskStatus.ONGOING,
+                    type=task_status,
                     page=current_page - 1
                 ).pack()
             )
         )
-    navigation_buttons.append(
+    navigation_buttons_row_one.append(
         InlineKeyboardButton(
             text=f"{current_page + 1}/{total_pages}",
             callback_data="page_info"
         )
     )
     if end_index < len(tasks):
-        navigation_buttons.append(
+        navigation_buttons_row_one.append(
             InlineKeyboardButton(
-                text="➡️",
+                text=task_list_nav_forward,
                 callback_data=TaskStatusCallbackData(
-                    type=TaskStatus.ONGOING,
+                    type=task_status,
                     page=current_page + 1
                 ).pack()
             )
         )
-
-    if navigation_buttons:
-        buttons.append(navigation_buttons)
+    navigation_buttons_row_two.append(
+        InlineKeyboardButton(
+            text=button_tasks_return,
+            callback_data=MenuCommandsCallback(
+                option=MenuCommands.GET_TASKS
+            ).pack()
+        )
+    )
+    
+    if navigation_buttons_row_one:
+        buttons.append(navigation_buttons_row_one)
+        buttons.append(navigation_buttons_row_two)
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -146,7 +136,7 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_ongoing_tasks = InlineKeyboardButton(
-        text=button_tasks_back,
+        text=button_tasks_return,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.ONGOING
         ).pack()
@@ -180,7 +170,7 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_completed_tasks = InlineKeyboardButton(
-        text=button_tasks_back,
+        text=button_tasks_return,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.COMPLETED
         ).pack()
