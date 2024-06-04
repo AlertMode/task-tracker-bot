@@ -8,7 +8,7 @@ from utils.dictionary import *
 router = Router(name=__name__)
 
 @router.message(Command(commands='start'))
-async def cmd_start(message: Message, bot: Bot):
+async def handle_start_command(message: Message, bot: Bot):
     db = DataBase()
     if not await db.get_user(user_id=message.from_user.id):
         await db.add_user(

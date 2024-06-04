@@ -6,16 +6,6 @@ from enum import (
 from aiogram.filters.callback_data import CallbackData
 
 
-class TaskStatus(IntEnum):
-    ONGOING = auto()
-    COMPLETED = auto()
-
-
-class TaskStatusCallbackData(CallbackData, prefix='task_type'):
-    type: TaskStatus
-    page: int = 0
-
-
 class TaskAlterationAction(IntEnum):
     DONE = auto()
     UNDONE = auto()
