@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine
 )
 
-from callbacks.task_alteration_callback import TaskStatus
+from callbacks.task_list_callback import TaskStatus
 from utils.logging_config import logger
 from database.models import *
 
