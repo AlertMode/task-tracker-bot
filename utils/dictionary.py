@@ -7,6 +7,12 @@ start_message = (
 error_message = '⚠️ Something went wrong! Please, try again'
 
 
+#Common buttons
+button_common_forward = '➡️'
+button_common_backwards = '⬅️'
+button_common_return = '🔙'
+button_common_number_one = '1️⃣'
+
 #Reply main menu commands
 class MenuNames:
     GET_TASKS = '🗃️ Show tasks'
@@ -21,12 +27,18 @@ task_creation_completed = '☑️ Task has been created'
 task_createion_invalid_content_type = '❓ Please, type in a text'
 
 
+#Day picking
+task_reminder_message = '📅 Choose the day'
+
+button_task_reminder_unchecked = '🔲 %s'
+button_task_reminder_checked = '✅ %s'
+button_task_reminder_confirm = '🆗'
+button_task_reminder_skip = '⏭️'
+button_task_reminder_recurrence = '🔁'
+
 
 #Task management
 task_status_message = '📁 Task status:'
-
-task_list_nav_forward = '➡️'
-task_list_nav_backwards = '⬅️'
 
 task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
 task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
@@ -36,7 +48,6 @@ button_task_done = '✅ Done'
 button_task_undone = '🔁 Restore'
 button_task_edit = '✏️ Edit'
 button_task_delete = '🗑️ Delete'
-button_tasks_return = '🔙'
 
 task_setting_done_completed = (f'Congratulations! 🎉\n\n'
                                'Task has been done!')

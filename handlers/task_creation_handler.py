@@ -16,6 +16,7 @@ from keyboards.start_kb import start_kb
 from keyboards.task_creation_kb import return_to_main_menu_kb
 from states.task_creation_state import CreateState
 from utils.dictionary import *
+from handlers.task_description_handler import *
 
 
 
@@ -127,61 +128,31 @@ async def create_task_callback(
     
 
 @router.message(CreateState.description_task, F.text)
-async def input_description_task(
-    message: Message,
-    state: FSMContext,
-    bot: Bot
-) -> None:
+async def on_task_description_input(message: Message, state: FSMContext, bot: Bot):
     """
-    Handles the input of the description for a new task.
+    Handles the input of task description.
 
     Args:
-        message (Message): The message object containing the user's input.
-        state (FSMContext): The state object for the conversation.
-        bot (Bot): The bot object for sending messages.
+        message (Message): The message object received from the user.
+        state (FSMContext): The FSM context object for managing the conversation state.
+        bot (Bot): The bot instance for sending messages.
 
     Returns:
         None
     """
-    await state.update_data(description_task=message.text)
-    
-    task = await state.get_data()
-    try:
-        db = DataBase()
-        user = await db.get_user(message.from_user.id)
-        await db.add_task(
-            task.description_task, 
-            datetime.today(), 
-            user.id
-        )
-        await bot.send_message(
-            message.from_user.id,
-            task_creation_completed,
-            reply_markup=None
-        )
-    except Exception as error:
-        await bot.send_message(
-            message.from_user.id,
-            error_message,
-            reply_markup=None
-        )
-    finally:
-        await state.clear()
+    await handle_task_description_input(message=message, state=state, bot=bot)
 
 
 @router.message(CreateState.description_task)
-async def input_description_task_invalid_content_type(message: Message, bot: Bot) -> None:
+async def on_invalid_description_content_type(message: Message, bot: Bot):
     """
-    Handler function for handling invalid content type when inputting description for a task.
+    Handles the case when the description content type is invalid.
 
     Args:
-        message (Message): The incoming message object.
-        bot (Bot): The bot object used to send messages.
+        message (Message): The incoming message.
+        bot (Bot): The bot instance.
 
     Returns:
         None
     """
-    await bot.send_message(
-        message.from_user.id,
-        task_createion_invalid_content_type
-    )
+    await handle_invalid_description_content_type(message=message, bot=bot)
