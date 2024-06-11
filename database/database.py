@@ -1,7 +1,6 @@
-import datetime
+from datetime import datetime
 import os
 
-from enum import IntEnum, auto
 from sqlalchemy import (
     Sequence,
     select,
@@ -108,34 +107,82 @@ class DataBase():
     async def add_task(
             self,
             description: str,
-            creation_date: str,
-            user_id: int
+            creation_date: datetime,
+            user_id: int,
+            is_recurrent: bool = False,
+            reminder_date: Optional[datetime] = None,
+            days_of_week: Optional[List[DaysOfWeek]] = None
         ) -> None:
         """
         Add a new task to the database.
 
         Args:
             description (str): The description of the task.
-            creation_date (str): The creation date of the task.
             user_id (int): The ID of the user to whom the task belongs.
+            creation_date (datetime): The creation date of the task.
+            is_recurrent (bool, optional): Whether the task is recurrent. Defaults to False.
+            reminder_date (datetime, optional): The reminder date for the task. Defaults to None.
+            days_of_week (List[DaysOfWeek], optional): The days of the week for the task's reminder. Defaults to None.
 
         Returns:
             None
-        """        
+        """   
         try:
             async with self.Session() as session:
-                session.add(
-                    Tasks(
-                        description=description,
-                        creation_date=creation_date,
-                        user_id=user_id
-                    )
+                task = Tasks(
+                    description=description,
+                    creation_date=creation_date,
+                    user_id=user_id,
+                    is_recurrent=is_recurrent,
+                    reminder_date=reminder_date
                 )
+                session.add(task)
+                await session.flush()
+
+                if days_of_week:
+                    await self.add_reminder(
+                        session=session,
+                        task_id=task.id,
+                        days_of_week=days_of_week
+                    )
+
                 await session.commit()
         except SQLAlchemyError as error:
             logger.error(f'add_tasks() error: {error}')
             await session.rollback()
             raise
+
+
+    async def add_reminder(
+            self,
+            session: AsyncSession,
+            task_id: int,
+            days_of_week: List[DaysOfWeek]
+    ) -> None:
+        """
+        Add a reminder to a task.
+
+        Args:
+            session (AsyncSession): The session object.
+            task_id (int): The ID of the task to which the reminder belongs.
+            days_of_week (List[DaysOfWeek]): The days of the week for the reminder.
+
+        Returns:
+            None
+        """
+        try:
+            for day in days_of_week:
+                session.add(
+                    DaysOfWeek(
+                        task_id=task_id,
+                        day=day.value
+                    )
+                )
+            await session.flush()
+        except SQLAlchemyError as error:
+            logger.error(f'add_reminder() error: {error}')
+            raise
+
     
 
     async def get_task_by_id(
@@ -236,7 +283,7 @@ class DataBase():
                 await session.execute(
                     update(Tasks)
                     .values(
-                        completion_date=datetime.datetime.now()
+                        completion_date=datetime.now()
                     )
                     .where(
                         Tasks.user_id == user_id,
