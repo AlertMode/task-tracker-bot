@@ -1,3 +1,4 @@
+from enum import StrEnum
 from typing import List, Optional
 from sqlalchemy import (
     Boolean, DateTime, Integer, ForeignKey,
@@ -8,14 +9,13 @@ from sqlalchemy.orm import (
     relationship
 )
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from enum import Enum
 
 
 class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
-class DaysOfWeek(Enum):
+class DaysOfWeek(StrEnum):
     MONDAY = "MONDAY"
     TUESDAY = "TUESDAY"
     WEDNESDAY = "WEDNESDAY"
