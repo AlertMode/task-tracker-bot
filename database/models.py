@@ -16,13 +16,13 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 
 class DaysOfWeek(Enum):
-    MONDAY = 1
-    TUESDAY = 2
-    WEDNESDAY = 3
-    THURSDAY = 4
-    FRIDAY = 5
-    SATURDAY = 6
-    SUNDAY = 7
+    MONDAY = "MONDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+    THURSDAY = "THURSDAY"
+    FRIDAY = "FRIDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
 
 
 class Users(Base):
@@ -55,7 +55,7 @@ class DaysOfWeek(Base):
     __tablename__ = 'days_of_week'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    day: Mapped[DaysOfWeek] = mapped_column(Integer)
+    day: Mapped[DaysOfWeek] = mapped_column(String(10))
     task_id: Mapped[int] = mapped_column(Integer, ForeignKey('tasks.id'))
     task: Mapped["Tasks"] = relationship("Tasks", back_populates="days_of_week")
 
