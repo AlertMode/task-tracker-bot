@@ -11,9 +11,11 @@ from callbacks.common_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
+from callbacks.task_list_callback import TaskStatus
 from database.database import DataBase
 from keyboards.start_kb import start_kb
 from keyboards.task_creation_kb import return_to_main_menu_kb
+from keyboards.task_list_kb import task_list_kb
 from states.task_creation_state import CreateState
 from utils.dictionary import *
 from handlers.task_description_handler import *
@@ -141,6 +143,7 @@ async def on_task_description_input(message: Message, state: FSMContext, bot: Bo
         None
     """
     await handle_task_description_input(message=message, state=state, bot=bot)
+    await on_final_confirmation_input(message=message, state=state, bot=bot)
 
 
 @router.message(CreateState.description_task)
@@ -158,7 +161,6 @@ async def on_invalid_description_content_type(message: Message, bot: Bot):
     await handle_invalid_description_content_type(message=message, bot=bot)
 
 
-@router.message(CreateState.final_confirmation, F.text)
 async def on_final_confirmation_input(message: Message, state: FSMContext, bot: Bot):
     """
     Handles the final confirmation of the task creation and writes to the database.
@@ -180,10 +182,20 @@ async def on_final_confirmation_input(message: Message, state: FSMContext, bot: 
             creation_date=datetime.today(),
             user_id=user.id
         )
+
+        tasks = await db.get_tasks_by_user(
+            user_id=user.id,
+            status=TaskStatus.ONGOING  
+        )
         await bot.send_message(
             chat_id=message.from_user.id,
             text=task_creation_completed,
-            reply_markup=None
+            reply_markup=task_list_kb(
+                tasks=tasks,
+                current_page=0,
+                task_status=TaskStatus.ONGOING,
+                from_the_end=True
+            )
         )
     except Exception as error:
         logger.error(f'Error: handle_task_description_input: {error}')
