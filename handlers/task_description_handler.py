@@ -5,7 +5,7 @@ from aiogram.types import Message
 
 from aiogram.fsm.context import FSMContext
 
-from database.database import DataBase
+from states.task_creation_state import CreateState
 from utils.dictionary import *
 from utils.logging_config import logger
 
@@ -27,30 +27,12 @@ async def handle_task_description_input(
         None
     """
     await state.update_data(description_task=message.text)
-    
-    task = await state.get_data()
-    try:
-        db = DataBase()
-        user = await db.get_user(message.from_user.id)
-        await db.add_task(
-            description=task['description_task'],
-            creation_date=datetime.today(),
-            user_id=user.id
-        )
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=task_creation_completed,
-            reply_markup=None
-        )
-    except Exception as error:
-        logger.error(f'Error: handle_task_description_input: {error}')
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=error_message,
-            reply_markup=None
-        )
-    finally:
-        await state.clear()
+    await state.set_state(CreateState.final_confirmation)
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=task_creation_completed,
+        reply_markup=None
+    )
 
 
 async def handle_invalid_description_content_type(message: Message, bot: Bot) -> None:

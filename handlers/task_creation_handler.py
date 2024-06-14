@@ -156,3 +156,41 @@ async def on_invalid_description_content_type(message: Message, bot: Bot):
         None
     """
     await handle_invalid_description_content_type(message=message, bot=bot)
+
+
+@router.message(CreateState.final_confirmation, F.text)
+async def on_final_confirmation_input(message: Message, state: FSMContext, bot: Bot):
+    """
+    Handles the final confirmation of the task creation and writes to the database.
+
+    Args:
+        message (Message): The incoming message object.
+        state (FSMContext): The FSM context object.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
+    try:
+        task = await state.get_data()
+        db = DataBase()
+        user = await db.get_user(message.from_user.id)
+        await db.add_task(
+            description=task['description_task'],
+            creation_date=datetime.today(),
+            user_id=user.id
+        )
+        await bot.send_message(
+            chat_id=message.from_user.id,
+            text=task_creation_completed,
+            reply_markup=None
+        )
+    except Exception as error:
+        logger.error(f'Error: handle_task_description_input: {error}')
+        await bot.send_message(
+            chat_id=message.from_user.id,
+            text=error_message,
+            reply_markup=None
+        )
+    finally:
+        await state.clear()
