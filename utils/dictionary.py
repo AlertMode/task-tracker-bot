@@ -21,9 +21,9 @@ class MenuNames:
 
 
 #Task creation
-task_creation_description_prompt = '✍ Write your task\'s description'
+task_creation_description_prompt = '✍ Input the task:'
 task_creation_cancel_cmd = '❌ Task creation has been cancelled'
-task_creation_completed = '☑️ Task has been created'
+task_creation_completed = '☑️ Task saved: <b>%s</b>'
 task_createion_invalid_content_type = '❓ Please, type in a text'
 
 

@@ -5,6 +5,8 @@ from enum import (
 
 from aiogram.filters.callback_data import CallbackData
 
+from callbacks.task_list_callback import TaskStatus
+
 
 class TaskAlterationAction(IntEnum):
     DONE = auto()
@@ -17,3 +19,4 @@ class TaskAlterationAction(IntEnum):
 class TaskAlterationCallbackData(CallbackData, prefix='task_alteration'):
     action: TaskAlterationAction
     id: int
+    status: TaskStatus

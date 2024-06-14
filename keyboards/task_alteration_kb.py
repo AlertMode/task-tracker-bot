@@ -20,21 +20,24 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
         text=button_task_done,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DONE,
-            id=task_id
+            id=task_id,
+            status=TaskStatus.ONGOING
         ).pack()
     )
     button_task_edit_kb = InlineKeyboardButton(
         text=button_task_edit,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.EDIT,
-            id=task_id
+            id=task_id,
+            status=TaskStatus.ONGOING
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DELETE,
-            id=task_id
+            id=task_id,
+            status=TaskStatus.ONGOING
         ).pack()
     )
     button_ongoing_tasks = InlineKeyboardButton(
@@ -61,14 +64,16 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
         text=button_task_undone,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.UNDONE,
-            id=task_id
+            id=task_id,
+            status=TaskStatus.COMPLETED
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DELETE,
-            id=task_id
+            id=task_id,
+            status=TaskStatus.COMPLETED
         ).pack()
     )
     button_completed_tasks = InlineKeyboardButton(

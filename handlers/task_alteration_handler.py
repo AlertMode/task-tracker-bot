@@ -45,7 +45,7 @@ async def get_task_information(
                 else task_ongoing_kb(task.id)
         )
     except Exception as error:
-        print(f'Error: task_full_information_handler(): {error}')
+        logger.error(f'get_task_information(): {error}')
 
 
 async def alter_task_information(
@@ -62,12 +62,12 @@ async def alter_task_information(
     Returns:
         None
     """
-    await callback.answer()
-    user = await db.get_user(callback.from_user.id)
-    task_id = callback_data.id
-    message = None
-
     try:
+        await callback.answer()
+        user = await db.get_user(callback.from_user.id)
+        task_id = callback_data.id
+        message = None
+
         if (callback_data.action == TaskAlterationAction.DONE):
             await db.set_task_done(user_id=user.id, task_id=task_id)
             message = task_setting_done_completed
@@ -78,9 +78,19 @@ async def alter_task_information(
             await db.delete_task(user_id=user.id, task_id=task_id)
             message = task_deletion_completed
         
+        tasks = await db.get_tasks_by_user(
+            user_id=user.id,
+            status=callback_data.status
+        )
+
         await callback.message.answer(
             text=(f'{message}\n\n{task_status_message}'),
-            reply_markup=task_type_kb()
+            reply_markup= task_list_kb(
+                tasks=tasks,
+                current_page=0,
+                task_status=callback_data.status,
+                from_the_end=True
+            ) if tasks else task_type_kb()
         )
         await callback.message.delete()
     except Exception as error:

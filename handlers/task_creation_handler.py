@@ -11,6 +11,7 @@ from callbacks.common_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
+from handlers.auxilary_handler import *
 from callbacks.task_list_callback import TaskStatus
 from database.database import DataBase
 from keyboards.start_kb import start_kb
@@ -66,12 +67,13 @@ async def create_task_handler(
     Returns:
         None
     """
-    await bot.send_message(
+    response = await bot.send_message(
         chat_id=user_id,
         text=task_creation_description_prompt,
         reply_markup=return_to_main_menu_kb
     )
     await state.set_state(CreateState.description_task)
+    await store_message_id(state=state, message_id=response.message_id)
 
 
 @router.message(F.text == MenuCommands.CREATE_TASK.value)
@@ -96,8 +98,7 @@ async def create_task_command(
         state=state,
         bot=bot
     )
-    message.delete()
-
+    await store_message_id(state=state, message_id=message.message_id)
 
 @router.callback_query(
         MenuCommandsCallback.filter(
@@ -126,7 +127,7 @@ async def create_task_callback(
         bot=bot    
     )
     await callback.answer()
-    await callback.message.delete()
+    await store_message_id(state=state, message_id=callback.message.message_id)
     
 
 @router.message(CreateState.description_task, F.text)
@@ -142,7 +143,13 @@ async def on_task_description_input(message: Message, state: FSMContext, bot: Bo
     Returns:
         None
     """
-    await handle_task_description_input(message=message, state=state, bot=bot)
+    await handle_task_description_input(message=message, state=state)
+    await store_message_id(state=state, message_id=message.message_id)
+    await delete_all_messages(
+        state=state,
+        bot=bot,
+        chat_id=message.from_user.id
+    )
     await on_final_confirmation_input(message=message, state=state, bot=bot)
 
 
@@ -189,7 +196,7 @@ async def on_final_confirmation_input(message: Message, state: FSMContext, bot: 
         )
         await bot.send_message(
             chat_id=message.from_user.id,
-            text=task_creation_completed,
+            text=task_creation_completed % task['description_task'],
             reply_markup=task_list_kb(
                 tasks=tasks,
                 current_page=0,
