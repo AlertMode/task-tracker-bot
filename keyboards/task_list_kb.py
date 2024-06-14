@@ -24,6 +24,12 @@ COMPLETED_TASKS = '⏹️ Completed'
 
 
 def task_type_kb() -> InlineKeyboardMarkup:
+    """
+    Generates the keyboard for selecting the type of tasks to display.
+    
+    Returns:
+        InlineKeyboardMarkup: The keyboard for selecting the type of tasks to display.
+    """
     button_ongoing_tasks = InlineKeyboardButton(
         text=ONGOING_TASKS,
         callback_data=TaskStatusCallbackData(
@@ -50,8 +56,25 @@ def task_type_kb() -> InlineKeyboardMarkup:
     return markup
 
 
-def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING) -> InlineKeyboardMarkup:
+def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the_end=False) -> InlineKeyboardMarkup:
+    """
+    Generates the keyboard for the task list.
+
+    Args:
+        tasks (List[Task]): The list of tasks to display.
+        current_page (int): The current page of the task list.
+        task_status (TaskStatus): The status of the tasks to display.
+        from_the_end (bool): Whether to display the last page of the task list.
+    
+    Returns:
+        InlineKeyboardMarkup: The keyboard for the task list.
+    """
     tasks_per_page = 10
+    total_pages = (len(tasks) - 1) // tasks_per_page + 1
+
+    if from_the_end:
+        current_page = total_pages - 1
+
     start_index = current_page * tasks_per_page
     end_index = start_index + tasks_per_page
     paginated_tasks = tasks[start_index:end_index]
@@ -68,7 +91,6 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING) -> Inlin
             )
         ])
 
-    total_pages = (len(tasks) - 1) // tasks_per_page + 1
     navigation_buttons_row_one = []
     navigation_buttons_row_two = []
 

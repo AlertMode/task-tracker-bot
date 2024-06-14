@@ -13,7 +13,6 @@ from utils.logging_config import logger
 async def handle_task_description_input(
     message: Message,
     state: FSMContext,
-    bot: Bot
 ) -> None:
     """
     Handles the input of the description for a new task.
@@ -21,18 +20,11 @@ async def handle_task_description_input(
     Args:
         message (Message): The message object containing the user's input.
         state (FSMContext): The state object for the conversation.
-        bot (Bot): The bot object for sending messages.
 
     Returns:
         None
     """
     await state.update_data(description_task=message.text)
-    await state.set_state(CreateState.final_confirmation)
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text=task_creation_completed,
-        reply_markup=None
-    )
 
 
 async def handle_invalid_description_content_type(message: Message, bot: Bot) -> None:
