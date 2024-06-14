@@ -18,7 +18,7 @@ class ReminderAction(str, Enum):
     CONFIRM = "confirm"
     SKIP = "skip"
     BACK = "back"
-    ONE_TIME = "one_time"
+    IS_RECURRING = "is_recurring"
 
 
 class DayOfWeekCallbackData(CallbackData, prefix='day_of_week'):

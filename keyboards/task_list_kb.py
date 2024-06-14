@@ -86,7 +86,8 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the
                 text=task.description,
                 callback_data=TaskAlterationCallbackData(
                     action=TaskAlterationAction.SKIP,
-                    id=task.id
+                    id=task.id,
+                    status=task_status
                 ).pack()
             )
         ])
