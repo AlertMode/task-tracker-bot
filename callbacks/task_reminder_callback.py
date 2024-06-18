@@ -1,9 +1,13 @@
-from enum import Enum
+from enum import (
+    IntEnum,
+    StrEnum,
+    auto
+)
 
 from aiogram.filters.callback_data import CallbackData
 
 
-class DayOfWeek(Enum):
+class DayOfWeek(StrEnum):
     MONDAY = 'MONDAY'
     TUESDAY = 'TUESDAY'
     WEDNESDAY = 'WEDNESDAY'
@@ -13,12 +17,11 @@ class DayOfWeek(Enum):
     SUNDAY = 'SUNDAY'
 
 
-class ReminderAction(str, Enum):
-    TOGGLE_DAY = "toggle_day"
-    CONFIRM = "confirm"
-    SKIP = "skip"
-    BACK = "back"
-    IS_RECURRING = "is_recurring"
+class ReminderAction(IntEnum):
+    TOGGLE_DAY = auto()
+    CONFIRM = auto()
+    BACK = auto()
+    IS_RECURRING = auto()
 
 
 class DayOfWeekCallbackData(CallbackData, prefix='day_of_week'):
