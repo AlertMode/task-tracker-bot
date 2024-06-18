@@ -7,7 +7,7 @@ from callbacks.task_reminder_callback import *
 from utils.dictionary import *
 
 
-def set_days_kb(selected_days, one_time) -> InlineKeyboardMarkup:
+def set_days_kb(selected_days, is_recurring) -> InlineKeyboardMarkup:
     buttons = []
     if selected_days is None:
         selected_days = []
@@ -52,17 +52,17 @@ def set_days_kb(selected_days, one_time) -> InlineKeyboardMarkup:
             action=ReminderAction.BACK
         ).pack()
     )
-    one_time_button = InlineKeyboardButton(
+    is_recurring_button = InlineKeyboardButton(
         text=(button_common_number_one
-                if not one_time
+                if not is_recurring
                 else button_task_reminder_recurrence),
         callback_data=DayOfWeekCallbackData(
-            action=ReminderAction.ONE_TIME
+            action=ReminderAction.IS_RECURRING
         ).pack()
     )
 
     buttons.append(back_button)
-    buttons.append(one_time_button)
+    buttons.append(is_recurring_button)
 
     keyboard = InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons[:3])

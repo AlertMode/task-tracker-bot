@@ -1,11 +1,8 @@
-from datetime import datetime
-
 from aiogram import Bot
 from aiogram.types import Message
 
 from aiogram.fsm.context import FSMContext
 
-from states.task_creation_state import CreateState
 from utils.dictionary import *
 from utils.logging_config import logger
 
@@ -24,7 +21,11 @@ async def handle_task_description_input(
     Returns:
         None
     """
-    await state.update_data(description_task=message.text)
+    try:
+        await state.update_data(description_task=message.text)
+    except Exception as error:
+        logger.error(f"Error in handle_task_description_input: {error}")
+        await state.clear()
 
 
 async def handle_invalid_description_content_type(message: Message, bot: Bot) -> None:
@@ -38,8 +39,11 @@ async def handle_invalid_description_content_type(message: Message, bot: Bot) ->
     Returns:
         None
     """
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text=task_createion_invalid_content_type,
-        reply_markup=None
-    )
+    try:
+        await bot.send_message(
+            chat_id=message.from_user.id,
+            text=task_createion_invalid_content_type,
+            reply_markup=None
+        )
+    except Exception as error:
+        logger.error(f"Error in handle_invalid_description_content_type: {error}")
