@@ -1,3 +1,4 @@
+import re
 from venv import logger
 
 from aiogram import Bot
@@ -62,3 +63,23 @@ async def delete_all_messages(state: FSMContext, bot: Bot, chat_id: int) -> None
         await state.update_data(messages=[])
     except Exception as error:
         logger.error(f'Error: delete_all_messages(): {error}')
+
+
+def valid_reminder_time(time: str) -> str | None:
+    """
+    Validates the reminder time input.
+
+    Args:
+        time (str): The reminder time input.
+
+    Returns:
+        str | None: The reminder time if valid, otherwise None.
+    """
+    try:
+        pattern = r"^\d{2}:\d{2}(?: [+-]\d{1,2})?$"
+        if re.match(pattern, time):
+            return time
+    except Exception as error:
+        logger.error(f'Error: valid_reminder_time(): {error}')
+        return None
+    
