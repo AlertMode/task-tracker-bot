@@ -13,6 +13,7 @@ button_common_backwards = '⬅️'
 button_common_return = '🔙'
 button_common_number_one = '1️⃣'
 
+
 #Reply main menu commands
 class MenuNames:
     GET_TASKS = '🗃️ Show tasks'
@@ -27,14 +28,16 @@ task_creation_completed = '☑️ Task saved: <b>%s</b>'
 task_createion_invalid_content_type = '❓ Please, type in a text'
 
 
-#Day picking
+#Reminder setting
+task_reminder_type_selection = '🔔 Choose the reminder type'
 task_reminder_message = '📅 Choose the day'
 
 button_task_reminder_unchecked = '🔲 %s'
 button_task_reminder_checked = '✅ %s'
 button_task_reminder_confirm = '🆗'
-button_task_reminder_skip = '⏭️'
-button_task_reminder_recurrence = '🔁'
+button_task_reminder_skip = '⏭️ Skip'
+button_task_reminder_recurring = '🔁 Recurring'
+button_task_reminder_single = '⏰ Single'
 
 
 #Task management
