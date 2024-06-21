@@ -1,1 +1,0 @@
-#TODO: Write functions for listenging to the commands and callbacks in all the handlers files.
