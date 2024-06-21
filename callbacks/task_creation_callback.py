@@ -1,10 +1,20 @@
 from enum import (
+    Enum,
     IntEnum,
     StrEnum,
     auto
 )
 
 from aiogram.filters.callback_data import CallbackData
+
+
+class ReminderType(Enum):
+    SINGLE = auto()
+    RECURRING = auto()
+    SKIP = auto()
+
+    def __str__(self):
+        return self.name.upper()
 
 
 class DayOfWeek(StrEnum):
