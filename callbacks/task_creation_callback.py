@@ -1,5 +1,4 @@
 from enum import (
-    Enum,
     IntEnum,
     StrEnum,
     auto
@@ -8,14 +7,9 @@ from enum import (
 from aiogram.filters.callback_data import CallbackData
 
 
-class ReminderType(Enum):
+class ReminderType(IntEnum):
     SINGLE = auto()
     RECURRING = auto()
-    SKIP = auto()
-
-    def __str__(self):
-        return self.name.upper()
-
 
 class DayOfWeek(StrEnum):
     MONDAY = 'MONDAY'
@@ -28,13 +22,14 @@ class DayOfWeek(StrEnum):
 
 
 class ReminderAction(IntEnum):
-    TOGGLE_DAY = auto()
+    TOGGLE = auto()
     CONFIRM = auto()
     BACK = auto()
-    IS_RECURRING = auto()
+    SKIP = auto()
 
 
-class DayOfWeekCallbackData(CallbackData, prefix='day_of_week'):
+class ReminderCallbackData(CallbackData, prefix='reminder_info'):
+    type: ReminderType
     action: ReminderAction
     day: DayOfWeek = None
     selected: bool = False
