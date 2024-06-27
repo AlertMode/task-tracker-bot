@@ -34,7 +34,7 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
         callback_data=ReminderType.RECURRING
     )
     button_back = InlineKeyboardButton(
-        text=button_task_reminder_skip,
+        text=button_common_skip,
         callback_data=ReminderType.SKIP
     )
     row_one = [button_time, button_days]
@@ -45,67 +45,52 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
     return markup
 
 
-def set_days_kb(selected_days, is_recurring) -> InlineKeyboardMarkup:
-    buttons = []
-    if selected_days is None:
-        selected_days = []
+def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:
+    """
+    Generates the keyboard for selecting the days for a recurring reminder.
 
-    for day in DayOfWeek:
-        is_selected = day in selected_days
-        button_text = (button_task_reminder_checked % day.value 
-                       if is_selected 
-                       else button_task_reminder_unchecked % day.value)
+    Args:
+        selected_days (set): The set of selected days.
 
-        toggle_day_button = InlineKeyboardButton(
-            text=button_text,
-            callback_data=DayOfWeekCallbackData(
-                action=ReminderAction.TOGGLE_DAY,
+    Returns:
+        InlineKeyboardMarkup: The keyboard for selecting the days for a recurring reminder.
+    """
+    def create_button(day: DayOfWeek) -> InlineKeyboardButton:
+        return InlineKeyboardButton(
+            text=(button_task_reminder_checked 
+                  if day in selected_days 
+                  else button_task_reminder_unchecked
+                ) % day.value,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.RECURRING,
+                action=ReminderAction.TOGGLE,
                 day=day,
-                selected=not is_selected
+                selected = day in selected_days
             ).pack()
         )
-        buttons.append(toggle_day_button)
 
-    
-    if selected_days:
-        confirm_button = InlineKeyboardButton(
-            text=button_task_reminder_confirm,
-            callback_data=DayOfWeekCallbackData(
+    buttons = [create_button(day) for day in DayOfWeek]
+    buttons.append(
+        InlineKeyboardButton(
+            text=button_common_confirm,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.RECURRING,
                 action=ReminderAction.CONFIRM
             ).pack()
         )
-        buttons.append(confirm_button)
-    else:
-        skip_button = InlineKeyboardButton(
-            text=button_task_reminder_skip,
-            callback_data=DayOfWeekCallbackData(
+    )
+    buttons.append(
+        InlineKeyboardButton(
+            text=button_common_skip,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.RECURRING,
                 action=ReminderAction.SKIP
             ).pack()
         )
-        buttons.append(skip_button)
-
-    back_button = InlineKeyboardButton(
-        text=button_common_backwards,
-        callback_data=DayOfWeekCallbackData(
-            action=ReminderAction.BACK
-        ).pack()
     )
-    is_recurring_button = InlineKeyboardButton(
-        text=(button_common_number_one
-                if not is_recurring
-                else button_task_reminder_recurring),
-        callback_data=DayOfWeekCallbackData(
-            action=ReminderAction.IS_RECURRING
-        ).pack()
+    markup = InlineKeyboardMarkup(
+        buttons[:3],
+        buttons[3:6],
+        buttons[6:]
     )
-
-    buttons.append(back_button)
-    buttons.append(is_recurring_button)
-
-    keyboard = InlineKeyboardMarkup(row_width=3)
-    keyboard.add(*buttons[:3])
-    keyboard.add(*buttons[3:6])
-    keyboard.add(*buttons[6:9])
-    keyboard.add(*buttons[9:])
-
-    return keyboard
+    return markup
