@@ -12,6 +12,8 @@ button_common_forward = '➡️'
 button_common_backwards = '⬅️'
 button_common_return = '🔙'
 button_common_number_one = '1️⃣'
+button_common_confirm = '🆗'
+button_common_skip = '⏭️ Skip'
 
 
 #Reply main menu commands
@@ -34,8 +36,6 @@ task_reminder_message = '📅 Choose the day'
 
 button_task_reminder_unchecked = '🔲 %s'
 button_task_reminder_checked = '✅ %s'
-button_task_reminder_confirm = '🆗'
-button_task_reminder_skip = '⏭️ Skip'
 button_task_reminder_recurring = '🔁 Recurring'
 button_task_reminder_single = '⏰ Single'
 
