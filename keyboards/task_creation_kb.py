@@ -1,10 +1,10 @@
+from venv import logger
+
 from aiogram.types import (
+    KeyboardButton,
     InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
-from aiogram.types import (
-    ReplyKeyboardMarkup,
-    KeyboardButton
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup
 )
 
 from callbacks.task_creation_callback import *
@@ -25,24 +25,36 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
     Returns:
         InlineKeyboardMarkup: The keyboard for selecting the reminder options for a task.
     """
-    button_time = InlineKeyboardButton(
-        text=button_task_reminder_single,
-        callback_data=ReminderType.SINGLE
-    )
-    button_days = InlineKeyboardButton(
-        text=button_task_reminder_recurring,
-        callback_data=ReminderType.RECURRING
-    )
-    button_back = InlineKeyboardButton(
-        text=button_common_skip,
-        callback_data=ReminderType.SKIP
-    )
-    row_one = [button_time, button_days]
-    row_two = [button_back]
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[row_one, row_two]
-    )
-    return markup
+    try:
+        button_single = InlineKeyboardButton(
+            text=button_task_reminder_single,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.SINGLE,
+                action=ReminderAction.TOGGLE
+            ).pack()
+        )
+        button_recurring = InlineKeyboardButton(
+            text=button_task_reminder_recurring,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.RECURRING,
+                action=ReminderAction.TOGGLE
+            ).pack()
+        )
+        button_skip = InlineKeyboardButton(
+            text=button_common_skip,
+            callback_data=ReminderCallbackData(
+                type=ReminderType.RECURRING,
+                action=ReminderAction.SKIP
+            ).pack()
+        )
+        row_one = [button_single, button_recurring]
+        row_two = [button_skip]
+        markup = InlineKeyboardMarkup(
+            inline_keyboard=[row_one, row_two]
+        )
+        return markup
+    except Exception as error:
+        logger.error(f"reminder_type_selection_kb: {error}")
 
 
 def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:

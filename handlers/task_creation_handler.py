@@ -11,11 +11,10 @@ from callbacks.common_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
-from handlers.auxilary_handler import *
+from callbacks.task_creation_callback import *
 from callbacks.task_list_callback import TaskStatus
-from callbacks.task_creation_callback import ReminderType
 from database.database import DataBase
-from handlers.task_reminder_handler import *
+from handlers.auxilary_handler import *
 from keyboards.start_kb import start_kb
 from keyboards.task_creation_kb import *
 from keyboards.task_list_kb import task_list_kb
@@ -138,7 +137,8 @@ async def create_task_callback(
 async def handle_task_description_input(
     message: Message,
     state: FSMContext,
-    bot: Bot):
+    bot: Bot
+) -> None:
     """
     Handles the input of the task description.
 
@@ -157,6 +157,7 @@ async def handle_task_description_input(
             chat_id=message.from_user.id
         )
         await state.update_data(description_task=message.text)
+        await state.set_state(CreateState.reminder_type)
         await store_message_id(state=state, message_id=message.message_id)
         await bot.send_message(
             chat_id=message.from_user.id,
@@ -165,7 +166,7 @@ async def handle_task_description_input(
         )
         await message.delete()
     except Exception as error:
-        logger.error(f"Error in handle_task_description_input: {error}")
+        logger.error(f"handle_task_description_input: {error}")
         await state.clear()
 
 
@@ -188,9 +189,40 @@ async def handle_invalid_description_content_type(message: Message, bot: Bot):
             reply_markup=None
         )
     except Exception as error:
-        logger.error(f"Error in handle_invalid_description_content_type: {error}")
+        logger.error(f"handle_invalid_description_content_type: {error}")
 
 
+@router.callback_query(
+    CreateState.reminder_type,
+    ReminderCallbackData.filter(
+        F.type == ReminderType.RECURRING
+    )
+)
+async def handle_recurring_reminder_selection(
+    callback: CallbackQuery,
+    callback_data: ReminderCallbackData,
+    state: FSMContext
+) -> None:
+    """
+    Handles the selection of a recurring reminder.
+
+    Args:
+        callback (CallbackQuery): The callback query object.
+        state (FSMContext): The FSM context object.
+        bot (Bot): The bot instance.
+
+    Returns:
+        None
+    """
+    try:
+
+        await callback.answer()
+
+    except Exception as error:
+        logger.error(f"on_recurring_reminder_selection: {error}")
+    
+
+@router.callback_query(CreateState.final_confirmation)
 async def handle_final_confirmation(message: Message, state: FSMContext, bot: Bot):
     """
     Handles the final confirmation of the task creation and writes to the database.
