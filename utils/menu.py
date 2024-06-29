@@ -1,7 +1,7 @@
 from aiogram import Bot
 from aiogram.types import BotCommand, BotCommandScopeDefault
 
-from callbacks.common_commands_callback import MenuCommands
+from callbacks.general_commands_callback import MenuCommands
 
 
 async def set_menu(bot: Bot):

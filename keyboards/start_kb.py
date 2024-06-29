@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from callbacks.common_commands_callback import (
+from callbacks.general_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )

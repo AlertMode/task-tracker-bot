@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from aiogram import Bot, Router, F
+from aiogram.fsm.context import FSMContext
 from aiogram.types import (
     Message,
     CallbackQuery
 )
-from aiogram.fsm.context import FSMContext
 
-from callbacks.common_commands_callback import (
+from callbacks.general_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
@@ -136,17 +136,17 @@ async def create_task_callback(
 @router.message(CreateState.description_task, F.text)
 async def handle_task_description_input(
     message: Message,
-    state: FSMContext,
-    bot: Bot
+    bot: Bot,
+    state: FSMContext
 ) -> None:
     """
     Handles the input of the task description.
 
     Args:
         message (Message): The incoming message object.
-        state (FSMContext): The state object for the conversation.
+        state (FSMContext): The FSM context object.
         bot (Bot): The bot instance.
-    
+
     Returns:
         None
     """
@@ -171,7 +171,10 @@ async def handle_task_description_input(
 
 
 @router.message(CreateState.description_task)
-async def handle_invalid_description_content_type(message: Message, bot: Bot):
+async def handle_invalid_description_content_type(
+    message: Message,
+    bot: Bot
+) -> None:
     """
     Handles the invalid content type for the task description.
 
@@ -194,36 +197,31 @@ async def handle_invalid_description_content_type(message: Message, bot: Bot):
 
 @router.callback_query(
     CreateState.reminder_type,
-    ReminderCallbackData.filter(
+    ReminderTypeCallbackData.filter(
         F.type == ReminderType.RECURRING
     )
 )
 async def handle_recurring_reminder_selection(
     callback: CallbackQuery,
-    callback_data: ReminderCallbackData,
-    state: FSMContext
+    callback_data: ReminderTypeCallbackData
 ) -> None:
-    """
-    Handles the selection of a recurring reminder.
-
-    Args:
-        callback (CallbackQuery): The callback query object.
-        state (FSMContext): The FSM context object.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
     try:
-
         await callback.answer()
-
+        print('FNOENE')
+        await callback.message.answer(
+            text=task_reminder_message,
+            reply_markup=recurring_day_selection_kb(set())
+        )
     except Exception as error:
-        logger.error(f"on_recurring_reminder_selection: {error}")
+        logger.error(f"handle_recurring_reminder_selection: {error}")
     
 
 @router.callback_query(CreateState.final_confirmation)
-async def handle_final_confirmation(message: Message, state: FSMContext, bot: Bot):
+async def handle_final_confirmation(
+    message: Message,
+    state: FSMContext,
+    bot: Bot
+) -> None:
     """
     Handles the final confirmation of the task creation and writes to the database.
 
