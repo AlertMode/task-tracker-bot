@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from utils.dictionary import *
 from utils.logging_config import logger
 from database.database import DataBase
-from callbacks.common_commands_callback import (
+from callbacks.general_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )

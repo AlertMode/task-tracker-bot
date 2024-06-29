@@ -6,10 +6,12 @@ from enum import (
 
 from aiogram.filters.callback_data import CallbackData
 
+from callbacks.common_callback import *
 
 class ReminderType(IntEnum):
     SINGLE = auto()
     RECURRING = auto()
+
 
 class DayOfWeek(StrEnum):
     MONDAY = 'MONDAY'
@@ -21,15 +23,10 @@ class DayOfWeek(StrEnum):
     SUNDAY = 'SUNDAY'
 
 
-class ReminderAction(IntEnum):
-    TOGGLE = auto()
-    CONFIRM = auto()
-    BACK = auto()
-    SKIP = auto()
-
-
-class ReminderCallbackData(CallbackData, prefix='reminder_info'):
+class ReminderTypeCallbackData(CallbackData, prefix='reminder_type'):
     type: ReminderType
-    action: ReminderAction
+
+
+class ReminderDayCallbackData(CallbackData, prefix='reminder_day'):
     day: DayOfWeek = None
     selected: bool = False

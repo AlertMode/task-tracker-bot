@@ -33,6 +33,7 @@ task_createion_invalid_content_type = '❓ Please, type in a text'
 #Reminder setting
 task_reminder_type_selection = '🔔 Choose the reminder type'
 task_reminder_message = '📅 Choose the day'
+task_reminder_no_days_selected = '🚧 No days were selected'
 
 button_task_reminder_unchecked = '🔲 %s'
 button_task_reminder_checked = '✅ %s'

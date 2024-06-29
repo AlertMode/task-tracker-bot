@@ -7,6 +7,7 @@ from aiogram.types import (
     ReplyKeyboardMarkup
 )
 
+from callbacks.common_callback import *
 from callbacks.task_creation_callback import *
 from utils.dictionary import *
 
@@ -28,23 +29,21 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
     try:
         button_single = InlineKeyboardButton(
             text=button_task_reminder_single,
-            callback_data=ReminderCallbackData(
+            callback_data=ReminderTypeCallbackData(
                 type=ReminderType.SINGLE,
-                action=ReminderAction.TOGGLE
             ).pack()
         )
         button_recurring = InlineKeyboardButton(
             text=button_task_reminder_recurring,
-            callback_data=ReminderCallbackData(
-                type=ReminderType.RECURRING,
-                action=ReminderAction.TOGGLE
+            callback_data=ReminderTypeCallbackData(
+                type=ReminderType.RECURRING
             ).pack()
         )
         button_skip = InlineKeyboardButton(
             text=button_common_skip,
-            callback_data=ReminderCallbackData(
+            callback_data=CommonActionCallbackData(
                 type=ReminderType.RECURRING,
-                action=ReminderAction.SKIP
+                action=CommonAction.SKIP
             ).pack()
         )
         row_one = [button_single, button_recurring]
@@ -57,52 +56,49 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
         logger.error(f"reminder_type_selection_kb: {error}")
 
 
-def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:
-    """
-    Generates the keyboard for selecting the days for a recurring reminder.
+# def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:
+#     """
+#     Generates the keyboard for selecting the days for a recurring reminder.
 
-    Args:
-        selected_days (set): The set of selected days.
+#     Args:
+#         selected_days (set): The set of selected days.
 
-    Returns:
-        InlineKeyboardMarkup: The keyboard for selecting the days for a recurring reminder.
-    """
-    def create_button(day: DayOfWeek) -> InlineKeyboardButton:
-        return InlineKeyboardButton(
-            text=(button_task_reminder_checked 
-                  if day in selected_days 
-                  else button_task_reminder_unchecked
-                ) % day.value,
-            callback_data=ReminderCallbackData(
-                type=ReminderType.RECURRING,
-                action=ReminderAction.TOGGLE,
-                day=day,
-                selected = day in selected_days
-            ).pack()
-        )
+#     Returns:
+#         InlineKeyboardMarkup: The keyboard for selecting the days for a recurring reminder.
+#     """
+#     try:
+#         def create_button(day: DayOfWeek) -> InlineKeyboardButton:
+#             return InlineKeyboardButton(
+#                 text=(button_task_reminder_checked 
+#                     if day in selected_days 
+#                     else button_task_reminder_unchecked
+#                     ) % day.value,
+#                 callback_data=ReminderDayCallbackData(
+#                     day=day,
+#                     selected = day in selected_days
+#                 ).pack()
+#             )
 
-    buttons = [create_button(day) for day in DayOfWeek]
-    buttons.append(
-        InlineKeyboardButton(
-            text=button_common_confirm,
-            callback_data=ReminderCallbackData(
-                type=ReminderType.RECURRING,
-                action=ReminderAction.CONFIRM
-            ).pack()
-        )
-    )
-    buttons.append(
-        InlineKeyboardButton(
-            text=button_common_skip,
-            callback_data=ReminderCallbackData(
-                type=ReminderType.RECURRING,
-                action=ReminderAction.SKIP
-            ).pack()
-        )
-    )
-    markup = InlineKeyboardMarkup(
-        buttons[:3],
-        buttons[3:6],
-        buttons[6:]
-    )
-    return markup
+#         buttons = [create_button(day) for day in DayOfWeek]
+#         buttons.append(
+#             InlineKeyboardButton(
+#                 text=button_common_confirm,
+#                 callback_data=CommonActionCallbackData(
+#                     action=CommonAction.CONFIRM
+#                 ).pack()
+#             )
+#         )
+#         buttons.append(
+#             InlineKeyboardButton(
+#                 text=button_common_skip,
+#                 callback_data=CommonActionCallbackData(
+#                     action=CommonAction.SKIP
+#                 ).pack()
+#             )
+#         )
+#         markup = InlineKeyboardMarkup(
+#             inline_keyboard=buttons
+#         )
+#         return markup
+#     except Exception as error:
+#         logger.error(f"recurring_day_selection_kb: {error}")
