@@ -201,9 +201,8 @@ async def handle_invalid_description_content_type(
         F.type == ReminderType.RECURRING
     )
 )
-async def handle_recurring_reminder_selection(
-    callback: CallbackQuery,
-    callback_data: ReminderTypeCallbackData
+async def handle_recurring_reminder_selection_keyboardcall(
+    callback: CallbackQuery
 ) -> None:
     try:
         await callback.answer()
@@ -214,7 +213,29 @@ async def handle_recurring_reminder_selection(
         )
     except Exception as error:
         logger.error(f"handle_recurring_reminder_selection: {error}")
-    
+
+
+@router.callback_query(
+    ReminderDayCallbackData.filter(
+        F.day != None
+    )
+)
+async def handle_recurring_reminder_selection_callback(
+    callback: CallbackQuery,
+    callback_data: ReminderDayCallbackData,
+    state: FSMContext
+) -> None:
+    try:
+        data = await state.get_data()
+        selected_days = data.get('selected_days', set())
+        selected_days.add(callback_data.day)
+        await state.update_data(selected_days=selected_days)
+        await callback.message.edit_reply_markup(
+            reply_markup=recurring_day_selection_kb(selected_days)
+        )
+    except Exception as error:
+        logger.error(f"handle_recurring_reminder_selection_callback: {error}")
+
 
 @router.callback_query(CreateState.final_confirmation)
 async def handle_final_confirmation(
