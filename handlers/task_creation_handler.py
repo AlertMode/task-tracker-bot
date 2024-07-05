@@ -217,7 +217,7 @@ async def handle_recurring_reminder_selection_keyboardcall(
 
 @router.callback_query(
     ReminderDayCallbackData.filter(
-        F.day != None
+        F.selected != None
     )
 )
 async def handle_recurring_reminder_selection_callback(
@@ -228,11 +228,30 @@ async def handle_recurring_reminder_selection_callback(
     try:
         data = await state.get_data()
         selected_days = data.get('selected_days', set())
-        selected_days.add(callback_data.day)
-        await state.update_data(selected_days=selected_days)
-        await callback.message.edit_reply_markup(
-            reply_markup=recurring_day_selection_kb(selected_days)
+
+        #TODO: Fix the issue with the selected_days being updated with delayed data.
+
+        print(
+            f"Day: {callback_data.day}, Selected: {callback_data.selected}\n"
+            f"description: {data.get('description_task')}\n"
+            f"selected_days: {selected_days}\n"
         )
+
+        # Toggle the day selection in the set of selected days for the keybaord.
+        if callback_data.day in selected_days:
+            selected_days.remove(callback_data.day)
+        else:
+            selected_days.add(callback_data.day)
+
+        await state.update_data(selected_days=selected_days)
+
+        # Update the keyboard with the new selection.
+        new_markup = recurring_day_selection_kb(selected_days)
+        await callback.message.edit_reply_markup(
+            reply_markup=new_markup
+        )
+
+        await callback.answer()
     except Exception as error:
         logger.error(f"handle_recurring_reminder_selection_callback: {error}")
 
