@@ -74,8 +74,9 @@ def create_toggle_day_button(day: DayOfWeek, selected_days: set) -> InlineKeyboa
                 else button_task_reminder_unchecked
                 ) % day.value,
             callback_data=ReminderDayCallbackData(
-                day=day,
-                selected = day in selected_days
+                day=day.value,
+                # Mark the day as selected if it is not in the set of selected days.
+                selected = day.value not in selected_days
             ).pack()
         )
     except Exception as error:
