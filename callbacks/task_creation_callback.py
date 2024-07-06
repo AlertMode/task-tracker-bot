@@ -6,7 +6,7 @@ from enum import (
 
 from aiogram.filters.callback_data import CallbackData
 
-from callbacks.common_callback import *
+from callbacks.common_actions_callback import *
 
 class ReminderType(IntEnum):
     SINGLE = auto()

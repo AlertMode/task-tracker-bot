@@ -52,7 +52,7 @@ async def return_to_main_menu_handler(
     await state.clear()
 
 
-async def create_task_handler(
+async def handle_task_creation(
         user_id: int,
         state: FSMContext,
         bot: Bot
@@ -68,14 +68,18 @@ async def create_task_handler(
     Returns:
         None
     """
-    response = await bot.send_message(
-        chat_id=user_id,
-        text=task_creation_description_prompt,
-        reply_markup=return_to_main_menu_kb
-    )
-    await delete_all_messages(state=state, bot=bot, chat_id=user_id)
-    await state.set_state(CreateState.description_task)
-    await store_message_id(state=state, message_id=response.message_id)
+    try:
+        response = await bot.send_message(
+            chat_id=user_id,
+            text=task_creation_description_prompt,
+            reply_markup=return_to_main_menu_kb
+        )
+        await state.clear()
+        await delete_all_messages(state=state, bot=bot, chat_id=user_id)
+        await state.set_state(CreateState.description_task)
+        await store_message_id(state=state, message_id=response.message_id)
+    except Exception as error:
+        logger.error(f"handle_task_creation: {error}")
 
 
 @router.message(F.text == MenuCommands.CREATE_TASK.value)
@@ -95,7 +99,7 @@ async def create_task_command(
     Returns:
         None
     """
-    await create_task_handler(
+    await handle_task_creation(
         user_id = message.from_user.id,
         state=state,
         bot=bot
@@ -124,7 +128,7 @@ async def create_task_callback(
     Returns:
         None
     """
-    await create_task_handler(
+    await handle_task_creation(
         user_id=callback.from_user.id,
         state=state,
         bot=bot    
@@ -201,16 +205,16 @@ async def handle_invalid_description_content_type(
         F.type == ReminderType.RECURRING
     )
 )
-async def handle_recurring_reminder_selection_keyboardcall(
+async def handle_recurring_reminder_selection_keyboard_call(
     callback: CallbackQuery
 ) -> None:
     try:
         await callback.answer()
-        print('FNOENE')
         await callback.message.answer(
             text=task_reminder_message,
             reply_markup=recurring_day_selection_kb(set())
         )
+        await callback.message.delete()
     except Exception as error:
         logger.error(f"handle_recurring_reminder_selection: {error}")
 
@@ -229,14 +233,6 @@ async def handle_recurring_reminder_selection_callback(
         data = await state.get_data()
         selected_days = data.get('selected_days', set())
 
-        #TODO: Fix the issue with the selected_days being updated with delayed data.
-
-        print(
-            f"Day: {callback_data.day}, Selected: {callback_data.selected}\n"
-            f"description: {data.get('description_task')}\n"
-            f"selected_days: {selected_days}\n"
-        )
-
         # Toggle the day selection in the set of selected days for the keybaord.
         if callback_data.day in selected_days:
             selected_days.remove(callback_data.day)
@@ -244,13 +240,15 @@ async def handle_recurring_reminder_selection_callback(
             selected_days.add(callback_data.day)
 
         await state.update_data(selected_days=selected_days)
-
+        
         # Update the keyboard with the new selection.
         new_markup = recurring_day_selection_kb(selected_days)
         await callback.message.edit_reply_markup(
             reply_markup=new_markup
         )
-
+        await store_message_id(
+            state=state,
+            message_id=callback.message.message_id)
         await callback.answer()
     except Exception as error:
         logger.error(f"handle_recurring_reminder_selection_callback: {error}")
