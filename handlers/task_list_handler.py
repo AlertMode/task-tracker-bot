@@ -12,20 +12,14 @@ from callbacks.task_list_callback import (
     TaskStatus,
     TaskStatusCallbackData,
 )
-from callbacks.task_alteration_callback import (
-    TaskAlterationAction,
-    TaskAlterationCallbackData
-)
 from keyboards.task_list_kb import *
 from keyboards.start_kb import start_kb
-from handlers.task_alteration_handler import (
-    get_task_information,
-    alter_task_information
-)
+from handlers.task_alteration_handler import router as task_alteration_router
 
 
-router = Router(name=__name__)
 db = DataBase()
+router = Router(name=__name__)
+router.include_router(task_alteration_router)
 
 
 async def handle_start(user_id: int, bot: Bot) -> None:
@@ -165,47 +159,3 @@ async def handle_task_list(
             )
     except Exception as error:
         logger.error(f'Error: tasks_list_handler(): {error}')
-
-
-@router.callback_query(
-        TaskAlterationCallbackData.filter(
-        F.action == TaskAlterationAction.SKIP
-    )
-)
-async def handle_task_information(
-    callback: CallbackQuery,
-    callback_data: TaskAlterationCallbackData
-) -> None:
-    """
-    Handles the task information callback query.
-
-    Args:
-        callback (CallbackQuery): The callback query instance.
-        callback_data (TaskAlterationCallbackData): The task alteration callback data.
-
-    Returns:
-        None
-    """
-    await get_task_information(callback=callback, callback_data=callback_data)
-
-
-@router.callback_query(
-        TaskAlterationCallbackData.filter(
-            F.action != TaskAlterationAction.SKIP
-        )
-)
-async def handle_task_action(
-    callback: CallbackQuery,
-    callback_data: TaskAlterationCallbackData
-) -> None:
-    """
-    Handles the task actions callback query.
-
-    Args:
-        callback (CallbackQuery): The callback query instance.
-        callback_data (TaskAlterationCallbackData): The task alteration callback data.
-
-    Returns:
-        None
-    """
-    await alter_task_information(callback=callback, callback_data=callback_data)

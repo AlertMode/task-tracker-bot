@@ -1,3 +1,4 @@
+from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from callbacks.task_alteration_callback import (
@@ -12,9 +13,15 @@ from utils.logging_config import logger
 
 
 db = DataBase()
+router = Router(name=__name__)
 
 
-async def get_task_information(
+@router.callback_query(
+    TaskAlterationCallbackData.filter(
+        F.action == TaskAlterationAction.SKIP
+    )
+)
+async def handle_task_information(
     callback: CallbackQuery,
     callback_data: TaskAlterationCallbackData
 ) -> None:
@@ -48,7 +55,12 @@ async def get_task_information(
         logger.error(f'get_task_information(): {error}')
 
 
-async def alter_task_information(
+@router.callback_query(
+        TaskAlterationCallbackData.filter(
+            F.action != TaskAlterationAction.SKIP
+        )
+)
+async def handle_task_information_alteration(
     callback: CallbackQuery,
     callback_data: TaskAlterationCallbackData
 ) -> None:
