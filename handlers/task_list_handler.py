@@ -1,9 +1,6 @@
 from aiogram import Bot, Router, F
 from aiogram.types import Message, CallbackQuery
 
-from utils.dictionary import *
-from utils.logging_config import logger
-from database.database import DataBase
 from callbacks.general_commands_callback import (
     MenuCommands,
     MenuCommandsCallback
@@ -12,9 +9,12 @@ from callbacks.task_list_callback import (
     TaskStatus,
     TaskStatusCallbackData,
 )
+from database.database import DataBase
+from handlers.task_alteration_handler import router as task_alteration_router
 from keyboards.task_list_kb import *
 from keyboards.start_kb import start_kb
-from handlers.task_alteration_handler import router as task_alteration_router
+from utils.dictionary import *
+from utils.logging_config import logger
 
 
 db = DataBase()
