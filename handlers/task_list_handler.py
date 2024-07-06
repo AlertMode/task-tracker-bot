@@ -12,7 +12,6 @@ from callbacks.task_list_callback import (
 from database.database import DataBase
 from handlers.task_alteration_handler import router as task_alteration_router
 from keyboards.task_list_kb import *
-from keyboards.start_kb import start_kb
 from utils.dictionary import *
 from utils.logging_config import logger
 
@@ -20,48 +19,6 @@ from utils.logging_config import logger
 db = DataBase()
 router = Router(name=__name__)
 router.include_router(task_alteration_router)
-
-
-async def handle_start(user_id: int, bot: Bot) -> None:
-    """
-    Sends the start message with the start keyboard to the user.
-
-    Args:
-        user_id (int): The ID of the user.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
-    await bot.send_message(
-        user_id,
-        text=start_message,
-        reply_markup=start_kb()
-    )
-    
-
-@router.callback_query(
-        MenuCommandsCallback.filter(
-            F.option == MenuCommands.START
-        )
-)
-async def handle_start_callback(
-    callback: CallbackQuery,
-    bot: Bot
-) -> None:
-    """
-    Handles the start callback query.
-
-    Args:
-        callback (CallbackQuery): The callback query instance.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
-    await callback.answer()
-    await handle_start(user_id=callback.from_user.id, bot=bot)
-    await callback.message.delete()
 
 
 async def handle_task_type_selection(user_id: int, bot: Bot) -> None:

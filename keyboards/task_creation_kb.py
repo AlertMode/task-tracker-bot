@@ -1,5 +1,3 @@
-from venv import logger
-
 from aiogram.types import (
     KeyboardButton,
     InlineKeyboardMarkup,
@@ -10,6 +8,7 @@ from aiogram.types import (
 from callbacks.common_actions_callback import *
 from callbacks.task_creation_callback import *
 from utils.dictionary import *
+from utils.logging_config import logger
 
 
 return_to_main_menu_kb = ReplyKeyboardMarkup(keyboard=[

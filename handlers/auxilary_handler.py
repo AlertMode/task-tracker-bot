@@ -1,8 +1,8 @@
 import re
-from venv import logger
 
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
+from utils.logging_config import logger
 
 
 async def store_message_id(state: FSMContext, message_id: int) -> None:
@@ -22,7 +22,7 @@ async def store_message_id(state: FSMContext, message_id: int) -> None:
         messages.append(message_id)
         await state.update_data(messages=messages)
     except Exception as error:
-        logger.error(f'Error: store_message_id(): {error}')
+        logger.error(f'store_message_id(): {error}')
 
 
 async def get_stored_message_ids(state: FSMContext) -> list[int]:
