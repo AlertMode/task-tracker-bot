@@ -72,10 +72,9 @@ async def handle_start_command(message: Message, bot: Bot):
             username=message.from_user.username,
             bot=bot
         )
+        await message.delete()
     except Exception as error:
         logger.error(f"in handle_start_command: {error}")
-    finally:
-        await message.delete()
 
 
 @router.callback_query(
@@ -97,13 +96,16 @@ async def handle_start_callback(
     Returns:
         None
     """
-    await callback.answer()
-    await handle_start(
-        user_id=callback.from_user.id,
-        user_first_name=callback.from_user.first_name,
-        user_last_name=callback.from_user.last_name,
-        username=callback.from_user.username,
-        bot=bot
-    )
-    await callback.message.delete()
+    try:
+        await callback.answer()
+        await handle_start(
+            user_id=callback.from_user.id,
+            user_first_name=callback.from_user.first_name,
+            user_last_name=callback.from_user.last_name,
+            username=callback.from_user.username,
+            bot=bot
+        )
+        await callback.message.delete()
+    except Exception as error:
+        logger.error(f"handle_start_callback: {error}")
         
