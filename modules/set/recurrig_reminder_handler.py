@@ -18,7 +18,7 @@ router = Router(name=__name__)
         F.type == ReminderType.RECURRING
     )
 )
-async def handle_recurring_reminder_selection_keyboard_call(
+async def handle_recurring_reminder_listener(
     callback: CallbackQuery
 ) -> None:
     try:
