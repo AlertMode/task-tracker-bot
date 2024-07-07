@@ -15,7 +15,7 @@ from modules.add.task_creation_callback import *
 from modules.list.task_list_callback import TaskStatus
 from database.database import DataBase
 from modules.common.auxilary_handler import *
-from modules.set.recurrig_reminder import router as recurring_reminder_router
+from modules.set.recurrig_reminder_handler import router as recurring_reminder_router
 from modules.start.start_kb import start_kb
 from modules.add.task_creation_kb import *
 from modules.list.task_list_kb import task_list_kb
