@@ -41,7 +41,6 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
         button_skip = InlineKeyboardButton(
             text=button_common_skip,
             callback_data=CommonActionCallbackData(
-                type=ReminderType.RECURRING,
                 action=CommonAction.SKIP
             ).pack()
         )

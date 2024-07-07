@@ -201,6 +201,20 @@ async def handle_invalid_description_content_type(
         logger.error(f"handle_invalid_description_content_type: {error}")
         
 
+@router.callback_query(
+        CommonActionCallbackData.filter(
+            F.action.in_(
+                [
+                    CommonAction.CONFIRM,
+                    CommonAction.SKIP
+                ]
+            )
+        ),
+        # Filter the CommonActionCallbackData to the reminder type state.
+        # In order to prevent the callback from being called in other states
+        # or by other similar callback data.
+        CreateState()
+)
 @router.callback_query(CreateState.final_confirmation)
 async def handle_final_confirmation(
     message: Message,
@@ -222,6 +236,7 @@ async def handle_final_confirmation(
         task = await state.get_data()
         db = DataBase()
         user = await db.get_user(message.from_user.id)
+        #TODO: Add the reminder creation logic here.
         await db.add_task(
             description=task['description_task'],
             creation_date=datetime.today(),
