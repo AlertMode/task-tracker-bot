@@ -1,13 +1,13 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from callbacks.task_alteration_callback import (
+from modules.alter.task_alteration_callback import (
     TaskAlterationAction,
     TaskAlterationCallbackData
 )
 from database.database import DataBase
-from keyboards.task_list_kb import *
-from keyboards.task_alteration_kb import *
+from modules.list.task_list_kb import *
+from modules.alter.task_alteration_kb import *
 from utils.dictionary import *
 from utils.logging_config import logger
 

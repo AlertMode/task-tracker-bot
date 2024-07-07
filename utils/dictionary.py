@@ -44,6 +44,9 @@ button_task_reminder_single = '⏰ Single'
 #Task management
 task_status_message = '📁 Task status:'
 
+ongoing_tasks = '▶️ Ongoing'
+completed_tasks = '⏹️ Completed'
+
 task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
 task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
 task_void_message = '🚧 No tasks were found! 🚧'

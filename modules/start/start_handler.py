@@ -1,5 +1,4 @@
 from aiogram import Bot, F, Router
-from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.types import (
     CallbackQuery,
@@ -7,7 +6,7 @@ from aiogram.types import (
 )
 
 from database.database import DataBase
-from keyboards.start_kb import *
+from modules.start.start_kb import *
 from utils.dictionary import *
 from utils.logging_config import logger
 
@@ -20,7 +19,6 @@ async def handle_start(
         user_first_name: str,
         user_last_name: str,
         username: str,
-        state: FSMContext,
         bot: Bot
 ) -> None:
     """

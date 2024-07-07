@@ -6,7 +6,7 @@ from aiogram import Dispatcher
 from utils.menu import set_menu
 from database.database import DataBase
 from bot_instance import bot
-from utils.routers import router
+from routers.routers import router
 
 
 async def main() -> None:  
