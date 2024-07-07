@@ -7,22 +7,24 @@ from aiogram.types import (
     CallbackQuery
 )
 
-from callbacks.general_commands_callback import (
+from modules.common.commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
-from callbacks.task_creation_callback import *
-from callbacks.task_list_callback import TaskStatus
+from modules.add.task_creation_callback import *
+from modules.list.task_list_callback import TaskStatus
 from database.database import DataBase
-from handlers.auxilary_handler import *
-from keyboards.start_kb import start_kb
-from keyboards.task_creation_kb import *
-from keyboards.task_list_kb import task_list_kb
-from states.task_creation_state import CreateState
+from modules.common.auxilary_handler import *
+from modules.set.recurrig_reminder import router as recurring_reminder_router
+from modules.start.start_kb import start_kb
+from modules.add.task_creation_kb import *
+from modules.list.task_list_kb import task_list_kb
+from modules.add.task_creation_state import CreateState
 from utils.dictionary import *
 
 
 router = Router(name=__name__)
+router.include_router(recurring_reminder_router)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
@@ -197,62 +199,7 @@ async def handle_invalid_description_content_type(
         )
     except Exception as error:
         logger.error(f"handle_invalid_description_content_type: {error}")
-
-
-@router.callback_query(
-    CreateState.reminder_type,
-    ReminderTypeCallbackData.filter(
-        F.type == ReminderType.RECURRING
-    )
-)
-async def handle_recurring_reminder_selection_keyboard_call(
-    callback: CallbackQuery
-) -> None:
-    try:
-        await callback.answer()
-        await callback.message.answer(
-            text=task_reminder_message,
-            reply_markup=recurring_day_selection_kb(set())
-        )
-        await callback.message.delete()
-    except Exception as error:
-        logger.error(f"handle_recurring_reminder_selection: {error}")
-
-
-@router.callback_query(
-    ReminderDayCallbackData.filter(
-        F.selected != None
-    )
-)
-async def handle_recurring_reminder_selection_callback(
-    callback: CallbackQuery,
-    callback_data: ReminderDayCallbackData,
-    state: FSMContext
-) -> None:
-    try:
-        data = await state.get_data()
-        selected_days = data.get('selected_days', set())
-
-        # Toggle the day selection in the set of selected days for the keybaord.
-        if callback_data.day in selected_days:
-            selected_days.remove(callback_data.day)
-        else:
-            selected_days.add(callback_data.day)
-
-        await state.update_data(selected_days=selected_days)
         
-        # Update the keyboard with the new selection.
-        new_markup = recurring_day_selection_kb(selected_days)
-        await callback.message.edit_reply_markup(
-            reply_markup=new_markup
-        )
-        await store_message_id(
-            state=state,
-            message_id=callback.message.message_id)
-        await callback.answer()
-    except Exception as error:
-        logger.error(f"handle_recurring_reminder_selection_callback: {error}")
-
 
 @router.callback_query(CreateState.final_confirmation)
 async def handle_final_confirmation(

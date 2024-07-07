@@ -5,7 +5,7 @@ from enum import (
 
 from aiogram.filters.callback_data import CallbackData
 
-from callbacks.task_list_callback import TaskStatus
+from modules.list.task_list_callback import TaskStatus
 
 
 class TaskAlterationAction(IntEnum):

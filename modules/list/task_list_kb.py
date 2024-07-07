@@ -3,24 +3,20 @@ from aiogram.types import (
     InlineKeyboardButton
 )
 
-from callbacks.general_commands_callback import (
+from modules.common.commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
-from callbacks.task_list_callback import (
+from modules.list.task_list_callback import (
     TaskStatus,
     TaskStatusCallbackData
 )
-from callbacks.task_alteration_callback import (
+from modules.alter.task_alteration_callback import (
     TaskAlterationAction,
     TaskAlterationCallbackData
 )
 from utils.dictionary import *
 from database.database import TaskStatus
-
-
-ONGOING_TASKS = '▶️ Ongoing'
-COMPLETED_TASKS = '⏹️ Completed'
 
 
 def task_type_kb() -> InlineKeyboardMarkup:
@@ -31,13 +27,13 @@ def task_type_kb() -> InlineKeyboardMarkup:
         InlineKeyboardMarkup: The keyboard for selecting the type of tasks to display.
     """
     button_ongoing_tasks = InlineKeyboardButton(
-        text=ONGOING_TASKS,
+        text=ongoing_tasks,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.ONGOING
         ).pack()
     )
     button_completed_tasks = InlineKeyboardButton(
-        text=COMPLETED_TASKS,
+        text=completed_tasks,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.COMPLETED
         ).pack()

@@ -3,11 +3,11 @@ from aiogram.types import (
     InlineKeyboardButton
 )
 
-from callbacks.task_list_callback import (
+from modules.list.task_list_callback import (
     TaskStatus,
     TaskStatusCallbackData
 )
-from callbacks.task_alteration_callback import (
+from modules.alter.task_alteration_callback import (
     TaskAlterationAction,
     TaskAlterationCallbackData
 )

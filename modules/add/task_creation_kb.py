@@ -5,8 +5,8 @@ from aiogram.types import (
     ReplyKeyboardMarkup
 )
 
-from callbacks.common_actions_callback import *
-from callbacks.task_creation_callback import *
+from modules.common.actions_callback import *
+from modules.add.task_creation_callback import *
 from utils.dictionary import *
 from utils.logging_config import logger
 

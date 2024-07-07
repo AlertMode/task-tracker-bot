@@ -3,8 +3,8 @@ import os
 
 from sqlalchemy import (
     Sequence,
-    select,
     delete,
+    select,
     update
 )
 from sqlalchemy.exc import SQLAlchemyError
@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine
 )
 
-from callbacks.task_list_callback import TaskStatus
+from modules.list.task_list_callback import TaskStatus
 from utils.logging_config import logger
 from database.models import *
 
