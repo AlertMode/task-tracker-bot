@@ -15,7 +15,7 @@ from modules.add.task_creation_callback import *
 from modules.list.task_list_callback import TaskStatus
 from database.database import DataBase
 from modules.common.auxilary_handler import *
-from modules.set.recurrig_reminder_handler import router as recurring_reminder_router
+from modules.set.reminder_recurrig_handler import router as recurring_reminder_router
 from modules.start.start_kb import start_kb
 from modules.add.task_creation_kb import *
 from modules.list.task_list_kb import task_list_kb
@@ -203,12 +203,7 @@ async def handle_invalid_description_content_type(
 
 @router.callback_query(
         CommonActionCallbackData.filter(
-            F.action.in_(
-                [
-                    CommonAction.CONFIRM,
-                    CommonAction.SKIP
-                ]
-            )
+            F.action == CommonAction.SKIP
         ),
         # Filter the CommonActionCallbackData to the reminder type state.
         # In order to prevent the callback from being called in other states

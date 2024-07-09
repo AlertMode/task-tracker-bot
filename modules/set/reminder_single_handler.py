@@ -13,6 +13,7 @@ from utils.logging_config import logger
 
 router = Router(name=__name__)
 
+
 @router.callback_query(
     CreateState.reminder_type,
     ReminderTypeCallbackData.filter(

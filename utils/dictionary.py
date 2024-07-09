@@ -42,6 +42,14 @@ button_task_reminder_recurring = '🔁 Recurring'
 button_task_reminder_single = '⏰ Single'
 
 
+#Reminder Interval
+task_reminder_interval_message = '📅 Choose the interval'
+
+button_task_reminder_daily = '📅 Daily'
+button_task_reminder_weekly = '📅 Weekly'
+button_task_reminder_monthly = '📅 Monthly'
+button_task_reminder_yearly = '📅 Yearly'
+
 #Single reminder
 single_reminder_message = '📅 Set the reminder date'
 
