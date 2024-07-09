@@ -5,5 +5,6 @@ class CreateState(StatesGroup):
     reminder_type = State()
     reminderd_reccuring_days = State()
     reminder_single_date = State()
+    reminder_interval = State()
     reminder_time = State()
     final_confirmation = State()

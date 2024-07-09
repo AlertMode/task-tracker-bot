@@ -22,6 +22,15 @@ router = Router(name=__name__)
 async def handle_recurring_reminder_listener(
     callback: CallbackQuery
 ) -> None:
+    """
+    Handles the listener for recurring reminder callbacks.
+
+    Args:
+        callback (CallbackQuery): The callback query object.
+
+    Returns:
+        None
+    """
     try:
         await callback.answer()
         await callback.message.answer(
@@ -43,7 +52,19 @@ async def handle_recurring_reminder_selection_callback(
     callback_data: ReminderDayCallbackData,
     state: FSMContext
 ) -> None:
+    """
+    Handles the callback for selecting recurring reminder days.
+
+    Args:
+        callback (CallbackQuery): The callback query object.
+        callback_data (ReminderDayCallbackData): The callback data object containing the selected day.
+        state (FSMContext): The FSM context object for storing and retrieving data.
+
+    Returns:
+        None
+    """
     try:
+        await callback.answer()
         data = await state.get_data()
         selected_days = data.get('selected_days', set())
 
@@ -65,7 +86,10 @@ async def handle_recurring_reminder_selection_callback(
             message_id=callback.message.message_id)
         
         await state.set_state(CreateState.reminder_interval)
-        await callback.answer()
+        await store_message_id(
+            state=state,
+            message_id=callback.message.message_id
+        )
     except Exception as error:
         logger.error(f"handle_recurring_reminder_selection_callback: {error}")
 
@@ -75,17 +99,31 @@ async def handle_recurring_interval_selection(
     callback: CallbackQuery,
     state: FSMContext
 ) -> None:
+    """
+    Handles the selection of the interval for a recurring reminder.
+
+    Args:
+        callback (CallbackQuery): The callback query object.
+        state (FSMContext): The FSM context object.
+
+    Returns:
+        None
+    """
     try:
         await callback.answer()
+        await delete_all_messages(
+            state=state,
+            bot=callback.bot,
+            chat_id=callback.from_user.id
+        )
         await callback.message.answer(
             text=task_reminder_interval_message,
             reply_markup=reminder_interval_selection_kb()
         )
-        await state.update_data
         await state.set_state(CreateState.reminder_time)
         await callback.message.delete()
     except Exception as error:
         logger.error(f"handle_recurring_interval_selection: {error}")
 
 
-#TODO: Add the handler for the interval's value selection.
+
