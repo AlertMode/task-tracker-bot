@@ -7,10 +7,12 @@ from modules.add.task_creation_kb import *
 from modules.add.task_creation_state import CreateState
 from modules.common.auxilary_handler import *
 from modules.set.reminder_recurring_kb import *
+from modules.set.time_handler import router as time_router
 from utils.dictionary import *
 
 
 router = Router(name=__name__)
+router.include_router(router=time_router)
 
 
 @router.callback_query(
@@ -35,10 +37,11 @@ async def handle_day_selection(
     state: FSMContext
 ) -> None:
     """
-    Handles the listener for recurring reminder callbacks.
+    Handles the selection of the days for a recurring reminder.
 
     Args:
         callback (CallbackQuery): The callback query object.
+        state (FSMContext): The FSM context object.
 
     Returns:
         None
@@ -57,6 +60,7 @@ async def handle_day_selection(
                 reply_markup=recurring_day_selection_kb(set())
             )
             await callback.message.delete()
+
         elif 'reminder_day' in callback_data:
             _, day, _ = callback_data.split(':')
 
@@ -67,10 +71,10 @@ async def handle_day_selection(
             await state.update_data(selected_days=selected_days)
             
             # Update the keyboard with the new selection.
-            new_markup = recurring_day_selection_kb(selected_days)
             await callback.message.edit_reply_markup(
-                reply_markup=new_markup
+                reply_markup=recurring_day_selection_kb(selected_days)
             )
+
         elif ('common_action' in callback_data) and len(selected_days) != 0:
             await callback.message.answer(
                 text=task_reminder_time,
@@ -81,31 +85,6 @@ async def handle_day_selection(
 
     except Exception as error:
         logger.error(f"handle_day_selection: {error}")
-
-
-@router.callback_query(CreateState.reminder_time)
-async def handle_recurring_reminder_time_input(
-    callback: CallbackQuery,
-    state: FSMContext,
-    bot: Bot
-) -> None:
-    """
-    Handles the selection of the time for a recurring reminder.
-
-    Args:
-        callback (CallbackQuery): The callback query object.
-        state (FSMContext): The FSM context object.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
-    try:
-        await callback.answer()
-        #TODO: Implement the time selection.
-        print("handle_recurring_reminder_time_input")
-    except Exception as error:
-        logger.error(f"handle_recurring_reminder_time_selection: {error}")
 
 
 @router.callback_query(CreateState.reminder_interval)

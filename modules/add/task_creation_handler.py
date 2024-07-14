@@ -45,8 +45,8 @@ async def return_to_main_menu_handler(
         None
     """
     await bot.send_message(
-        message.from_user.id,
-        task_creation_cancel_cmd,
+        chat_id=message.from_user.id,
+        text=task_creation_cancel_cmd,
         reply_markup=start_kb()
     )
     await store_message_id(state=state, message_id=message.message_id)
