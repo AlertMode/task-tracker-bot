@@ -15,7 +15,7 @@ router = Router(name=__name__)
 )
 async def handle_reminder_time_input(
     message: Message,
-    time: datetime,
+    time: time,
     state: FSMContext,
     bot: Bot
 ) -> None:
