@@ -1,7 +1,7 @@
 import re
 
 from datetime import (
-    datetime,
+    time,
     timedelta,
     timezone
 )
@@ -71,32 +71,30 @@ async def delete_all_messages(state: FSMContext, bot: Bot, chat_id: int) -> None
         logger.error(f'Error: delete_all_messages(): {error}')
 
 
-def validate_time_format(time: str) -> datetime | None:
+def validate_time_format(input_time: str) -> time | None:
     """
     Validates the reminder time input.
 
     Args:
-        time (str): The reminder time input.
+        input_time (str): The input time.
 
     Returns:
-        str | None: The reminder time if valid, otherwise None.
+        time | None: The time object or None.
     """
-    #TODO: Improve the time validation.
     try:
         # Pattern to match HH:MM UTC+[number] with HH in 00-23 and MM in 00-59
-        pattern = r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]) UTC([+-](0?[0-9]|1[0-4]))$"
-        match = re.match(pattern, time)
+        pattern = r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]) \+([+-]?[0-9]|1[0-4])$"
+        match = re.match(pattern, input_time)
         if match:
-            hours, minutes, utc_offset, _ = map(int, match.groups())
+            hours, minutes, utc_offset = map(int, match.groups())
             _timezone = timezone(timedelta(hours=utc_offset))
-            return datetime.now(_timezone).replace(
+            return time(
                 hour=hours,
                 minute=minutes,
-                second=0,
-                microsecond=0,
+                tzinfo=_timezone
             )
         return None
     except Exception as error:
-        logger.error(f'Error: valid_reminder_time(): {error}')
+        logger.error(f'valid_reminder_time(): {error}')
         return None
     
