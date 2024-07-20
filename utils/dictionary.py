@@ -34,7 +34,10 @@ task_createion_invalid_content_type = '❓ Please, type in a text'
 task_reminder_type_selection = '🔔 Choose the reminder type'
 task_reminder_message = '📅 Choose the day'
 task_reminder_no_days_selected = '🚧 No days were selected'
-task_reminder_time = '🔔 Set the reminder time'
+task_reminder_time = ('🕒 Set the reminder time in the format ' 
+                     '<b>HH:MM +UTC</b> (e.g., 12:34 +3)')
+task_remimder_invalid_time_format = '❓ Invalid time format! Please, try again!'
+task_reminder_interval_selection = '📅 Choose the interval: daily interval or weekly interval or etc'
 
 button_task_reminder_unchecked = '🔲 %s'
 button_task_reminder_checked = '✅ %s'
@@ -43,7 +46,7 @@ button_task_reminder_single = '⏰ Single'
 
 
 #Reminder Interval
-task_reminder_interval_message = '📅 Choose the interval'
+task_reminder_interval_selection = '⏱ Choose the interval: daily interval or weekly interval or etc'
 
 button_task_reminder_daily = '📅 Daily'
 button_task_reminder_weekly = '📅 Weekly'
