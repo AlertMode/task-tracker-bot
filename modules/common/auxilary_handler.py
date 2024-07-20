@@ -63,12 +63,16 @@ async def delete_all_messages(state: FSMContext, bot: Bot, chat_id: int) -> None
     """
     try:
         message_ids = await get_stored_message_ids(state=state)
+
+        if not message_ids:
+            return
+        
         for message_id in message_ids:
             await bot.delete_message(chat_id=chat_id, message_id=message_id)
         
         await state.update_data(messages=[])
     except Exception as error:
-        logger.error(f'Error: delete_all_messages(): {error}')
+        logger.error(f'delete_all_messages(): {error}')
 
 
 def validate_time_format(input_time: str) -> time | None:

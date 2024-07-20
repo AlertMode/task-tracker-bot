@@ -87,7 +87,10 @@ async def handle_day_selection(
         logger.error(f"handle_day_selection: {error}")
 
 
-@router.callback_query(CreateState.reminder_interval)
+@router.callback_query(
+        CreateState.reminder_interval,
+        
+                       )
 async def handle_recurring_interval_selection(
     callback: CallbackQuery,
     state: FSMContext
@@ -102,6 +105,7 @@ async def handle_recurring_interval_selection(
     Returns:
         None
     """
+    #TODO: Complete the logic.
     try:
         await callback.answer()
         await delete_all_messages(
@@ -110,8 +114,8 @@ async def handle_recurring_interval_selection(
             chat_id=callback.from_user.id
         )
         await callback.message.answer(
-            text=task_reminder_interval_message,
-            reply_markup=reminder_interval_selection_kb()
+            text='DONE!',
+            reply_markup=None
         )
         await state.set_state(CreateState.reminder_time)
         await callback.message.delete()
