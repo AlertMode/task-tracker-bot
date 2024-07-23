@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -89,35 +91,34 @@ async def handle_day_selection(
 
 @router.callback_query(
         CreateState.reminder_interval,
-        
-                       )
+        ReminderIntervalCallbackData.filter()
+    )
 async def handle_recurring_interval_selection(
     callback: CallbackQuery,
+    callback_data: ReminderIntervalCallbackData,
     state: FSMContext
-) -> None:
+    ) -> None:
     """
     Handles the selection of the interval for a recurring reminder.
 
     Args:
         callback (CallbackQuery): The callback query object.
+        callback_data (ReminderIntervalCallbackData): The callback data object.
         state (FSMContext): The FSM context object.
 
     Returns:
         None
     """
-    #TODO: Complete the logic.
     try:
+        #TODO: Figure out how to delete the previous messages.
+        #TODO: Implement the interval selection with warnings. Redo the message and the whole logic in general.
         await callback.answer()
-        await delete_all_messages(
-            state=state,
-            bot=callback.bot,
-            chat_id=callback.from_user.id
-        )
         await callback.message.answer(
-            text='DONE!',
+            text=msg_reminder_interval_number,
             reply_markup=None
         )
-        await state.set_state(CreateState.reminder_time)
+        print(callback_data.interval)
+
         await callback.message.delete()
     except Exception as error:
         logger.error(f"handle_recurring_interval_selection: {error}")
