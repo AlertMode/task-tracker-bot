@@ -47,6 +47,7 @@ button_task_reminder_single = '⏰ Single'
 
 #Reminder Interval
 task_reminder_interval_selection = '⏱ Choose the interval: daily interval or weekly interval or etc'
+msg_reminder_interval_number = '⏱ Set the interval number. Only integer values!'
 
 button_task_reminder_daily = '📅 Daily'
 button_task_reminder_weekly = '📅 Weekly'

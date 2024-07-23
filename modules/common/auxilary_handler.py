@@ -1,6 +1,7 @@
 import re
 
 from datetime import (
+    datetime,
     time,
     timedelta,
     timezone
@@ -8,6 +9,7 @@ from datetime import (
 
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
+
 from utils.logging_config import logger
 
 
@@ -102,3 +104,23 @@ def validate_time_format(input_time: str) -> time | None:
         logger.error(f'valid_reminder_time(): {error}')
         return None
     
+
+def calculate_next_reminder(
+        initial_datetime: datetime,
+        days: int
+        ) -> datetime:
+    """
+    Calculates the next reminder time.
+
+    Args:
+        initial_datetime (datetime): The initial datetime.
+        days (int): The number of days to add.
+
+    Returns:
+        datetime: The next reminder datetime.
+    """
+    try:
+        return initial_datetime + timedelta(days=days)
+    except Exception as error:
+        logger.error(f'calculate_next_reminder_time(): {error}')
+        return initial_datetime
