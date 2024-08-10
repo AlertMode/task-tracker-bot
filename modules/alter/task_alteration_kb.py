@@ -24,14 +24,16 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
             status=TaskStatus.ONGOING
         ).pack()
     )
-    button_task_edit_kb = InlineKeyboardButton(
-        text=button_task_edit,
-        callback_data=TaskAlterationCallbackData(
-            action=TaskAlterationAction.EDIT,
-            id=task_id,
-            status=TaskStatus.ONGOING
-        ).pack()
-    )
+    #TODO: Implement the edit task functionality. Somday...
+
+    # button_task_edit_kb = InlineKeyboardButton(
+    #     text=button_task_edit,
+    #     callback_data=TaskAlterationCallbackData(
+    #         action=TaskAlterationAction.EDIT,
+    #         id=task_id,
+    #         status=TaskStatus.ONGOING
+    #     ).pack()
+    # )
     button_task_delete_kb = InlineKeyboardButton(
         text=button_task_delete,
         callback_data=TaskAlterationCallbackData(
@@ -46,14 +48,12 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
             type=TaskStatus.ONGOING
         ).pack()
     )
-    buttons_row_one = [button_task_done_kb, button_task_edit_kb]
-    buttons_row_two = [button_task_delete_kb]
-    button_row_three = [button_ongoing_tasks]
+    buttons_row_one = [button_task_done_kb, button_task_delete_kb ]
+    buttons_row_two = [button_ongoing_tasks]
     markup = InlineKeyboardMarkup(
         inline_keyboard=[
             buttons_row_one,
-            buttons_row_two,
-            button_row_three
+            buttons_row_two
         ]
     )
     return markup
