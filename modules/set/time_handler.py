@@ -35,7 +35,7 @@ async def handle_reminder_time_input(
     try:
         await message.delete()
         await state.update_data(reminder_time=time)
-        await state.set_state(CreateState.reminder_interval)
+        await state.set_state(CreateState.reminder_interval_type)
         await bot.send_message(
             chat_id=message.from_user.id,
             text=task_reminder_interval_selection,
@@ -47,7 +47,7 @@ async def handle_reminder_time_input(
 
 
 @router.message(
-    CreateState.reminder_time,
+    CreateState.reminder_time
 )
 async def handle_reminder_invalid_time_input(
     message: Message,

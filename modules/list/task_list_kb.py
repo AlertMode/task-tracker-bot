@@ -94,7 +94,7 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the
     if current_page > 0:
         navigation_buttons_row_one.append(
             InlineKeyboardButton(
-                text=button_common_backwards,
+                text=btn_common_backwards,
                 callback_data=TaskStatusCallbackData(
                     type=task_status,
                     page=current_page - 1
@@ -110,7 +110,7 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the
     if end_index < len(tasks):
         navigation_buttons_row_one.append(
             InlineKeyboardButton(
-                text=button_common_forward,
+                text=btn_common_forward,
                 callback_data=TaskStatusCallbackData(
                     type=task_status,
                     page=current_page + 1
@@ -119,7 +119,7 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the
         )
     navigation_buttons_row_two.append(
         InlineKeyboardButton(
-            text=button_common_return,
+            text=btn_common_return,
             callback_data=MenuCommandsCallback(
                 option=MenuCommands.GET_TASKS
             ).pack()

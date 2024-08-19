@@ -39,7 +39,7 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
             ).pack()
         )
         button_skip = InlineKeyboardButton(
-            text=button_common_skip,
+            text=btn_common_skip,
             callback_data=CommonActionCallbackData(
                 action=CommonAction.SKIP
             ).pack()
@@ -52,3 +52,32 @@ def reminder_type_selection_kb() -> InlineKeyboardMarkup:
         return markup
     except Exception as error:
         logger.error(f"reminder_type_selection_kb: {error}")
+
+
+def final_confirmation_kb() -> InlineKeyboardMarkup:
+    """
+    Generates the keyboard for the final confirmation of the task creation.
+    
+    Returns:
+        InlineKeyboardMarkup: The keyboard for the final confirmation of the task creation.
+    """
+    try:
+        button_confirm = InlineKeyboardButton(
+            text=btn_common_confirm,
+            callback_data=CommonActionCallbackData(
+                action=CommonAction.CONFIRM
+            ).pack()
+        )
+        button_cancel = InlineKeyboardButton(
+            text=btn_common_cancel,
+            callback_data=CommonActionCallbackData(
+                action=CommonAction.CANCEL
+            ).pack()
+        )
+        row_one = [button_confirm, button_cancel]
+        markup = InlineKeyboardMarkup(
+            inline_keyboard=[row_one]
+        )
+        return markup
+    except Exception as error:
+        logger.error(f"final_confirmation_kb: {error}")

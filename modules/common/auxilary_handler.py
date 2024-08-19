@@ -13,6 +13,9 @@ from aiogram.fsm.context import FSMContext
 from utils.logging_config import logger
 
 
+MAX_REMINDER_INTERVAL = (365 * 3) + 1 
+
+
 async def store_message_id(state: FSMContext, message_id: int) -> None:
     """
     Stores the message ID in the state.
@@ -102,6 +105,25 @@ def validate_time_format(input_time: str) -> time | None:
         return None
     except Exception as error:
         logger.error(f'valid_reminder_time(): {error}')
+        return None
+    
+
+def validate_interval_format(input_interval: str) -> int | None:
+    """
+    Validates the reminder interval input.
+
+    Args:
+        input_interval (str): The input interval.
+
+    Returns:
+        int | None: The interval or None.
+    """
+    try:
+        global MAX_REMINDER_INTERVAL
+        if input_interval.isdigit() and int(input_interval) > 0 and int(input_interval) < MAX_REMINDER_INTERVAL:
+            return int(input_interval)
+    except Exception as error:
+        logger.error(f'validate_interval_format(): {error}')
         return None
     
 

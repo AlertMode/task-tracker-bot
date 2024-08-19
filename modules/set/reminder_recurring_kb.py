@@ -51,7 +51,7 @@ def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:
         control_buttons = []
         control_buttons.append(
             InlineKeyboardButton(
-                text=button_common_confirm,
+                text=btn_common_confirm,
                 callback_data=CommonActionCallbackData(
                     action=CommonAction.CONFIRM
                 ).pack()
@@ -59,7 +59,7 @@ def recurring_day_selection_kb(selected_days: set) -> InlineKeyboardMarkup:
         )
         control_buttons.append(
             InlineKeyboardButton(
-                text=button_common_skip,
+                text=btn_common_skip,
                 callback_data=CommonActionCallbackData(
                     action=CommonAction.SKIP
                 ).pack()
@@ -113,7 +113,7 @@ def reminder_interval_selection_kb() -> InlineKeyboardMarkup:
             ).pack()
         )
         button_skip = InlineKeyboardButton(
-            text=button_common_skip,
+            text=btn_common_skip,
             callback_data=CommonActionCallbackData(
                 action=CommonAction.SKIP
             ).pack()

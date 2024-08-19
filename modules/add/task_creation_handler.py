@@ -46,7 +46,7 @@ async def return_to_main_menu_handler(
     """
     await bot.send_message(
         chat_id=message.from_user.id,
-        text=task_creation_cancel_cmd,
+        text=mag_task_creation_cancel_cmd,
         reply_markup=start_kb()
     )
     await store_message_id(state=state, message_id=message.message_id)
@@ -73,7 +73,7 @@ async def handle_task_creation(
     try:
         response = await bot.send_message(
             chat_id=user_id,
-            text=task_creation_description_prompt,
+            text=msg_task_creation_description_prompt,
             reply_markup=return_to_main_menu_kb
         )
         await state.clear()
@@ -194,7 +194,7 @@ async def handle_invalid_description_content_type(
     try:
         await bot.send_message(
             chat_id=message.from_user.id,
-            text=task_createion_invalid_content_type,
+            text=msg_task_createion_invalid_content_type,
             reply_markup=None
         )
     except Exception as error:
@@ -210,7 +210,12 @@ async def handle_invalid_description_content_type(
         # or by other similar callback data.
         CreateState()
 )
-@router.callback_query(CreateState.final_confirmation)
+@router.callback_query(
+    CreateState.final_confirmation,
+    CommonActionCallbackData.filter(
+            F.action == CommonAction.CONFIRM
+        )
+)
 async def handle_final_confirmation(
     message: Message,
     state: FSMContext,
@@ -244,7 +249,7 @@ async def handle_final_confirmation(
         )
         await bot.send_message(
             chat_id=message.from_user.id,
-            text=task_creation_completed % task['description_task'],
+            text=msg_task_creation_completed % task['description_task'],
             reply_markup=task_list_kb(
                 tasks=tasks,
                 current_page=0,
