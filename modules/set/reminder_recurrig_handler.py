@@ -2,7 +2,10 @@ from datetime import datetime, timedelta
 
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery
+from aiogram.types import (
+    CallbackQuery,
+    Message
+)
 
 from modules.add.task_creation_callback import *
 from modules.add.task_creation_kb import *
@@ -90,7 +93,7 @@ async def handle_day_selection(
 
 
 @router.callback_query(
-        CreateState.reminder_interval,
+        CreateState.reminder_interval_type,
         ReminderIntervalCallbackData.filter()
     )
 async def handle_recurring_interval_selection(
@@ -111,17 +114,78 @@ async def handle_recurring_interval_selection(
     """
     try:
         #TODO: Figure out how to delete the previous messages.
-        #TODO: Implement the interval selection with warnings. Redo the message and the whole logic in general.
         await callback.answer()
+        await state.set_state(CreateState.reminder_interval_number)
         await callback.message.answer(
             text=msg_reminder_interval_number,
             reply_markup=None
         )
-        print(callback_data.interval)
-
+        await state.update_data(interval_type=callback_data.interval.value)
         await callback.message.delete()
     except Exception as error:
         logger.error(f"handle_recurring_interval_selection: {error}")
 
+    
+@router.message(
+    CreateState.reminder_interval_number,
+    F.text.cast(validate_interval_format).as_("interval")
+)
+async def handle_recurring_interval_number(
+    message: Message,
+    interval: int,
+    state: FSMContext
+) -> None:
+    """
+    Handles the selection of the interval number for a recurring reminder.
+
+    Args:
+        message (Message): The incoming message object.
+        interval (int): The selected interval number.
+        state (FSMContext): The FSM context object.
+
+    Returns:
+        None
+    """
+    try:
+        await message.delete()
+        await state.update_data(interval_number=interval)
+        await state.set_state(CreateState.final_confirmation)
+        data = await state.get_data()
+        await message.answer(
+            #TODO: Extend the message's variational part with days' selection or a single date
+            text=msg_reminder_final_confirmation % (
+                data.get('description_task'),
+                data.get('reminder_time'),
+                data.get('interval_number'),
+                data.get('interval_type')
+            ),
+            reply_markup=final_confirmation_kb()
+        )
+    except Exception as error:
+        logger.error(f"handle_recurring_interval_number: {error}")
 
 
+@router.message(
+    CreateState.reminder_interval_number
+)
+async def handle_invalid_interval_number(
+    message: Message
+) -> None:
+    """
+    Handles the invalid interval number for the recurring reminder.
+
+    Args:
+        message (Message): The incoming message object.
+
+    Returns:
+        None
+    """
+    try:
+        await message.delete()
+        #TODO: Add the original message's text to the warning
+        await message.answer(
+            text=msg_reminder_invalid_interval_number,
+            reply_markup=None
+        )
+    except Exception as error:
+        logger.error(f"handle_invalid_interval_number: {error}")

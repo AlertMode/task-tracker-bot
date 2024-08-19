@@ -43,7 +43,7 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_ongoing_tasks = InlineKeyboardButton(
-        text=button_common_return,
+        text=btn_common_return,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.ONGOING
         ).pack()
@@ -77,7 +77,7 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_completed_tasks = InlineKeyboardButton(
-        text=button_common_return,
+        text=btn_common_return,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.COMPLETED
         ).pack()

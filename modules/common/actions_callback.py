@@ -10,6 +10,7 @@ from aiogram.filters.callback_data import CallbackData
 class CommonAction(IntEnum):
     TOGGLE = auto()
     CONFIRM = auto()
+    CANCEL = auto()
     BACK = auto()
     SKIP = auto()
 

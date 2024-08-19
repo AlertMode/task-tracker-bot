@@ -8,12 +8,13 @@ error_message = '⚠️ Something went wrong! Please, try again'
 
 
 #Common buttons
-button_common_forward = '➡️'
-button_common_backwards = '⬅️'
-button_common_return = '🔙'
-button_common_number_one = '1️⃣'
-button_common_confirm = '🆗'
-button_common_skip = '⏭️ Skip'
+btn_common_forward = '➡️'
+btn_common_backwards = '⬅️'
+btn_common_return = '🔙'
+btn_common_number_one = '1️⃣'
+btn_common_confirm = '🆗'
+btn_common_cancel = '🚫'
+btn_common_skip = '⏭️ Skip'
 
 
 #Reply main menu commands
@@ -24,11 +25,15 @@ class MenuNames:
 
 
 #Task creation
-task_creation_description_prompt = '✍ Input the task:'
-task_creation_cancel_cmd = '❌ Task creation has been cancelled'
-task_creation_completed = '☑️ Task saved: <b>%s</b>'
-task_createion_invalid_content_type = '❓ Please, type in a text'
-
+msg_task_creation_description_prompt = '✍ Input the task:'
+mag_task_creation_cancel_cmd = '❌ Task creation has been cancelled'
+msg_task_creation_completed = '☑️ Task saved: <b>%s</b>'
+msg_task_createion_invalid_content_type = '❓ Please, type in a text'
+msg_reminder_final_confirmation = (
+    '📅 Task: <b>%s</b>\n\n'
+    '⏰ Time: <b>%s</b>\n\n'
+    '🔁 Interval: Each <b>%s</b> <b>%s</b>\n\n\n'
+)
 
 #Reminder setting
 task_reminder_type_selection = '🔔 Choose the reminder type'
@@ -38,6 +43,10 @@ task_reminder_time = ('🕒 Set the reminder time in the format '
                      '<b>HH:MM +UTC</b> (e.g., 12:34 +3)')
 task_remimder_invalid_time_format = '❓ Invalid time format! Please, try again!'
 task_reminder_interval_selection = '📅 Choose the interval: daily interval or weekly interval or etc'
+msg_reminder_invalid_interval_number = (
+    '❓ Invalid interval format!\n'
+    'Please, type in an integer value!'
+)
 
 button_task_reminder_unchecked = '🔲 %s'
 button_task_reminder_checked = '✅ %s'
@@ -53,6 +62,7 @@ button_task_reminder_daily = '📅 Daily'
 button_task_reminder_weekly = '📅 Weekly'
 button_task_reminder_monthly = '📅 Monthly'
 button_task_reminder_yearly = '📅 Yearly'
+
 
 #Single reminder
 single_reminder_message = '📅 Set the reminder date'
