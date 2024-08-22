@@ -109,9 +109,8 @@ class DataBase():
             description: str,
             creation_date: datetime,
             user_id: int,
-            is_recurrent: bool = False,
             reminder_date: Optional[datetime] = None,
-            days_of_week: Optional[List[DaysOfWeek]] = None
+            recurring_days: Optional[List[RecurringDays]] = None
         ) -> None:
         """
         Add a new task to the database.
@@ -120,9 +119,8 @@ class DataBase():
             description (str): The description of the task.
             user_id (int): The ID of the user to whom the task belongs.
             creation_date (datetime): The creation date of the task.
-            is_recurrent (bool, optional): Whether the task is recurrent. Defaults to False.
             reminder_date (datetime, optional): The reminder date for the task. Defaults to None.
-            days_of_week (List[DaysOfWeek], optional): The days of the week for the task's reminder. Defaults to None.
+            recurring_days (List[RecurringDays], optional): The days of the week for the task's reminder. Defaults to None.
 
         Returns:
             None
@@ -133,17 +131,16 @@ class DataBase():
                     description=description,
                     creation_date=creation_date,
                     user_id=user_id,
-                    is_recurrent=is_recurrent,
                     reminder_date=reminder_date
                 )
                 session.add(task)
                 await session.flush()
 
-                if days_of_week:
+                if recurring_days:
                     await self.add_reminder(
                         session=session,
                         task_id=task.id,
-                        days_of_week=days_of_week
+                        days_of_week=recurring_days
                     )
 
                 await session.commit()
@@ -157,7 +154,7 @@ class DataBase():
             self,
             session: AsyncSession,
             task_id: int,
-            days_of_week: List[DaysOfWeek]
+            recurring_days: List[RecurringDays]
     ) -> None:
         """
         Add a reminder to a task.
@@ -165,15 +162,15 @@ class DataBase():
         Args:
             session (AsyncSession): The session object.
             task_id (int): The ID of the task to which the reminder belongs.
-            days_of_week (List[DaysOfWeek]): The days of the week for the reminder.
+            recurring_days (List[RecurringDays]): The days of the week for the reminder.
 
         Returns:
             None
         """
         try:
-            for day in days_of_week:
+            for day in recurring_days:
                 session.add(
-                    DaysOfWeek(
+                    RecurringDays(
                         task_id=task_id,
                         day=day.value
                     )

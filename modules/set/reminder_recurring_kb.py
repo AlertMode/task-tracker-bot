@@ -103,7 +103,7 @@ def reminder_interval_selection_kb() -> InlineKeyboardMarkup:
         button_monthly = InlineKeyboardButton(
             text=button_task_reminder_monthly,
             callback_data=ReminderIntervalCallbackData(
-                interval=ReminderInterval.BY_MONTHES
+                interval=ReminderInterval.BY_MONTHS
             ).pack()
         )
         button_yearly = InlineKeyboardButton(

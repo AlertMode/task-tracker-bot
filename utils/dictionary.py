@@ -29,10 +29,12 @@ msg_task_creation_description_prompt = '✍ Input the task:'
 mag_task_creation_cancel_cmd = '❌ Task creation has been cancelled'
 msg_task_creation_completed = '☑️ Task saved: <b>%s</b>'
 msg_task_createion_invalid_content_type = '❓ Please, type in a text'
-msg_reminder_final_confirmation = (
-    '📅 Task: <b>%s</b>\n\n'
-    '⏰ Time: <b>%s</b>\n\n'
-    '🔁 Interval: Each <b>%s</b> <b>%s</b>\n\n\n'
+msg_task_recurring_reminder_final_confirmation = (
+    '📜 Task: <b>%s</b>\n'
+    '⏰ Time: <b>%s</b>\n'
+    '🔁 Interval number: <b>%s</b>\n'
+    '📅 Interval type: <b>%s</b>\n'
+    '🗓️ Next reminder: <b>%s</b>'
 )
 
 #Reminder setting

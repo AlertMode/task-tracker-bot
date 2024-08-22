@@ -258,7 +258,7 @@ async def handle_final_confirmation(
             )
         )
     except Exception as error:
-        logger.error(f'Error: handle_task_description_input: {error}')
+        logger.error(f'handle_final_confirmation: {error}')
         await bot.send_message(
             chat_id=message.from_user.id,
             text=error_message,
