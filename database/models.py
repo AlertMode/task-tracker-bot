@@ -15,7 +15,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
-class DaysOfWeek(StrEnum):
+class Days_of_Week(StrEnum):
     MONDAY = "MONDAY"
     TUESDAY = "TUESDAY"
     WEDNESDAY = "WEDNESDAY"
@@ -45,19 +45,18 @@ class Tasks(Base):
     update_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     reminder_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     completion_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
-    is_recurrent: Mapped[bool] = mapped_column(Boolean, default=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
     user: Mapped["Users"] = relationship("Users", back_populates="tasks")
-    days_of_week: Mapped[List["DaysOfWeek"]] = relationship("DaysOfWeek", back_populates="task")
+    recurring_days: Mapped[List["RecurringDays"]] = relationship("RecurringDays", back_populates="task")
 
 
-class DaysOfWeek(Base):
-    __tablename__ = 'days_of_week'
+class RecurringDays(Base):
+    __tablename__ = 'recurring_days'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    day: Mapped[DaysOfWeek] = mapped_column(String(10))
+    day: Mapped[Days_of_Week] = mapped_column(String(10))
     task_id: Mapped[int] = mapped_column(Integer, ForeignKey('tasks.id'))
-    task: Mapped["Tasks"] = relationship("Tasks", back_populates="days_of_week")
+    task: Mapped["Tasks"] = relationship("Tasks", back_populates="recurring_days")
 
     __table_args__ = (
         UniqueConstraint('task_id', 'day', name='unique_task_day'),

@@ -149,15 +149,36 @@ async def handle_recurring_interval_number(
     try:
         await message.delete()
         await state.update_data(interval_number=interval)
-        await state.set_state(CreateState.final_confirmation)
+
         data = await state.get_data()
+        description_task = data.get('description_task')
+        reminder_time = data.get('reminder_time')
+        interval_number = data.get('interval_number')
+        interval_type = data.get('interval_type')
+
+        print(f'interval_type: {interval_type}')
+
+        # PLACEHOLDER: Calculate the quantity of days for the next reminder.
+        interval_days = 42
+
+        next_reminder = calculate_next_reminder_date(
+            initial_datetime=reminder_time,
+            days=interval_days
+        )
+
+        # await state.update_data(next_reminder=next_reminder)
+        next_reminder = data.get('next_reminder')
+
+        await state.update_data(next_reminder=next_reminder)
+        await state.set_state(CreateState.final_confirmation)
         await message.answer(
             #TODO: Extend the message's variational part with days' selection or a single date
-            text=msg_reminder_final_confirmation % (
-                data.get('description_task'),
-                data.get('reminder_time'),
-                data.get('interval_number'),
-                data.get('interval_type')
+            text=msg_task_recurring_reminder_final_confirmation % (
+                description_task,
+                reminder_time,
+                interval_number,
+                interval_type,
+                next_reminder
             ),
             reply_markup=final_confirmation_kb()
         )

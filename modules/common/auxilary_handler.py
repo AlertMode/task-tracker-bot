@@ -10,10 +10,11 @@ from datetime import (
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 
+from modules.set.reminder_callback import ReminderInterval
 from utils.logging_config import logger
 
 
-MAX_REMINDER_INTERVAL = (365 * 3) + 1 
+MAX_REMINDER_INTERVAL = (365 * 5) + 1 
 
 
 async def store_message_id(state: FSMContext, message_id: int) -> None:
@@ -127,10 +128,7 @@ def validate_interval_format(input_interval: str) -> int | None:
         return None
     
 
-def calculate_next_reminder(
-        initial_datetime: datetime,
-        days: int
-        ) -> datetime:
+def calculate_next_reminder_date(initial_datetime: datetime, days: int) -> datetime:
     """
     Calculates the next reminder time.
 
@@ -142,7 +140,12 @@ def calculate_next_reminder(
         datetime: The next reminder datetime.
     """
     try:
-        return initial_datetime + timedelta(days=days)
+        #TODO: ERROR - calculate_next_reminder_date(): combine() argument 1 must be datetime.date, not datetime.time
+        print(f'initial_datetime: {initial_datetime}')
+        return datetime.combine(initial_datetime, timedelta(days=days))
     except Exception as error:
-        logger.error(f'calculate_next_reminder_time(): {error}')
+        logger.error(f'calculate_next_reminder_date(): {error}')
         return initial_datetime
+    
+
+#TODO: Add the logic for the reminder interval. Look into the external dateutil library

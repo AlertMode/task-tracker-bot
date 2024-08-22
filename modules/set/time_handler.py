@@ -41,7 +41,8 @@ async def handle_reminder_time_input(
             text=task_reminder_interval_selection,
             reply_markup=reminder_interval_selection_kb()
         )
-        print(f'Time: {time}')
+
+        
     except Exception as error:
         logger.error(f"handle_reminder_time_input: {error}")
 

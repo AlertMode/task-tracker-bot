@@ -19,7 +19,7 @@ class DayOfWeek(StrEnum):
 class ReminderInterval(Enum):
     BY_DAYS = 'BY DAYS'
     BY_WEEKS = 'BY WEEKS'
-    BY_MONTHES = 'BY MONTHES'
+    BY_MONTHS = 'BY MONTHS'
     BY_YEARS = 'BY YEARS'
 
 
