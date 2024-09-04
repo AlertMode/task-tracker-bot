@@ -240,7 +240,7 @@ async def handle_final_confirmation(
         await db.add_task(
             description=task['description_task'],
             creation_date=datetime.today(),
-            user_id=user.id
+            user_id=user.id,
         )
 
         tasks = await db.get_tasks_by_user(

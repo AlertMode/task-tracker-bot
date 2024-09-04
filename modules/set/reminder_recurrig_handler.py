@@ -156,20 +156,16 @@ async def handle_recurring_interval_number(
         interval_number = data.get('interval_number')
         interval_type = data.get('interval_type')
 
-        print(f'interval_type: {interval_type}')
-
-        # PLACEHOLDER: Calculate the quantity of days for the next reminder.
-        interval_days = 42
-
-        next_reminder = calculate_next_reminder_date(
+        date = calculate_next_reminder_date(
+            type=interval_type,
             initial_datetime=reminder_time,
-            days=interval_days
+            interval=interval_number
         )
 
-        # await state.update_data(next_reminder=next_reminder)
-        next_reminder = data.get('next_reminder')
+        await state.update_data(next_reminder_date=date)
+        data = await state.get_data()
+        next_reminder_date = data.get('next_reminder_date')
 
-        await state.update_data(next_reminder=next_reminder)
         await state.set_state(CreateState.final_confirmation)
         await message.answer(
             #TODO: Extend the message's variational part with days' selection or a single date
@@ -178,7 +174,7 @@ async def handle_recurring_interval_number(
                 reminder_time,
                 interval_number,
                 interval_type,
-                next_reminder
+                next_reminder_date
             ),
             reply_markup=final_confirmation_kb()
         )

@@ -9,6 +9,7 @@ from datetime import (
 
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
+from dateutil.relativedelta import relativedelta
 
 from modules.set.reminder_callback import ReminderInterval
 from utils.logging_config import logger
@@ -128,24 +129,36 @@ def validate_interval_format(input_interval: str) -> int | None:
         return None
     
 
-def calculate_next_reminder_date(initial_datetime: datetime, days: int) -> datetime:
+def calculate_next_reminder_date(type: ReminderInterval, initial_datetime: datetime, interval: int) -> datetime:
     """
     Calculates the next reminder time.
 
     Args:
+        type (ReminderInterval): The type of the reminder interval.
         initial_datetime (datetime): The initial datetime.
-        days (int): The number of days to add.
+        interval (int): The interval.
 
     Returns:
         datetime: The next reminder datetime.
     """
     try:
-        #TODO: ERROR - calculate_next_reminder_date(): combine() argument 1 must be datetime.date, not datetime.time
-        print(f'initial_datetime: {initial_datetime}')
-        return datetime.combine(initial_datetime, timedelta(days=days))
+        result = None
+        current_datetime_with_initial_time = datetime.now().replace(
+            hour=initial_datetime.hour,
+            minute=initial_datetime.minute,
+            second=initial_datetime.second,
+            microsecond=initial_datetime.microsecond,
+            tzinfo=initial_datetime.tzinfo
+        )
+        if type == ReminderInterval.BY_DAYS.value:
+            result = current_datetime_with_initial_time + relativedelta(days=interval)
+        elif type == ReminderInterval.BY_WEEKS.value:
+            result = current_datetime_with_initial_time + relativedelta(weeks=interval)
+        elif type == ReminderInterval.BY_MONTHS.value:
+            result = current_datetime_with_initial_time + relativedelta(months=interval)
+        elif type == ReminderInterval.BY_YEARS.value:
+            result = current_datetime_with_initial_time + relativedelta(years=interval)
     except Exception as error:
         logger.error(f'calculate_next_reminder_date(): {error}')
-        return initial_datetime
-    
-
-#TODO: Add the logic for the reminder interval. Look into the external dateutil library
+    finally:
+        return result
