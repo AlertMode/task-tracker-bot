@@ -236,11 +236,19 @@ async def handle_final_confirmation(
         task = await state.get_data()
         db = DataBase()
         user = await db.get_user(message.from_user.id)
-        #TODO: Add the reminder creation logic here.
+
+        reminder_date = None
+        selected_days = None
+        if task['reminder_type'] == ReminderType.RECURRING:
+            reminder_date = task['next_reminder_date']
+            selected_days = task['selected_days']
+
         await db.add_task(
             description=task['description_task'],
             creation_date=datetime.today(),
             user_id=user.id,
+            reminder_date=reminder_date,
+            recurring_days=selected_days
         )
 
         tasks = await db.get_tasks_by_user(

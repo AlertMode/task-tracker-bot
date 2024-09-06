@@ -64,6 +64,7 @@ async def handle_day_selection(
                 text=task_reminder_message,
                 reply_markup=recurring_day_selection_kb(set())
             )
+            await state.update_data(reminder_type = ReminderType.RECURRING)
             await callback.message.delete()
 
         elif 'reminder_day' in callback_data:

@@ -47,7 +47,7 @@ class Tasks(Base):
     completion_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
     user: Mapped["Users"] = relationship("Users", back_populates="tasks")
-    recurring_days: Mapped[List["RecurringDays"]] = relationship("RecurringDays", back_populates="task")
+    recurring_days: Mapped[List["RecurringDays"]] = relationship("RecurringDays", back_populates="task", cascade="all, delete-orphan")
 
 
 class RecurringDays(Base):
@@ -55,7 +55,7 @@ class RecurringDays(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     day: Mapped[Days_of_Week] = mapped_column(String(10))
-    task_id: Mapped[int] = mapped_column(Integer, ForeignKey('tasks.id'))
+    task_id: Mapped[int] = mapped_column(Integer, ForeignKey('tasks.id', ondelete='CASCADE'))
     task: Mapped["Tasks"] = relationship("Tasks", back_populates="recurring_days")
 
     __table_args__ = (

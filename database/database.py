@@ -154,7 +154,7 @@ class DataBase():
             self,
             session: AsyncSession,
             task_id: int,
-            recurring_days: List[RecurringDays]
+            days_of_week: List[RecurringDays]
     ) -> None:
         """
         Add a reminder to a task.
@@ -168,11 +168,11 @@ class DataBase():
             None
         """
         try:
-            for day in recurring_days:
+            for day in days_of_week:
                 session.add(
                     RecurringDays(
                         task_id=task_id,
-                        day=day.value
+                        day=day
                     )
                 )
             await session.flush()
