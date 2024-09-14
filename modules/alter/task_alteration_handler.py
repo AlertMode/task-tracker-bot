@@ -90,7 +90,7 @@ async def handle_task_information_alteration(
             await db.delete_task(user_id=user.id, task_id=task_id)
             message = task_deletion_completed
         
-        tasks = await db.get_tasks_by_user(
+        tasks = await db.get_all_tasks_by_user(
             user_id=user.id,
             status=callback_data.status
         )

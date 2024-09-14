@@ -200,7 +200,7 @@ class DataBase():
             raise
 
 
-    async def get_tasks_by_user(
+    async def get_all_tasks_by_user(
             self,
             user_id: int,
             status: TaskStatus
