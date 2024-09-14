@@ -98,7 +98,7 @@ async def handle_task_list(
     try:
         await callback.answer()
         user = await db.get_user(callback.from_user.id)
-        tasks = await db.get_tasks_by_user(user_id=user.id, status=callback_data.type)
+        tasks = await db.get_all_tasks_by_user(user_id=user.id, status=callback_data.type)
         await callback.message.delete()
         if tasks:
             await callback.message.answer(

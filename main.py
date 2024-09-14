@@ -1,12 +1,20 @@
 import asyncio
 import logging
 
+import aioschedule as scheduler
 from aiogram import Dispatcher
 
-from utils.menu import set_menu
-from database.database import DataBase
 from bot_instance import bot
+from database.database import DataBase
 from routers.routers import router
+from scheduler_handler import job
+from utils.menu import set_menu
+
+
+async def run_shceduler():
+    while True:
+        await scheduler.run_pending()
+        await asyncio.sleep(1)
 
 
 async def main() -> None:  
@@ -19,10 +27,12 @@ async def main() -> None:
         dp = Dispatcher()
         dp.include_router(router)
 
-        await set_menu(bot)
+        asyncio.create_task(run_shceduler())
+
         await dp.start_polling(bot, skip_updates=True)
     finally:
         await bot.session.close()
+        
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

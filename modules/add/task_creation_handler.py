@@ -251,7 +251,7 @@ async def handle_final_confirmation(
             recurring_days=selected_days
         )
 
-        tasks = await db.get_tasks_by_user(
+        tasks = await db.get_all_tasks_by_user(
             user_id=user.id,
             status=TaskStatus.ONGOING  
         )

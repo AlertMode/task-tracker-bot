@@ -7,6 +7,7 @@ from aiogram.types import (
 
 from database.database import DataBase
 from modules.start.start_kb import *
+from scheduler_handler import start_user_job
 from utils.dictionary import *
 from utils.logging_config import logger
 
@@ -43,11 +44,15 @@ async def handle_start(
                 user_name=username,
                 telegram_id=user_id
             )
+
         await bot.send_message(
             chat_id=user_id,
             text=start_message,
             reply_markup=start_kb()
         )
+
+        await start_user_job(user_id=user_id, bot=bot)
+
     except Exception as error:
         logger.error(f"handle_start: {error}")
 
