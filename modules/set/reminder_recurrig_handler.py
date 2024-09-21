@@ -60,12 +60,12 @@ async def handle_day_selection(
         callback_data = callback.data
 
         if 'reminder_type' in callback_data:
+            await callback.message.delete()
             await callback.message.answer(
                 text=task_reminder_message,
                 reply_markup=recurring_day_selection_kb(set())
             )
             await state.update_data(reminder_type = ReminderType.RECURRING)
-            await callback.message.delete()
 
         elif 'reminder_day' in callback_data:
             _, day, _ = callback_data.split(':')
@@ -116,13 +116,13 @@ async def handle_recurring_interval_selection(
     try:
         #TODO: Figure out how to delete the previous messages.
         await callback.answer()
+        await callback.message.delete()
         await state.set_state(CreateState.reminder_interval_number)
         await callback.message.answer(
             text=msg_reminder_interval_number,
             reply_markup=None
         )
         await state.update_data(interval_type=callback_data.interval.value)
-        await callback.message.delete()
     except Exception as error:
         logger.error(f"handle_recurring_interval_selection: {error}")
 

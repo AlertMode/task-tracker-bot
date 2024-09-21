@@ -15,6 +15,7 @@ from modules.add.task_creation_callback import *
 from modules.list.task_list_callback import TaskStatus
 from database.database import DataBase
 from modules.common.auxilary_handler import *
+from modules.set.reminder_single_handler import router as single_reminder_router
 from modules.set.reminder_recurrig_handler import router as recurring_reminder_router
 from modules.start.start_kb import start_kb
 from modules.add.task_creation_kb import *
@@ -24,6 +25,7 @@ from utils.dictionary import *
 
 
 router = Router(name=__name__)
+router.include_router(single_reminder_router)
 router.include_router(recurring_reminder_router)
 
 
