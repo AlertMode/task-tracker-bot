@@ -51,7 +51,7 @@ async def handle_start(
             reply_markup=start_kb()
         )
 
-        await start_user_job(user_id=user_id, bot=bot)
+        # await start_user_job(user_id=user_id, bot=bot)
 
     except Exception as error:
         logger.error(f"handle_start: {error}")
