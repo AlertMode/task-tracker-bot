@@ -1,7 +1,7 @@
 from datetime import datetime
 
+import asyncio
 import aioschedule as scheduler
-
 from aiogram import Bot
 
 from database.database import DataBase
@@ -44,9 +44,7 @@ async def start_user_job(user_id: int, bot: Bot):
         if user_id not in user_ids:
             user_ids.add(user_id)
             scheduler.every(1).minutes.do(
-                job,
-                user_id=user_id,
-                bot=bot
+                lambda: asyncio.create_task(job(user_id=user_id, bot=bot))
             )
     except Exception as error:
         logger.error(f"start_user_job: {error}")
