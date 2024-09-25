@@ -30,6 +30,11 @@ router.include_router(recurring_reminder_router)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
+@router.callback_query(
+    CommonActionCallbackData.filter(
+        F.action == CommonAction.CANCEL
+    )
+)
 async def return_to_main_menu_handler(
     message: Message,
     state: FSMContext,
@@ -244,6 +249,8 @@ async def handle_final_confirmation(
         if task['reminder_type'] == ReminderType.RECURRING:
             reminder_date = task['next_reminder_date']
             selected_days = task['selected_days']
+        else:
+            reminder_date = task['single_date']
 
         await db.add_task(
             description=task['description_task'],
