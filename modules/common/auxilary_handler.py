@@ -11,7 +11,10 @@ from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 from dateutil.relativedelta import relativedelta
 
-from modules.set.reminder_recurring_callback import ReminderInterval
+from modules.set.reminder_recurring_callback import (
+    DayOfWeek,
+    ReminderInterval
+)
 from utils.logging_config import logger
 
 
@@ -129,7 +132,12 @@ def validate_interval_format(input_interval: str) -> int | None:
         return None
     
 
-def calculate_next_reminder_date(type: ReminderInterval, initial_datetime: datetime, interval: int) -> datetime:
+def calculate_next_reminder_date(
+        type: ReminderInterval,
+        initial_datetime: datetime,
+        interval: int,
+        day_of_week: DayOfWeek = None
+) -> datetime:
     """
     Calculates the next reminder time.
 
@@ -150,6 +158,12 @@ def calculate_next_reminder_date(type: ReminderInterval, initial_datetime: datet
             microsecond=initial_datetime.microsecond,
             tzinfo=initial_datetime.tzinfo
         )
+
+        current_weekday = current_datetime_with_initial_time.strftime('%A').upper()
+        
+        print(current_weekday)
+        
+
         if type == ReminderInterval.BY_DAYS.value:
             result = current_datetime_with_initial_time + relativedelta(days=interval)
         elif type == ReminderInterval.BY_WEEKS.value:

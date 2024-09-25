@@ -70,6 +70,7 @@ async def handle_start_command(message: Message, bot: Bot):
         None
     """
     try:
+        await message.delete()
         await handle_start(
             user_id=message.from_user.id,
             user_first_name=message.from_user.first_name,
@@ -77,7 +78,6 @@ async def handle_start_command(message: Message, bot: Bot):
             username=message.from_user.username,
             bot=bot
         )
-        await message.delete()
     except Exception as error:
         logger.error(f"in handle_start_command: {error}")
 
