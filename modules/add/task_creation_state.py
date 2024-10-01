@@ -8,4 +8,5 @@ class CreateState(StatesGroup):
     reminder_interval_type = State()
     reminder_interval_number = State()
     reminder_time = State()
+    reimnder_time_picker = State()
     final_confirmation = State()

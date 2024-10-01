@@ -4,7 +4,7 @@ from aiogram.types import (
 )
 
 from modules.common.actions_callback import *
-from modules.set.reminder_recurring_callback import *
+from modules.set.recurring_reminder_callback import *
 from utils.dictionary import *
 from utils.logging_config import logger
 

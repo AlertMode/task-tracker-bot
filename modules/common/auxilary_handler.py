@@ -11,7 +11,7 @@ from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 from dateutil.relativedelta import relativedelta
 
-from modules.set.reminder_recurring_callback import (
+from modules.set.recurring_reminder_callback import (
     DayOfWeek,
     ReminderInterval
 )
