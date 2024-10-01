@@ -11,7 +11,7 @@ from modules.add.task_creation_callback import *
 from modules.add.task_creation_kb import *
 from modules.add.task_creation_state import CreateState
 from modules.common.auxilary_handler import *
-from modules.set.reminder_recurring_kb import *
+from modules.set.recurring_reminder_kb import *
 from utils.dictionary import *
 
 
