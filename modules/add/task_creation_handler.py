@@ -56,6 +56,10 @@ async def return_to_main_menu_handler(
         text=mag_task_creation_cancel_cmd,
         reply_markup=start_kb()
     )
+    #TODO: File "D:\Projects\task-tracker-bot\modules\add\task_creation_handler.py", line 59, in return_to_main_menu_handler
+    #ERROR - Cause exception while process update id=476359806 by bot id=6833316623
+    #AttributeError: 'CallbackQuery' object has no attribute 'message_id'
+    await store_message_id(state=state, message_id=message.message_id)
     await store_message_id(state=state, message_id=message.message_id)
     await delete_all_messages(state=state, bot=bot, chat_id=message.from_user.id)
     await state.clear()

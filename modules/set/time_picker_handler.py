@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -16,7 +14,10 @@ from utils.logging_config import logger
 router = Router(name=__name__)
 
 
-@router.callback_query(CreateState.reimnder_time_picker)
+@router.callback_query(
+        TimePickerCallbackData.filter(),
+        CreateState.reminder_time_picker
+    )
 async def handle_time_picker_selector(
     callback: CallbackQuery,
     state: FSMContext
@@ -37,15 +38,15 @@ async def handle_time_picker_selector(
             # Log the final selected time for debugging
             logger.info(f"Final selected time: {selected_time}")
 
-            # Update the state with the final time
-            await state.update_data(reminder_time=selected_time)
-
-
             #TODO: Fix the issue with the reminder time
-            #TODO: Write the code for calling timezone picker
             description_task = data.get("description_task")
             single_date = data.get("single_date")
-            reminder_time = data.get("reminder_time")
+            utc_offset = data.get("time_zone")
+
+            reminder_time = convert_string_to_datetime(
+                selected_time,
+                utc_offset
+            )
 
             await state.set_state(CreateState.final_confirmation)
             await callback.answer(f"Time confirmed: {selected_time}")
@@ -57,6 +58,8 @@ async def handle_time_picker_selector(
                 ),
                 reply_markup=final_confirmation_kb()
             )
+            await callback.answer()
+            await callback.message.delete()
             return
         
         default_hour_tens = HoursTens.ZERO.value
