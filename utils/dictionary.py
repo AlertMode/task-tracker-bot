@@ -48,6 +48,7 @@ task_reminder_message = '📅 Choose the day'
 task_reminder_no_days_selected = '🚧 No days were selected'
 task_reminder_time = ('🕒 Set the reminder time in the format ' 
                      '<b>HH:MM +UTC</b> (e.g., 12:34 +3)')
+task_reminder_timezone = '🌐 Set the timezone'
 task_reminder_time_picker = '🕒 Set the reminder time'
 task_remimder_invalid_time_format = '❓ Invalid time format! Please, try again!'
 task_reminder_interval_selection = '📅 Choose the interval: daily interval or weekly interval or etc'

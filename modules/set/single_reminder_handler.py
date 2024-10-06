@@ -10,14 +10,14 @@ from modules.add.task_creation_callback import *
 from modules.add.task_creation_kb import *
 from modules.add.task_creation_state import CreateState
 from modules.common.auxilary_handler import *
-from modules.set.time_picker_kb import *
+from modules.set.time_zone_selector_kb import create_time_zone_keyboard
 from utils.dictionary import *
 from utils.logging_config import logger
 
-from modules.set.time_picker_handler import router as time_picker_router
+from modules.set.time_zone_selector_handler import router as time_zone_selector_router
 
 router = Router(name=__name__)
-router.include_router(time_picker_router)
+router.include_router(time_zone_selector_router)
 
 
 @router.callback_query(
@@ -54,84 +54,8 @@ async def handle_simple_calendar_date_selection(
     selected, date = await SimpleCalendar().process_selection(callback, callback_data)
     if selected:
         await state.update_data(single_date = date)
-        await state.set_state(CreateState.reimnder_time_picker)
+        await state.set_state(CreateState.reminder_time_zone)
         await callback.message.answer(
-            text=task_reminder_time_picker,
-            reply_markup=create_time_picker_keyboard()
+            text=task_reminder_timezone,
+            reply_markup=create_time_zone_keyboard()
 )
-        
-
-# @router.message(
-#         CreateState.reminder_time,
-#         F.text.cast(validate_time_format).as_("time")
-# )
-# async def handle_reminder_time_input(
-#     message: Message,
-#     time: time,
-#     state: FSMContext,
-#     bot: Bot
-# ) -> None:
-#     """
-#     Handles the selection of the time for a recurring reminder.
-
-#     Args:
-#         message (Message): The incoming message object.
-#         time (datetime): The selected time.
-#         state (FSMContext): The state of the conversation.
-#         bot (Bot): The bot instance.
-
-#     Returns:
-#         None
-#     """
-#     try:
-#         await message.delete()
-#         await state.update_data(reminder_time=time)
-
-#         data = await state.get_data()
-#         description_task = data.get('description_task')
-#         reminder_time = data.get('reminder_time')
-#         single_date = data.get('single_date')
-#         #TODO: Add time to the reminder date.
-
-#         await state.set_state(CreateState.final_confirmation)
-#         await bot.send_message(
-#             chat_id=message.from_user.id,
-#             text=msg_task_single_reminder_final_confirmation % (
-#                 description_task,
-#                 single_date,
-#                 reminder_time
-#             ),
-#             reply_markup=final_confirmation_kb()
-#         )
-#     except Exception as error:
-#         logger.error(f"handle_reminder_time_input: {error}")
-
-
-# @router.message(
-#     CreateState.reminder_time
-# )
-# async def handle_reminder_invalid_time_input(
-#     message: Message,
-#     bot: Bot
-# ) -> None:
-#     """
-#     Handles the invalid time input for the reminder.
-
-#     Args:
-#         message (Message): The incoming message object.
-#         state (FSMContext): The state of the conversation.
-#         bot (Bot): The bot instance.
-
-#     Returns:
-#         None
-#     """
-#     try:
-#         await message.delete()
-#         await bot.send_message(
-#             chat_id=message.from_user.id,
-#             text=task_remimder_invalid_time_format + '\n' + 
-#             task_reminder_time,
-#             reply_markup=None
-#         )
-#     except Exception as error:
-#         logger.error(f"handle_reminder_invalid_time_input: {error}")
