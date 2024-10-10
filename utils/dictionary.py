@@ -31,8 +31,7 @@ msg_task_creation_completed = '☑️ Task saved: <b>%s</b>'
 msg_task_createion_invalid_content_type = '❓ Please, type in a text'
 msg_task_single_reminder_final_confirmation = (
     '📜 Task: <b>%s</b>\n'
-    '📅 Date: <b>%s</b>\n'
-    '⏰ Time: <b>%s</b>'
+    '📅 Date: <b>%s</b>'
 )
 msg_task_recurring_reminder_final_confirmation = (
     '📜 Task: <b>%s</b>\n'
@@ -83,8 +82,16 @@ task_status_message = '📁 Task status:'
 ongoing_tasks = '▶️ Ongoing'
 completed_tasks = '⏹️ Completed'
 
-task_ongoing = '▶️  %s \n\n <b>%s</b> \n\n➡️  %s'
-task_completed = '▶️  %s \n\n <b><s>%s</s></b> \n\n✅  %s'
+task_ongoing = (
+    '📅 <b>Createion date:</b> %s\n'
+    '📜 <b>Description:</b> %s\n'
+    '▶️ <b>Reminder date:</b> %s\n'
+)
+task_completed = (
+    '📅 <b>Createion date:</b> %s\n'
+    '📜 <b>Description:</b> %s\n'
+    '✅ <b>Completion date:</b> %s\n'
+)
 task_void_message = '🚧 No tasks were found! 🚧'
 
 button_task_done = '✅ Done'

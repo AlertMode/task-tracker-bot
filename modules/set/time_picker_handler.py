@@ -16,7 +16,7 @@ router = Router(name=__name__)
 
 @router.callback_query(
         TimePickerCallbackData.filter(),
-        CreateState.reminder_time_picker
+        CreateState.time_picker
     )
 async def handle_time_picker_selector(
     callback: CallbackQuery,
@@ -35,26 +35,35 @@ async def handle_time_picker_selector(
 
             selected_time = f"{callback_data.hours_tens}{callback_data.hours_ones}:{callback_data.minutes_tens}{callback_data.minutes_ones}"
             
-            # Log the final selected time for debugging
-            logger.info(f"Final selected time: {selected_time}")
-
-            #TODO: Fix the issue with the reminder time
             description_task = data.get("description_task")
-            single_date = data.get("single_date")
+            date = data.get("date")
             utc_offset = data.get("time_zone")
+            
 
-            reminder_time = convert_string_to_datetime(
+            _time = convert_string_to_datetime(
                 selected_time,
                 utc_offset
             )
+            
+            _datetime = datetime(
+                year=date.year,
+                month=date.month,
+                day=date.day,
+                hour=_time.hour,
+                minute=_time.minute,
+                second=0,
+                microsecond=0,
+                tzinfo=_time.tzinfo
+            )
+
+            await state.update_data(date=_datetime)
 
             await state.set_state(CreateState.final_confirmation)
             await callback.answer(f"Time confirmed: {selected_time}")
             await callback.message.answer(
                 text=msg_task_single_reminder_final_confirmation % (
                     description_task,
-                    single_date,
-                    reminder_time
+                    _datetime
                 ),
                 reply_markup=final_confirmation_kb()
             )

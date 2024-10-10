@@ -40,13 +40,18 @@ async def handle_task_information(
         task = await db.get_task_by_id(task_id=callback_data.id)
         await callback.message.delete()
         await callback.message.answer(
-            text=(task_completed
+            text=(task_completed % (
+                    task.creation_date,
+                    task.description,
+                    task.reminder_date
+                )
                 if task.completion_date
-                else task_ongoing) % (
+                else task_ongoing
+                % (
                     task.creation_date,
                     task.description,
                     task.completion_date
-                ),
+                )),
             reply_markup=task_completed_kb(task.id)
                 if task.completion_date
                 else task_ongoing_kb(task.id)

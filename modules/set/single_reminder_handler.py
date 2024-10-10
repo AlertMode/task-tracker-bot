@@ -53,8 +53,8 @@ async def handle_simple_calendar_date_selection(
     await callback.answer()
     selected, date = await SimpleCalendar().process_selection(callback, callback_data)
     if selected:
-        await state.update_data(single_date = date)
-        await state.set_state(CreateState.reminder_time_zone)
+        await state.update_data(date = date)
+        await state.set_state(CreateState.time_zone)
         await callback.message.answer(
             text=task_reminder_timezone,
             reply_markup=create_time_zone_keyboard()

@@ -7,20 +7,20 @@ from aiogram.types import (
     CallbackQuery
 )
 
+from database.database import DataBase
+from modules.add.task_creation_callback import *
+from modules.add.task_creation_kb import *
+from modules.add.task_creation_state import CreateState
+from modules.common.auxilary_handler import *
 from modules.common.commands_callback import (
     MenuCommands,
     MenuCommandsCallback
 )
-from modules.add.task_creation_callback import *
 from modules.list.task_list_callback import TaskStatus
-from database.database import DataBase
-from modules.common.auxilary_handler import *
-from modules.set.single_reminder_handler import router as single_reminder_router
-from modules.set.recurrig_reminder_handler import router as recurring_reminder_router
-from modules.start.start_kb import start_kb
-from modules.add.task_creation_kb import *
 from modules.list.task_list_kb import task_list_kb
-from modules.add.task_creation_state import CreateState
+from modules.set.recurrig_reminder_handler import router as recurring_reminder_router
+from modules.set.single_reminder_handler import router as single_reminder_router
+from modules.start.start_kb import start_kb
 from utils.dictionary import *
 
 
@@ -56,12 +56,6 @@ async def return_to_main_menu_handler(
         text=mag_task_creation_cancel_cmd,
         reply_markup=start_kb()
     )
-    #TODO: File "D:\Projects\task-tracker-bot\modules\add\task_creation_handler.py", line 59, in return_to_main_menu_handler
-    #ERROR - Cause exception while process update id=476359806 by bot id=6833316623
-    #AttributeError: 'CallbackQuery' object has no attribute 'message_id'
-    await store_message_id(state=state, message_id=message.message_id)
-    await store_message_id(state=state, message_id=message.message_id)
-    await delete_all_messages(state=state, bot=bot, chat_id=message.from_user.id)
     await state.clear()
 
 
@@ -254,7 +248,7 @@ async def handle_final_confirmation(
             reminder_date = task['next_reminder_date']
             selected_days = task['selected_days']
         else:
-            reminder_date = task['single_date']
+            reminder_date = task['date']
 
         await db.add_task(
             description=task['description_task'],
