@@ -99,7 +99,9 @@ async def handle_task_list(
         await callback.answer()
         user = await db.get_user(callback.from_user.id)
         tasks = await db.get_all_tasks_by_user(user_id=user.id, status=callback_data.type)
-        await callback.message.delete()
+        
+        # Reverse the list to show the latest tasks first.
+        tasks = tasks[::-1]
         if tasks:
             await callback.message.answer(
                 text=f'Tasks:',
@@ -115,4 +117,4 @@ async def handle_task_list(
                 reply_markup=task_type_kb()
             )
     except Exception as error:
-        logger.error(f'Error: tasks_list_handler(): {error}')
+        logger.error(f'Error: handle_task_list(): {error}')

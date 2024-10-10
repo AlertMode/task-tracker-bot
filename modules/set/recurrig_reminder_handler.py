@@ -85,14 +85,14 @@ async def handle_day_selection(
                 text=task_reminder_time,
                 reply_markup=None
             )
-            await state.set_state(CreateState.reminder_time)
+            await state.set_state(CreateState.time)
 
     except Exception as error:
         logger.error(f"handle_day_selection: {error}")
 
 
 @router.message(
-CreateState.reminder_time,
+CreateState.time,
 F.text.cast(validate_time_format).as_("time")
 )
 async def handle_reminder_time_input(
@@ -128,7 +128,7 @@ async def handle_reminder_time_input(
 
 
 @router.message(
-    CreateState.reminder_time
+    CreateState.time
 )
 async def handle_reminder_invalid_time_input(
     message: Message,

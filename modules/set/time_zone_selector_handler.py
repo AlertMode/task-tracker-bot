@@ -16,7 +16,7 @@ router.include_router(time_picker_router)
 
 @router.callback_query(
         TimeZoneSelectorCallbackData.filter(),
-        CreateState.reminder_time_zone
+        CreateState.time_zone
 )
 async def handle_time_zone_selector(
     callback: CallbackQuery,
@@ -38,7 +38,7 @@ async def handle_time_zone_selector(
         selected_time_zone = callback_data.time_zone
         await state.update_data(time_zone=selected_time_zone)
 
-        await state.set_state(CreateState.reminder_time_picker)
+        await state.set_state(CreateState.time_picker)
         await callback.message.answer(
             text=task_reminder_time_picker,
             reply_markup=create_time_picker_keyboard()
