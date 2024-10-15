@@ -7,7 +7,6 @@ from aiogram.types import (
 
 from database.database import DataBase
 from modules.start.start_kb import *
-from scheduler_handler import start_user_job
 from utils.dictionary import *
 from utils.logging_config import logger
 
