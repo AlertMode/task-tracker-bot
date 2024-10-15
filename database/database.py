@@ -326,3 +326,30 @@ class DataBase():
             logger.error(f'set_task_undone() error: {error}')
             await session.rollback()
             raise
+
+
+async def get_all_tasks_by_reminder_date(
+        self,
+        current_datetime: datetime
+    ) -> Sequence[Tasks]:
+    """
+    Retrieve all tasks that have a reminder date equal to the current date.
+
+    Args:
+        current_datetime (datetime): The current date and time.
+
+    Returns:
+        Sequence[Tasks]: A sequence of tasks with a reminder date equal to the current date.
+    """
+    try:
+        async with self.Session() as session:
+            query = (
+                select(Tasks)
+                .filter(Tasks.reminder_date <= current_datetime)
+                .filter(Tasks.completion_date.is_(None))
+            )
+            result = await session.execute(query)
+            return result.scalars().all()
+    except SQLAlchemyError as error:
+        logger.error(f'get_tasks_by_reminder_date() error: {error}')
+        raise
