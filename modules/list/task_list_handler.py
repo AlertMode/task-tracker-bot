@@ -51,8 +51,8 @@ async def handle_task_type_selection_command(message: Message, bot: Bot) -> None
     Returns:
         None
     """
-    await handle_task_type_selection(user_id=message.from_user.id, bot=bot)
     await message.delete()
+    await handle_task_type_selection(user_id=message.from_user.id, bot=bot)
 
 
 @router.callback_query(
@@ -72,8 +72,8 @@ async def handle_task_type_selection_callback(callback: CallbackQuery, bot: Bot)
         None
     """
     await callback.answer()
-    await handle_task_type_selection(user_id=callback.from_user.id, bot=bot)
     await callback.message.delete()
+    await handle_task_type_selection(user_id=callback.from_user.id, bot=bot)
 
 
 @router.callback_query(
@@ -97,6 +97,7 @@ async def handle_task_list(
     """
     try:
         await callback.answer()
+        await callback.message.delete()
         user = await db.get_user(callback.from_user.id)
         tasks = await db.get_all_tasks_by_user(user_id=user.id, status=callback_data.type)
         

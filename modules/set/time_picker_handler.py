@@ -61,7 +61,7 @@ async def handle_time_picker_selector(
             await state.set_state(CreateState.final_confirmation)
             await callback.answer(f"Time confirmed: {selected_time}")
             await callback.message.answer(
-                text=msg_task_single_reminder_final_confirmation % (
+                text=msg_final_confirmation % (
                     description_task,
                     _datetime
                 ),

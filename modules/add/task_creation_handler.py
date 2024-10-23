@@ -6,6 +6,8 @@ from aiogram.types import (
     Message,
     CallbackQuery
 )
+from aiogram3_calendar import SimpleCalendar
+from aiogram3_calendar.calendar_types import SimpleCalendarCallback
 
 from database.database import DataBase
 from modules.add.task_creation_callback import *
@@ -18,15 +20,14 @@ from modules.common.commands_callback import (
 )
 from modules.list.task_list_callback import TaskStatus
 from modules.list.task_list_kb import task_list_kb
-from modules.set.recurrig_reminder_handler import router as recurring_reminder_router
-from modules.set.single_reminder_handler import router as single_reminder_router
+from modules.set.time_zone_selector_handler import router as time_zone_selector_router
+from modules.set.time_zone_selector_kb import create_time_zone_keyboard
 from modules.start.start_kb import start_kb
 from utils.dictionary import *
 
 
 router = Router(name=__name__)
-router.include_router(single_reminder_router)
-router.include_router(recurring_reminder_router)
+router.include_router(time_zone_selector_router)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
@@ -76,15 +77,13 @@ async def handle_task_creation(
         None
     """
     try:
-        response = await bot.send_message(
+        await bot.send_message(
             chat_id=user_id,
             text=msg_task_creation_description_prompt,
             reply_markup=return_to_main_menu_kb
         )
         await state.clear()
-        await delete_all_messages(state=state, bot=bot, chat_id=user_id)
-        await state.set_state(CreateState.description_task)
-        await store_message_id(state=state, message_id=response.message_id)
+        await state.set_state(CreateState.description)
     except Exception as error:
         logger.error(f"handle_task_creation: {error}")
 
@@ -111,7 +110,6 @@ async def create_task_command(
         state=state,
         bot=bot
     )
-    await store_message_id(state=state, message_id=message.message_id)
 
 
 @router.callback_query(
@@ -135,16 +133,16 @@ async def create_task_callback(
     Returns:
         None
     """
+    await callback.answer()
+    await callback.message.delete()
     await handle_task_creation(
         user_id=callback.from_user.id,
         state=state,
         bot=bot    
     )
-    await callback.answer()
-    await store_message_id(state=state, message_id=callback.message.message_id)
     
 
-@router.message(CreateState.description_task, F.text)
+@router.message(CreateState.description, F.text)
 async def handle_task_description_input(
     message: Message,
     bot: Bot,
@@ -162,26 +160,20 @@ async def handle_task_description_input(
         None
     """
     try:
-        await delete_all_messages(
-            state=state,
-            bot=bot,
-            chat_id=message.from_user.id
-        )
+        await message.delete()
         await state.update_data(description_task=message.text)
-        await state.set_state(CreateState.reminder_type)
-        await store_message_id(state=state, message_id=message.message_id)
+        await state.set_state(CreateState.date)
         await bot.send_message(
             chat_id=message.from_user.id,
-            text=task_reminder_type_selection,
-            reply_markup=reminder_type_selection_kb() 
+            text=msg_date_selection,
+            reply_markup = await SimpleCalendar().start_calendar()
         )
-        await message.delete()
     except Exception as error:
         logger.error(f"handle_task_description_input: {error}")
         await state.clear()
 
 
-@router.message(CreateState.description_task)
+@router.message(CreateState.description)
 async def handle_invalid_description_content_type(
     message: Message,
     bot: Bot
@@ -207,6 +199,26 @@ async def handle_invalid_description_content_type(
         
 
 @router.callback_query(
+    SimpleCalendarCallback.filter()
+)
+async def handle_simple_calendar_date_selection(
+    callback: CallbackQuery,
+    callback_data: dict,
+    state: FSMContext
+) -> None:
+    await callback.answer()
+    selected, date = await SimpleCalendar().process_selection(callback, callback_data)
+    if selected:
+        await state.update_data(date = date)
+        await state.set_state(CreateState.time_zone)
+        await callback.message.delete()
+        await callback.message.answer(
+            text=task_reminder_timezone,
+            reply_markup=create_time_zone_keyboard()
+)
+
+
+@router.callback_query(
         CommonActionCallbackData.filter(
             F.action == CommonAction.SKIP
         ),
@@ -223,6 +235,7 @@ async def handle_invalid_description_content_type(
 )
 async def handle_final_confirmation(
     message: Message,
+    callback: CallbackQuery,
     state: FSMContext,
     bot: Bot
 ) -> None:
@@ -242,20 +255,11 @@ async def handle_final_confirmation(
         db = DataBase()
         user = await db.get_user(message.from_user.id)
 
-        reminder_date = None
-        selected_days = None
-        if task['reminder_type'] == ReminderType.RECURRING:
-            reminder_date = task['next_reminder_date']
-            selected_days = task['selected_days']
-        else:
-            reminder_date = task['date']
-
         await db.add_task(
             description=task['description_task'],
             creation_date=datetime.today(),
             user_id=user.id,
-            reminder_date=reminder_date,
-            recurring_days=selected_days
+            reminder_date=task['date']
         )
 
         tasks = await db.get_all_tasks_by_user(

@@ -26,53 +26,19 @@ class MenuNames:
 
 #Task creation
 msg_task_creation_description_prompt = '✍ Input the task:'
+msg_date_selection = '📅 Choose the date'
 mag_task_creation_cancel_cmd = '❌ Task creation has been cancelled'
 msg_task_creation_completed = '☑️ Task saved: <b>%s</b>'
 msg_task_createion_invalid_content_type = '❓ Please, type in a text'
-msg_task_single_reminder_final_confirmation = (
+msg_final_confirmation = (
     '📜 Task: <b>%s</b>\n'
     '📅 Date: <b>%s</b>'
 )
-msg_task_recurring_reminder_final_confirmation = (
-    '📜 Task: <b>%s</b>\n'
-    '⏰ Time: <b>%s</b>\n'
-    '🔁 Interval number: <b>%s</b>\n'
-    '📅 Interval type: <b>%s</b>\n'
-    '🗓️ Next reminder: <b>%s</b>'
-)
+
 
 #Reminder setting
-task_reminder_type_selection = '🔔 Choose the reminder type'
-task_reminder_message = '📅 Choose the day'
-task_reminder_no_days_selected = '🚧 No days were selected'
-task_reminder_time = ('🕒 Set the reminder time in the format ' 
-                     '<b>HH:MM +UTC</b> (e.g., 12:34 +3)')
 task_reminder_timezone = '🌐 Set the timezone'
 task_reminder_time_picker = '🕒 Set the reminder time'
-task_remimder_invalid_time_format = '❓ Invalid time format! Please, try again!'
-task_reminder_interval_selection = '📅 Choose the interval: daily interval or weekly interval or etc'
-msg_reminder_invalid_interval_number = (
-    '❓ Invalid interval format!\n'
-    'Please, type in an integer value!'
-)
-
-button_task_reminder_unchecked = '🔲 %s'
-button_task_reminder_checked = '✅ %s'
-button_task_reminder_recurring = '🔁 Recurring'
-button_task_reminder_single = '⏰ Single'
-
-
-#Reminder Interval
-task_reminder_interval_selection = '⏱ Choose the interval: daily interval or weekly interval or etc'
-msg_reminder_interval_number = '⏱ Set the interval number. Only integer values!'
-
-button_task_reminder_daily = '📅 Daily'
-button_task_reminder_weekly = '📅 Weekly'
-button_task_reminder_monthly = '📅 Monthly'
-button_task_reminder_yearly = '📅 Yearly'
-
-
-#Single reminder
 single_reminder_message = '📅 Set the reminder date'
 
 
