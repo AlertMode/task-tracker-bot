@@ -57,7 +57,7 @@ async def handle_task_information(
                 else task_ongoing_kb(task.id)
         )
     except Exception as error:
-        logger.error(f'get_task_information(): {error}')
+        logger.error(f'handle_task_information(): {error}')
 
 
 @router.callback_query(
@@ -81,6 +81,7 @@ async def handle_task_information_alteration(
     """
     try:
         await callback.answer()
+        await callback.message.delete()
         user = await db.get_user(callback.from_user.id)
         task_id = callback_data.id
         message = None
@@ -109,7 +110,6 @@ async def handle_task_information_alteration(
                 from_the_end=True
             ) if tasks else task_type_kb()
         )
-        await callback.message.delete()
     except Exception as error:
-        logger.error(f'Database Query Error: {error}')
+        logger.error(f'handle_task_information_alteration: {error}')
         await callback.message.answer(error_message)

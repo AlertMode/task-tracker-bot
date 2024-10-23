@@ -126,8 +126,7 @@ class DataBase():
             description: str,
             creation_date: datetime,
             user_id: int,
-            reminder_date: Optional[datetime] = None,
-            recurring_days: Optional[List[RecurringDays]] = None
+            reminder_date: Optional[datetime] = None
         ) -> None:
         """
         Add a new task to the database.
@@ -153,50 +152,11 @@ class DataBase():
                 session.add(task)
                 await session.flush()
 
-                if recurring_days:
-                    await self.add_reminder(
-                        session=session,
-                        task_id=task.id,
-                        days_of_week=recurring_days
-                    )
-
                 await session.commit()
         except SQLAlchemyError as error:
             logger.error(f'add_tasks() error: {error}')
             await session.rollback()
             raise
-
-
-    async def add_reminder(
-            self,
-            session: AsyncSession,
-            task_id: int,
-            days_of_week: List[RecurringDays]
-    ) -> None:
-        """
-        Add a reminder to a task.
-
-        Args:
-            session (AsyncSession): The session object.
-            task_id (int): The ID of the task to which the reminder belongs.
-            recurring_days (List[RecurringDays]): The days of the week for the reminder.
-
-        Returns:
-            None
-        """
-        try:
-            for day in days_of_week:
-                session.add(
-                    RecurringDays(
-                        task_id=task_id,
-                        day=day
-                    )
-                )
-            await session.flush()
-        except SQLAlchemyError as error:
-            logger.error(f'add_reminder() error: {error}')
-            raise
-
     
 
     async def get_task_by_id(
