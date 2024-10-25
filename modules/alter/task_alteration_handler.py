@@ -43,14 +43,14 @@ async def handle_task_information(
             text=(task_completed % (
                     task.creation_date,
                     task.description,
-                    task.reminder_date
+                    task.completion_date
                 )
                 if task.completion_date
                 else task_ongoing
                 % (
                     task.creation_date,
                     task.description,
-                    task.completion_date
+                    task.reminder_date
                 )),
             reply_markup=task_completed_kb(task.id)
                 if task.completion_date
