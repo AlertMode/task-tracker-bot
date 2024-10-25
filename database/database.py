@@ -330,3 +330,37 @@ class DataBase():
         except SQLAlchemyError as error:
             logger.error(f'get_tasks_by_reminder_date() error: {error}')
             raise
+
+    
+    async def set_task_reminded(
+            self,
+            user_id: int,
+            task_id: int
+        ) -> None:
+        """
+        Marks a task as reminded.
+
+        Args:
+            user_id (int): The ID of the user who owns the task.
+            task_id (int): The ID of the task to mark as reminded.
+
+        Returns:
+            None
+        """
+        try:
+            async with self.Session() as session:
+                await session.execute(
+                    update(Tasks)
+                    .values(
+                        is_reminded=True
+                    )
+                    .where(
+                        Tasks.user_id == user_id,
+                        Tasks.id == task_id
+                    )
+                )
+                await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f'set_task_reminded() error: {error}')
+            await session.rollback()
+            raise

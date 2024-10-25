@@ -63,10 +63,16 @@ async def check_reminders(bot: Bot, database: DataBase) -> None:
             )
 
             for task in tasks:
-                if task.reminder_date and task.reminder_date <= start_of_minute:
+                if (
+                    task.reminder_date 
+                    and task.reminder_date <= start_of_minute
+                    and task.is_reminded is False
+                    ):
                     await send_reminder(bot=bot, task=task, user_id=user.telegram_id)
-            #TODO: Set the reminder_date to None after sending the reminder
-            # or create a separate column for the reminder_date
+                    await database.set_task_reminded(
+                        user_id=user.id,
+                        task_id=task.id
+                    )
 
     except Exception as error:
         logger.error(f"check_reminders: {error}")

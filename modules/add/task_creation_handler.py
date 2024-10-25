@@ -52,12 +52,15 @@ async def return_to_main_menu_handler(
     Returns:
         None
     """
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text=mag_task_creation_cancel_cmd,
-        reply_markup=start_kb()
-    )
-    await state.clear()
+    try:
+        await state.clear()
+        await bot.send_message(
+            chat_id=message.from_user.id,
+            text=mag_task_creation_cancel_cmd,
+            reply_markup=start_kb()
+        )
+    except Exception as error:
+        logger.error(f"return_to_main_menu_handler: {error}")
 
 
 async def handle_task_creation(
@@ -105,11 +108,15 @@ async def create_task_command(
     Returns:
         None
     """
-    await handle_task_creation(
-        user_id = message.from_user.id,
-        state=state,
-        bot=bot
-    )
+    try:
+        message.delete()
+        await handle_task_creation(
+            user_id = message.from_user.id,
+            state=state,
+            bot=bot
+        )
+    except Exception as error:
+        logger.error(f"create_task_command: {error}")
 
 
 @router.callback_query(
@@ -133,13 +140,16 @@ async def create_task_callback(
     Returns:
         None
     """
-    await callback.answer()
-    await callback.message.delete()
-    await handle_task_creation(
-        user_id=callback.from_user.id,
-        state=state,
-        bot=bot    
-    )
+    try:
+        await callback.answer()
+        await callback.message.delete()
+        await handle_task_creation(
+            user_id=callback.from_user.id,
+            state=state,
+            bot=bot    
+        )
+    except Exception as error:
+        logger.error(f"create_task_callback: {error}")
     
 
 @router.message(CreateState.description, F.text)
@@ -206,16 +216,20 @@ async def handle_simple_calendar_date_selection(
     callback_data: dict,
     state: FSMContext
 ) -> None:
-    await callback.answer()
-    selected, date = await SimpleCalendar().process_selection(callback, callback_data)
-    if selected:
-        await state.update_data(date = date)
-        await state.set_state(CreateState.time_zone)
-        await callback.message.delete()
-        await callback.message.answer(
-            text=task_reminder_timezone,
-            reply_markup=create_time_zone_keyboard()
-)
+    try:
+        await callback.answer()
+        selected, date = await SimpleCalendar().process_selection(callback, callback_data)
+        if selected:
+            await state.update_data(date = date)
+            await state.set_state(CreateState.time_zone)
+            await callback.message.delete()
+            await callback.message.answer(
+                text=task_reminder_timezone,
+                reply_markup=create_time_zone_keyboard()
+            )
+    except Exception as error:
+        logger.error(f"handle_simple_calendar_date_selection: {error}")
+        await state.clear()
 
 
 @router.callback_query(
@@ -234,7 +248,6 @@ async def handle_simple_calendar_date_selection(
         )
 )
 async def handle_final_confirmation(
-    message: Message,
     callback: CallbackQuery,
     state: FSMContext,
     bot: Bot
@@ -243,9 +256,9 @@ async def handle_final_confirmation(
     Handles the final confirmation of the task creation and writes to the database.
 
     Args:
-        message (Message): The incoming message object.
+        callback (CallbackQuery): The callback query object.
         state (FSMContext): The FSM context object.
-        bot (Bot): The bot instance.
+        bot (Bot): The bot object.
 
     Returns:
         None
@@ -253,7 +266,7 @@ async def handle_final_confirmation(
     try:
         task = await state.get_data()
         db = DataBase()
-        user = await db.get_user(message.from_user.id)
+        user = await db.get_user(callback.from_user.id)
 
         await db.add_task(
             description=task['description_task'],
@@ -266,8 +279,10 @@ async def handle_final_confirmation(
             user_id=user.id,
             status=TaskStatus.ONGOING  
         )
+        await callback.answer()
+        await callback.message.delete()
         await bot.send_message(
-            chat_id=message.from_user.id,
+            chat_id=callback.from_user.id,
             text=msg_task_creation_completed % task['description_task'],
             reply_markup=task_list_kb(
                 tasks=tasks,
@@ -279,7 +294,7 @@ async def handle_final_confirmation(
     except Exception as error:
         logger.error(f'handle_final_confirmation: {error}')
         await bot.send_message(
-            chat_id=message.from_user.id,
+            chat_id=callback.from_user.id,
             text=error_message,
             reply_markup=None
         )
