@@ -1,6 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
-class CreateState(StatesGroup):
+class CreateTaskState(StatesGroup):
     description = State()
     date = State()
     time_zone = State()

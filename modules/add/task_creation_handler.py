@@ -12,7 +12,7 @@ from aiogram3_calendar.calendar_types import SimpleCalendarCallback
 from database.database import DataBase
 from modules.add.task_creation_callback import *
 from modules.add.task_creation_kb import *
-from modules.add.task_creation_state import CreateState
+from modules.add.task_creation_state import CreateTaskState
 from modules.common.auxilary_handler import *
 from modules.common.commands_callback import (
     MenuCommands,
@@ -86,7 +86,7 @@ async def handle_task_creation(
             reply_markup=return_to_main_menu_kb
         )
         await state.clear()
-        await state.set_state(CreateState.description)
+        await state.set_state(CreateTaskState.description)
     except Exception as error:
         logger.error(f"handle_task_creation: {error}")
 
@@ -152,7 +152,7 @@ async def create_task_callback(
         logger.error(f"create_task_callback: {error}")
     
 
-@router.message(CreateState.description, F.text)
+@router.message(CreateTaskState.description, F.text)
 async def handle_task_description_input(
     message: Message,
     bot: Bot,
@@ -172,7 +172,7 @@ async def handle_task_description_input(
     try:
         await message.delete()
         await state.update_data(description_task=message.text)
-        await state.set_state(CreateState.date)
+        await state.set_state(CreateTaskState.date)
         await bot.send_message(
             chat_id=message.from_user.id,
             text=msg_date_selection,
@@ -183,7 +183,7 @@ async def handle_task_description_input(
         await state.clear()
 
 
-@router.message(CreateState.description)
+@router.message(CreateTaskState.description)
 async def handle_invalid_description_content_type(
     message: Message,
     bot: Bot
@@ -209,6 +209,7 @@ async def handle_invalid_description_content_type(
         
 
 @router.callback_query(
+    CreateTaskState.date,
     SimpleCalendarCallback.filter()
 )
 async def handle_simple_calendar_date_selection(
@@ -221,7 +222,7 @@ async def handle_simple_calendar_date_selection(
         selected, date = await SimpleCalendar().process_selection(callback, callback_data)
         if selected:
             await state.update_data(date = date)
-            await state.set_state(CreateState.time_zone)
+            await state.set_state(CreateTaskState.time_zone)
             await callback.message.delete()
             await callback.message.answer(
                 text=task_reminder_timezone,
@@ -239,10 +240,10 @@ async def handle_simple_calendar_date_selection(
         # Filter the CommonActionCallbackData to the reminder type state.
         # In order to prevent the callback from being called in other states
         # or by other similar callback data.
-        CreateState()
+        CreateTaskState()
 )
 @router.callback_query(
-    CreateState.final_confirmation,
+    CreateTaskState.final_confirmation,
     CommonActionCallbackData.filter(
             F.action == CommonAction.CONFIRM
         )
@@ -284,12 +285,7 @@ async def handle_final_confirmation(
         await bot.send_message(
             chat_id=callback.from_user.id,
             text=msg_task_creation_completed % task['description_task'],
-            reply_markup=task_list_kb(
-                tasks=tasks,
-                current_page=0,
-                task_status=TaskStatus.ONGOING,
-                from_the_end=True
-            )
+            reply_markup=None
         )
     except Exception as error:
         logger.error(f'handle_final_confirmation: {error}')

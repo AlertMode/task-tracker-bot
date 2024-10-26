@@ -81,7 +81,7 @@ def task_list_kb(tasks, current_page=0, task_status=TaskStatus.ONGOING, from_the
             InlineKeyboardButton(
                 text=task.description,
                 callback_data=TaskAlterationCallbackData(
-                    action=TaskAlterationAction.SKIP,
+                    action=TaskAlterationAction.SELECT,
                     id=task.id,
                     status=task_status
                 ).pack()

@@ -334,7 +334,6 @@ class DataBase():
     
     async def set_task_reminded(
             self,
-            user_id: int,
             task_id: int
         ) -> None:
         """
@@ -355,12 +354,109 @@ class DataBase():
                         is_reminded=True
                     )
                     .where(
-                        Tasks.user_id == user_id,
                         Tasks.id == task_id
                     )
                 )
                 await session.commit()
         except SQLAlchemyError as error:
             logger.error(f'set_task_reminded() error: {error}')
+            await session.rollback()
+            raise
+
+    
+    async def set_task_not_reminded(
+            self,
+            task_id: int
+    ) -> None:
+        """
+        Marks a task as not reminded.
+
+        Args:
+            user_id (int): The ID of the user who owns the task.
+            task_id (int): The ID of the task to mark as not reminded.
+
+        Returns:
+            None
+        """
+        try:
+            async with self.Session() as session:
+                await session.execute(
+                    update(Tasks)
+                    .values(
+                        is_reminded=False
+                    )
+                    .where(
+                        Tasks.id == task_id
+                    )
+                )
+                await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f'set_task_not_reminded() error: {error}')
+            await session.rollback()
+            raise
+
+        
+    async def edit_task_description(
+            self,
+            task_id: int,
+            new_description: str
+        ) -> None:
+        """
+        Edit the description of a task.
+
+        Args:
+            task_id (int): The ID of the task to edit.
+            new_description (str): The new description for the task.
+
+        Returns:
+            None
+        """
+        try:
+            async with self.Session() as session:
+                await session.execute(
+                    update(Tasks)
+                    .values(
+                        description=new_description
+                    )
+                    .where(
+                        Tasks.id == task_id
+                    )
+                )
+                await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f'edit_task_description() error: {error}')
+            await session.rollback()
+            raise
+
+
+    async def update_task_reminder_date(
+            self,
+            task_id: int,
+            reminder_date: datetime
+        ) -> None:
+        """
+        Edit the reminder date of a task.
+
+        Args:
+            task_id (int): The ID of the task to edit.
+            new_reminder_date (datetime): The new reminder date for the task.
+
+        Returns:
+            None
+        """
+        try:
+            async with self.Session() as session:
+                await session.execute(
+                    update(Tasks)
+                    .values(
+                        reminder_date=reminder_date
+                    )
+                    .where(
+                        Tasks.id == task_id
+                    )
+                )
+                await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f'edit_task_reminder_date() error: {error}')
             await session.rollback()
             raise
