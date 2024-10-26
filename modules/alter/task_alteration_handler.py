@@ -201,7 +201,13 @@ async def handle_task_edit(
             await state.set_state(AlterTaskState.edit_time_zone)
         elif (callback_data.action == TaskEditAction.CHANGE_TIME):
             message = task.reminder_date.strftime('%H:%M')
-            reply=create_time_picker_keyboard()
+            reply=create_time_picker_keyboard(
+                # Pass the time from the task to the time picker
+                hours_tens=task.reminder_date.strftime('%H')[0],
+                hours_ones=task.reminder_date.strftime('%H')[1],
+                minutes_tens=task.reminder_date.strftime('%M')[0],
+                minutes_ones=task.reminder_date.strftime('%M')[1]
+            )
             await state.set_state(AlterTaskState.edit_time)
 
         await state.update_data(task_id=callback_data.id)

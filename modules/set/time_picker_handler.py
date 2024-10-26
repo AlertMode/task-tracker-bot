@@ -28,7 +28,7 @@ router = Router(name=__name__)
 )
 async def handle_time_picker_selector(
     callback: CallbackQuery,
-    state: FSMContext,
+    state: FSMContext
 ) -> None:
     try:
         # Log the received callback data for debugging
