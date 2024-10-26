@@ -29,7 +29,7 @@ async def send_reminder(bot: Bot, task: Tasks, user_id: str) -> None:
         await bot.send_message(
             chat_id=user_id,
             text = (
-                task_ongoing % (
+                msg_task_ongoing % (
                     task.creation_date,
                     task.description,
                     task.reminder_date

@@ -28,7 +28,7 @@ return_to_edit_menu_kb = ReplyKeyboardMarkup(keyboard=[
 
 def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
     button_task_done_kb = InlineKeyboardButton(
-        text=button_task_done,
+        text=btn_task_done,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DONE,
             id=task_id,
@@ -36,7 +36,7 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_task_edit_kb = InlineKeyboardButton(
-        text=button_task_edit,
+        text=btn_task_edit,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.EDIT,
             id=task_id,
@@ -44,7 +44,7 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
-        text=button_task_delete,
+        text=btn_task_delete,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DELETE,
             id=task_id,
@@ -70,7 +70,7 @@ def task_ongoing_kb(task_id) -> InlineKeyboardMarkup:
 
 def task_completed_kb(task_id) -> InlineKeyboardMarkup:
     button_task_undone_kb = InlineKeyboardButton(
-        text=button_task_undone,
+        text=btn_task_undone,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.UNDONE,
             id=task_id,
@@ -78,7 +78,7 @@ def task_completed_kb(task_id) -> InlineKeyboardMarkup:
         ).pack()
     )
     button_task_delete_kb = InlineKeyboardButton(
-        text=button_task_delete,
+        text=btn_task_delete,
         callback_data=TaskAlterationCallbackData(
             action=TaskAlterationAction.DELETE,
             id=task_id,

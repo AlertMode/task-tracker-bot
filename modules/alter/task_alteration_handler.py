@@ -53,7 +53,7 @@ async def return_to_edit_menu_handler(
         )
     except Exception as error:
         logger.error(f'return_to_edit_menu_handler: {error}')
-        await message.answer(error_message)
+        await message.answer(msg_error)
 
 
 @router.callback_query(
@@ -80,13 +80,13 @@ async def handle_task_information(
         task = await db.get_task_by_id(task_id=callback_data.id)
         await callback.message.delete()
         await callback.message.answer(
-            text=(task_completed % (
+            text=(msg_task_completed % (
                     task.creation_date,
                     task.description,
                     task.completion_date
                 )
                 if task.completion_date
-                else task_ongoing
+                else msg_task_ongoing
                 % (
                     task.creation_date,
                     task.description,
@@ -148,7 +148,7 @@ async def handle_task_information_alteration(
         )
 
         await callback.message.answer(
-            text=(f'{message}\n\n{task_status_message}'),
+            text=(f'{message}\n\n{msg_task_status}'),
             reply_markup=task_list_kb(
                 tasks=tasks,
                 current_page=0,
@@ -158,7 +158,7 @@ async def handle_task_information_alteration(
         )
     except Exception as error:
         logger.error(f'handle_task_information_alteration: {error}')
-        await callback.message.answer(error_message)
+        await callback.message.answer(msg_error)
 
 
 @router.callback_query(
@@ -217,7 +217,7 @@ async def handle_task_edit(
         )
     except Exception as error:
         logger.error(f'handle_task_edit: {error}')
-        await callback.message.answer(error_message)
+        await callback.message.answer(msg_error)
 
 
 @router.message(AlterTaskState.edit_description, F.text)
@@ -252,7 +252,7 @@ async def handle_edit_description(
         )
     except Exception as error:
         logger.error(f'handle_edit_description: {error}')
-        await message.answer(error_message)
+        await message.answer(msg_error)
         await state.clear()
 
 

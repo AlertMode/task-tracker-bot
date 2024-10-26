@@ -225,7 +225,7 @@ async def handle_simple_calendar_date_selection(
             await state.set_state(CreateTaskState.time_zone)
             await callback.message.delete()
             await callback.message.answer(
-                text=task_reminder_timezone,
+                text=msg_task_reminder_timezone,
                 reply_markup=create_time_zone_keyboard()
             )
     except Exception as error:
@@ -291,7 +291,7 @@ async def handle_final_confirmation(
         logger.error(f'handle_final_confirmation: {error}')
         await bot.send_message(
             chat_id=callback.from_user.id,
-            text=error_message,
+            text=msg_error,
             reply_markup=None
         )
     finally:

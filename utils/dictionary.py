@@ -1,10 +1,10 @@
-start_message = (
+msg_start_message = (
     f'<b>TaskTracker</b> - a task management bot.'
 )
 
 
 #Error
-error_message = '⚠️ Something went wrong! Please, try again'
+msg_error = '⚠️ Something went wrong! Please, try again'
 
 
 #Common buttons
@@ -38,33 +38,33 @@ msg_final_confirmation = (
 
 
 #Reminder setting
-task_reminder_timezone = '🌐 Set the timezone'
-task_reminder_time_picker = '🕒 Set the reminder time'
-single_reminder_message = '📅 Set the reminder date'
+msg_task_reminder_timezone = '🌐 Set the timezone'
+msg_task_reminder_time_picker = '🕒 Set the reminder time'
+msg_task_reminder_date = '📅 Set the reminder date'
 
 
 #Task management
-task_status_message = '📁 Task status:'
+msg_task_status = '📁 Task status:'
 
-ongoing_tasks = '▶️ Ongoing'
-completed_tasks = '⏹️ Completed'
+msg_ongoing_tasks = '▶️ Ongoing'
+msg_completed_tasks = '⏹️ Completed'
 
-task_ongoing = (
+msg_task_ongoing = (
     '📅 <b>Creation date:</b> %s\n'
     '📜 <b>Description:</b> %s\n'
     '▶️ <b>Reminder date:</b> %s\n'
 )
-task_completed = (
+msg_task_completed = (
     '📅 <b>Creation date:</b> %s\n'
     '📜 <b>Description:</b> %s\n'
     '✅ <b>Completion date:</b> %s\n'
 )
 msg_task_void = '🚧 No tasks were found! 🚧'
 
-button_task_done = '✅ Done'
-button_task_undone = '🔁 Restore'
-button_task_edit = '✏️ Edit'
-button_task_delete = '🗑️ Delete'
+btn_task_done = '✅ Done'
+btn_task_undone = '🔁 Restore'
+btn_task_edit = '✏️ Edit'
+btn_task_delete = '🗑️ Delete'
 
 msg_task_setting_done_completed = (f'Congratulations! 🎉\n\n'
                                'Task has been done!')

@@ -46,7 +46,7 @@ async def handle_start(
 
         await bot.send_message(
             chat_id=user_id,
-            text=start_message,
+            text=msg_start_message,
             reply_markup=start_kb()
         )
 
