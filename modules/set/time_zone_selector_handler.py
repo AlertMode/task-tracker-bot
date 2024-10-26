@@ -51,7 +51,7 @@ async def handle_time_zone_selector(
             await state.update_data(time_zone=selected_time_zone)
             await state.set_state(CreateTaskState.time_picker)
             await callback.message.answer(
-                text=task_reminder_time_picker,
+                text=msg_task_reminder_time_picker,
             reply_markup=create_time_picker_keyboard()
         )
             

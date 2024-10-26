@@ -34,7 +34,7 @@ async def handle_task_type_selection(user_id: int, bot: Bot) -> None:
     """
     await bot.send_message(
         user_id,
-        text=task_status_message,
+        text=msg_task_status,
         reply_markup=task_type_kb()
     )
    
@@ -114,7 +114,7 @@ async def handle_task_list(
             )
         else:
             await callback.message.answer(
-                text=(f'{msg_task_void}\n\n{task_status_message}'),
+                text=(f'{msg_task_void}\n\n{msg_task_status}'),
                 reply_markup=task_type_kb()
             )
     except Exception as error:

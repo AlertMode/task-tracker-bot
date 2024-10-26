@@ -27,13 +27,13 @@ def task_type_kb() -> InlineKeyboardMarkup:
         InlineKeyboardMarkup: The keyboard for selecting the type of tasks to display.
     """
     button_ongoing_tasks = InlineKeyboardButton(
-        text=ongoing_tasks,
+        text=msg_ongoing_tasks,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.ONGOING
         ).pack()
     )
     button_completed_tasks = InlineKeyboardButton(
-        text=completed_tasks,
+        text=msg_completed_tasks,
         callback_data=TaskStatusCallbackData(
             type=TaskStatus.COMPLETED
         ).pack()
