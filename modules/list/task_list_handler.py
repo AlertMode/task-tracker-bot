@@ -114,7 +114,7 @@ async def handle_task_list(
             )
         else:
             await callback.message.answer(
-                text=(f'{task_void_message}\n\n{task_status_message}'),
+                text=(f'{msg_task_void}\n\n{task_status_message}'),
                 reply_markup=task_type_kb()
             )
     except Exception as error:

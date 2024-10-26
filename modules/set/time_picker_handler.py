@@ -2,8 +2,11 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from database.database import DataBase
 from modules.add.task_creation_kb import final_confirmation_kb
-from modules.add.task_creation_state import CreateState
+from modules.add.task_creation_state import CreateTaskState
+from modules.alter.task_alteration_kb import task_edit_kb
+from modules.alter.task_alteration_state import AlterTaskState
 from modules.common.auxilary_handler import *
 from modules.set.time_picker_callback import *
 from modules.set.time_picker_kb import create_time_picker_keyboard
@@ -11,16 +14,21 @@ from utils.dictionary import *
 from utils.logging_config import logger
 
 
+db = DataBase()
 router = Router(name=__name__)
 
 
 @router.callback_query(
         TimePickerCallbackData.filter(),
-        CreateState.time_picker
+        CreateTaskState.time_picker
     )
+@router.callback_query(
+        TimePickerCallbackData.filter(),
+        AlterTaskState.edit_time
+)
 async def handle_time_picker_selector(
     callback: CallbackQuery,
-    state: FSMContext
+    state: FSMContext,
 ) -> None:
     try:
         # Log the received callback data for debugging
@@ -28,45 +36,68 @@ async def handle_time_picker_selector(
 
         # Extract callback data
         callback_data = TimePickerCallbackData.unpack(callback.data)
+        
+        data = await state.get_data()
 
         # Check if the action is 'CONFIRM'
         if callback_data.action == TimePickerAction.CONFIRM:
-            data = await state.get_data()
+            current_state = await state.get_state()
 
             selected_time = f"{callback_data.hours_tens}{callback_data.hours_ones}:{callback_data.minutes_tens}{callback_data.minutes_ones}"
-            
-            description_task = data.get("description_task")
-            date = data.get("date")
-            utc_offset = data.get("time_zone")
-            
 
-            _time = convert_string_to_datetime(
-                selected_time,
-                utc_offset
-            )
-            
-            _datetime = datetime(
-                year=date.year,
-                month=date.month,
-                day=date.day,
-                hour=_time.hour,
-                minute=_time.minute,
-                second=0,
-                microsecond=0,
-                tzinfo=_time.tzinfo
-            )
+            if current_state == CreateTaskState.time_picker.state:
+                description_task = data.get("description_task")
+                date = data.get("date")
+                utc_offset = data.get("time_zone")
+                
 
-            await state.update_data(date=_datetime)
+                _time = convert_string_to_datetime(
+                    selected_time,
+                    utc_offset
+                )
 
-            await state.set_state(CreateState.final_confirmation)
-            await callback.answer(f"Time confirmed: {selected_time}")
-            await callback.message.answer(
-                text=msg_final_confirmation % (
-                    description_task,
-                    _datetime
-                ),
-                reply_markup=final_confirmation_kb()
-            )
+                # Create a datetime object with the selected date and time
+                _datetime = datetime(
+                    year=date.year,
+                    month=date.month,
+                    day=date.day,
+                    hour=_time.hour,
+                    minute=_time.minute,
+                    second=0,
+                    microsecond=0,
+                    tzinfo=_time.tzinfo
+                )
+
+                await state.update_data(date=_datetime)
+                await state.set_state(CreateTaskState.final_confirmation)
+                await callback.answer(f"Time confirmed: {selected_time}")
+                await callback.message.answer(
+                    text=msg_final_confirmation % (
+                        description_task,
+                        _datetime
+                    ),
+                    reply_markup=final_confirmation_kb()
+                )
+
+            elif current_state == AlterTaskState.edit_time.state:
+                task_id = data.get("task_id")
+                task = await db.get_task_by_id(task_id)
+
+                original_datetime = task.reminder_date
+                replaced_time = original_datetime.replace(
+                    hour=int(f"{callback_data.hours_tens}{callback_data.hours_ones}"),
+                    minute=int(f"{callback_data.minutes_tens}{callback_data.minutes_ones}")
+                )
+                await db.update_task_reminder_date(
+                    task_id=task_id,
+                    reminder_date=replaced_time
+                )
+                await state.clear()
+                await callback.message.answer(
+                    text=(f'{msg_task_time_change_completed}\n\n{replaced_time.strftime('%H:%M')}'),
+                    reply_markup=task_edit_kb(task_id)
+                )
+
             await callback.answer()
             await callback.message.delete()
             return

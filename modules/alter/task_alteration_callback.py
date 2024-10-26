@@ -13,10 +13,23 @@ class TaskAlterationAction(IntEnum):
     UNDONE = auto()
     EDIT = auto()
     DELETE = auto()
-    SKIP = auto()
+    SELECT = auto()
+
+
+class TaskEditAction(IntEnum):
+    CHANGE_DESCRIPTION = auto()
+    CHANGE_DATE = auto()
+    CHANGE_TIME_ZONE = auto()
+    CHANGE_TIME = auto()
 
 
 class TaskAlterationCallbackData(CallbackData, prefix='task_alteration'):
     action: TaskAlterationAction
+    id: int
+    status: TaskStatus
+
+
+class TaskEditCallbackData(CallbackData, prefix='task_edit'):
+    action: TaskEditAction
     id: int
     status: TaskStatus

@@ -1,8 +1,7 @@
-from enum import StrEnum
 from typing import List, Optional
 from sqlalchemy import (
     Boolean, DateTime, Integer, ForeignKey,
-    String, Text, UniqueConstraint
+    String, Text
 )
 from sqlalchemy.orm import (
     DeclarativeBase, Mapped, mapped_column,

@@ -18,40 +18,40 @@ return_to_main_menu_kb = ReplyKeyboardMarkup(keyboard=[
 ], resize_keyboard=True, one_time_keyboard=True)
 
 
-def reminder_type_selection_kb() -> InlineKeyboardMarkup:
-    """
-    Generates the keyboard for selecting the reminder options for a task.
+# def reminder_type_selection_kb() -> InlineKeyboardMarkup:
+#     """
+#     Generates the keyboard for selecting the reminder options for a task.
     
-    Returns:
-        InlineKeyboardMarkup: The keyboard for selecting the reminder options for a task.
-    """
-    try:
-        button_single = InlineKeyboardButton(
-            text=button_task_reminder_single,
-            callback_data=ReminderTypeCallbackData(
-                type=ReminderType.SINGLE,
-            ).pack()
-        )
-        button_recurring = InlineKeyboardButton(
-            text=button_task_reminder_recurring,
-            callback_data=ReminderTypeCallbackData(
-                type=ReminderType.RECURRING
-            ).pack()
-        )
-        button_skip = InlineKeyboardButton(
-            text=btn_common_skip,
-            callback_data=CommonActionCallbackData(
-                action=CommonAction.SKIP
-            ).pack()
-        )
-        row_one = [button_single, button_recurring]
-        row_two = [button_skip]
-        markup = InlineKeyboardMarkup(
-            inline_keyboard=[row_one, row_two]
-        )
-        return markup
-    except Exception as error:
-        logger.error(f"reminder_type_selection_kb: {error}")
+#     Returns:
+#         InlineKeyboardMarkup: The keyboard for selecting the reminder options for a task.
+#     """
+#     try:
+#         button_single = InlineKeyboardButton(
+#             text=button_task_reminder_single,
+#             callback_data=ReminderTypeCallbackData(
+#                 type=ReminderType.SINGLE,
+#             ).pack()
+#         )
+#         button_recurring = InlineKeyboardButton(
+#             text=button_task_reminder_recurring,
+#             callback_data=ReminderTypeCallbackData(
+#                 type=ReminderType.RECURRING
+#             ).pack()
+#         )
+#         button_skip = InlineKeyboardButton(
+#             text=btn_common_skip,
+#             callback_data=CommonActionCallbackData(
+#                 action=CommonAction.SKIP
+#             ).pack()
+#         )
+#         row_one = [button_single, button_recurring]
+#         row_two = [button_skip]
+#         markup = InlineKeyboardMarkup(
+#             inline_keyboard=[row_one, row_two]
+#         )
+#         return markup
+#     except Exception as error:
+#         logger.error(f"reminder_type_selection_kb: {error}")
 
 
 def final_confirmation_kb() -> InlineKeyboardMarkup:

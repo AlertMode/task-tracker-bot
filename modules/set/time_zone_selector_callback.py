@@ -4,7 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 
 
 class TimeZone(StrEnum):
-    UTC0 = '0'
+    UTC0 = '+0'
     UTC1 = '+1'
     UTC2 = '+2'
     UTC3 = '+3'

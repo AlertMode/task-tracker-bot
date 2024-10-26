@@ -70,7 +70,6 @@ async def check_reminders(bot: Bot, database: DataBase) -> None:
                     ):
                     await send_reminder(bot=bot, task=task, user_id=user.telegram_id)
                     await database.set_task_reminded(
-                        user_id=user.id,
                         task_id=task.id
                     )
 
