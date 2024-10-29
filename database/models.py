@@ -33,6 +33,7 @@ class Tasks(Base):
     creation_date: Mapped[DateTime] = mapped_column(DateTime)
     update_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     reminder_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
+    reminder_utc: Mapped[Optional[str]] = mapped_column(String(100))
     completion_date: Mapped[Optional[DateTime]] = mapped_column(DateTime)
     is_reminded: Mapped[bool] = mapped_column(Boolean, default=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))

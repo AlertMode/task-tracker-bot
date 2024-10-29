@@ -19,15 +19,13 @@ from modules.common.commands_callback import (
     MenuCommandsCallback
 )
 from modules.list.task_list_callback import TaskStatus
-from modules.list.task_list_kb import task_list_kb
-from modules.set.time_zone_selector_handler import router as time_zone_selector_router
-from modules.set.time_zone_selector_kb import create_time_zone_keyboard
+from modules.set.calendar_handler import router as calendar_handler_router
 from modules.start.start_kb import start_kb
 from utils.dictionary import *
 
 
 router = Router(name=__name__)
-router.include_router(time_zone_selector_router)
+router.include_router(calendar_handler_router)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
@@ -206,31 +204,6 @@ async def handle_invalid_description_content_type(
         )
     except Exception as error:
         logger.error(f"handle_invalid_description_content_type: {error}")
-        
-
-@router.callback_query(
-    CreateTaskState.date,
-    SimpleCalendarCallback.filter()
-)
-async def handle_simple_calendar_date_selection(
-    callback: CallbackQuery,
-    callback_data: dict,
-    state: FSMContext
-) -> None:
-    try:
-        await callback.answer()
-        selected, date = await SimpleCalendar().process_selection(callback, callback_data)
-        if selected:
-            await state.update_data(date = date)
-            await state.set_state(CreateTaskState.time_zone)
-            await callback.message.delete()
-            await callback.message.answer(
-                text=msg_task_reminder_timezone,
-                reply_markup=create_time_zone_keyboard()
-            )
-    except Exception as error:
-        logger.error(f"handle_simple_calendar_date_selection: {error}")
-        await state.clear()
 
 
 @router.callback_query(
@@ -273,7 +246,8 @@ async def handle_final_confirmation(
             description=task['description_task'],
             creation_date=datetime.today(),
             user_id=user.id,
-            reminder_date=task['date']
+            reminder_date=task['date'],
+            reminder_utc=task['time_zone']
         )
 
         tasks = await db.get_all_tasks_by_user(

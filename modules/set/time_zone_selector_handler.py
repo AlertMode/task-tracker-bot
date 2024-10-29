@@ -58,16 +58,17 @@ async def handle_time_zone_selector(
         elif current_state == AlterTaskState.edit_time_zone.state:
             data = await state.get_data()
             task_id = data.get("task_id")
-            task = await db.get_task_by_id(task_id)
+            # task = await db.get_task_by_id(task_id)
 
-            original_datetime = task.reminder_date
-            time_zone = convert_string_to_timezone(selected_time_zone)
-            new_datetime = original_datetime.replace(tzinfo=time_zone)
+            # original_datetime = task.reminder_date
+            # time_zone = convert_string_to_timezone(selected_time_zone)
+            # new_datetime = original_datetime.replace(tzinfo=time_zone)
 
-            await db.update_task_reminder_date(
-                task_id=task_id,
-                reminder_date=new_datetime
-            )
+            # await db.update_task_reminder_date(
+            #     task_id=task_id,
+            #     reminder_date=new_datetime
+            # )
+            await db.update_task_reminder_utc(task_id, selected_time_zone)
             await db.set_task_not_reminded(task_id)
             await state.clear()
             await callback.message.answer(

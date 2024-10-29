@@ -15,23 +15,23 @@ from utils.logging_config import logger
     
 
 def convert_string_to_timezone(
-        time_str: str
+        utc_str: str
 ) -> timezone:
     """
     Converts the string to a timezone.
 
     Args:
-        time_str (str): The time string.
+        utc_str (str): The time string.
 
     Returns:
         int: The timezone.
     """
     try:
         # Extract the sign and the hours from the UTC offset
-        sign = 1 if "+" in time_str else -1
+        sign = 1 if "+" in utc_str else -1
 
         # Extract the hours from the UTC offset
-        utc_offset_hours = int(time_str.replace("+", "").replace("-", ""))
+        utc_offset_hours = int(utc_str.replace("+", "").replace("-", ""))
 
         return timezone(timedelta(hours=sign * utc_offset_hours))
     except Exception as error:
@@ -55,16 +55,7 @@ def convert_string_to_datetime(
     """
     try:
         time_obj = datetime.strptime(time_str, '%H:%M')
-
-        # # Extract the sign and the hours from the UTC offset
-        # sign = 1 if "+" in utc_offset_str else -1
-
-        # # Extract the hours from the UTC offset
-        # utc_offset_hours = int(utc_offset_str.replace("+", "").replace("-", ""))
-
-        # time_zone = timezone(timedelta(hours=sign * utc_offset_hours))
         time_zone = convert_string_to_timezone(utc_offset_str)
-
         return time_obj.replace(tzinfo=time_zone)
     except Exception as error:
         logger.error(f'convert_string_to_datetime(): {error}')

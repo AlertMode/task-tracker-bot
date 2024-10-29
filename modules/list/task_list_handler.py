@@ -32,11 +32,14 @@ async def handle_task_type_selection(user_id: int, bot: Bot) -> None:
     Returns:
         None
     """
-    await bot.send_message(
-        user_id,
-        text=msg_task_status,
-        reply_markup=task_type_kb()
-    )
+    try:
+        await bot.send_message(
+            user_id,
+            text=msg_task_status,
+            reply_markup=task_type_kb()
+        )
+    except Exception as error:
+        logger.error(f'Error: handle_task_type_selection(): {error}')
    
 
 @router.message(F.text == MenuCommands.GET_TASKS.value)
@@ -51,8 +54,11 @@ async def handle_task_type_selection_command(message: Message, bot: Bot) -> None
     Returns:
         None
     """
-    await message.delete()
-    await handle_task_type_selection(user_id=message.from_user.id, bot=bot)
+    try:
+        await message.delete()
+        await handle_task_type_selection(user_id=message.from_user.id, bot=bot)
+    except Exception as error:
+        logger.error(f'Error: handle_task_type_selection_command(): {error}')
 
 
 @router.callback_query(
@@ -71,9 +77,12 @@ async def handle_task_type_selection_callback(callback: CallbackQuery, bot: Bot)
     Returns:
         None
     """
-    await callback.answer()
-    await callback.message.delete()
-    await handle_task_type_selection(user_id=callback.from_user.id, bot=bot)
+    try:
+        await callback.answer()
+        await callback.message.delete()
+        await handle_task_type_selection(user_id=callback.from_user.id, bot=bot)
+    except Exception as error:
+        logger.error(f'Error: handle_task_type_selection_callback(): {error}')
 
 
 @router.callback_query(

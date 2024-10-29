@@ -126,7 +126,8 @@ class DataBase():
             description: str,
             creation_date: datetime,
             user_id: int,
-            reminder_date: Optional[datetime] = None
+            reminder_date: Optional[datetime] = None,
+            reminder_utc: Optional[str] = None
         ) -> None:
         """
         Add a new task to the database.
@@ -136,7 +137,7 @@ class DataBase():
             user_id (int): The ID of the user to whom the task belongs.
             creation_date (datetime): The creation date of the task.
             reminder_date (datetime, optional): The reminder date for the task. Defaults to None.
-            recurring_days (List[RecurringDays], optional): The days of the week for the task's reminder. Defaults to None.
+            reminder_utc (str, optional): The reminder UTC offset for the task. Defaults
 
         Returns:
             None
@@ -147,7 +148,8 @@ class DataBase():
                     description=description,
                     creation_date=creation_date,
                     user_id=user_id,
-                    reminder_date=reminder_date
+                    reminder_date=reminder_date,
+                    reminder_utc=reminder_utc
                 )
                 session.add(task)
                 await session.flush()
@@ -458,5 +460,38 @@ class DataBase():
                 await session.commit()
         except SQLAlchemyError as error:
             logger.error(f'edit_task_reminder_date() error: {error}')
+            await session.rollback()
+            raise
+
+
+    async def update_task_reminder_utc(
+            self,
+            task_id: int,
+            reminder_utc: str
+        ) -> None:
+        """
+        Edit the reminder UTC offset of a task.
+
+        Args:
+            task_id (int): The ID of the task to edit.
+            reminder_utc (str): The new reminder UTC offset for the task.
+
+        Returns:
+            None
+        """
+        try:
+            async with self.Session() as session:
+                await session.execute(
+                    update(Tasks)
+                    .values(
+                        reminder_utc=reminder_utc
+                    )
+                    .where(
+                        Tasks.id == task_id
+                    )
+                )
+                await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f'edit_task_reminder_utc() error: {error}')
             await session.rollback()
             raise
