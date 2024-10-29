@@ -196,7 +196,7 @@ async def handle_task_edit(
             reply = await SimpleCalendar().start_calendar()
             await state.set_state(AlterTaskState.edit_date)
         elif (callback_data.action == TaskEditAction.CHANGE_TIME_ZONE):
-            message = task.reminder_date
+            message = task.reminder_utc
             reply = create_time_zone_keyboard()
             await state.set_state(AlterTaskState.edit_time_zone)
         elif (callback_data.action == TaskEditAction.CHANGE_TIME):
@@ -213,7 +213,7 @@ async def handle_task_edit(
         await state.update_data(task_id=callback_data.id)
         await callback.message.answer(
             text=(message),
-            reply_markup= reply
+            reply_markup=reply
         )
     except Exception as error:
         logger.error(f'handle_task_edit: {error}')
@@ -279,49 +279,3 @@ async def handle_invalid_description_content_type(
         )
     except Exception as error:
         logger.error(f'handle_invalid_description_content_type: {error}')
-
-
-@router.callback_query(AlterTaskState.edit_date, SimpleCalendarCallback.filter())
-async def handle_edit_date(
-    callback: CallbackQuery,
-    callback_data: dict,
-    state: FSMContext
-) -> None:
-    """
-    Handles the task date edit.
-
-    Args:
-        callback (CallbackQuery): The callback query instance.
-        callback_data (dict): The callback data.
-        state (FSMContext): The state machine context.
-  
-    Returns:
-        None
-    """
-    try:
-        await callback.answer()
-        selected, date = await SimpleCalendar().process_selection(callback, callback_data)
-        if selected:
-            task_id = (await state.get_data()).get('task_id')
-            task = await db.get_task_by_id(task_id)
-            origianl_date = task.reminder_date
-            replaced_date = origianl_date.replace(
-                year=date.year,
-                month=date.month,
-                day=date.day
-            )
-            await db.update_task_reminder_date(
-                task_id=task_id,
-                reminder_date=replaced_date
-            )
-            await db.set_task_not_reminded(task_id=task_id)
-            await state.clear()
-            await callback.message.delete()
-            await callback.message.answer(
-                text=(f'{msg_task_date_change_completed}\n\n{replaced_date.strftime('%Y-%m-%d')}'),
-                reply_markup=task_edit_kb(task_id)
-            )
-
-    except Exception as error:
-        logger.error(f'handle_edit_date: {error}')
-        await state.clear()

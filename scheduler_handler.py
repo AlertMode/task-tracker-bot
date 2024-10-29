@@ -1,12 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import asyncio
 
 from aiogram import Bot
-import aioschedule as shcedule
-from sqlalchemy import Sequence
 
 from database.database import *
+from modules.common.auxilary_handler import *
 from modules.list.task_list_callback import *
 from modules.alter.task_alteration_kb import *
 from utils.dictionary import *
@@ -53,7 +52,7 @@ async def check_reminders(bot: Bot, database: DataBase) -> None:
         None
     """
     try:
-        start_of_minute = datetime.now().replace(second=0, microsecond=0)
+        now_aware = datetime.now(timezone.utc).replace(second=0, microsecond=0)
         users = await database.get_all_users()
 
         for user in users:
@@ -63,15 +62,17 @@ async def check_reminders(bot: Bot, database: DataBase) -> None:
             )
 
             for task in tasks:
-                if (
-                    task.reminder_date 
-                    and task.reminder_date <= start_of_minute
-                    and task.is_reminded is False
-                    ):
-                    await send_reminder(bot=bot, task=task, user_id=user.telegram_id)
-                    await database.set_task_reminded(
-                        task_id=task.id
-                    )
+                if task.reminder_date:
+                    utc = convert_string_to_timezone(task.reminder_utc)
+                    date_with_utc = task.reminder_date.replace(tzinfo=utc)
+                    
+                    if (date_with_utc <= now_aware 
+                        and task.is_reminded is False
+                        ):
+                        await send_reminder(bot=bot, task=task, user_id=user.telegram_id)
+                        await database.set_task_reminded(
+                            task_id=task.id
+                        )
 
     except Exception as error:
         logger.error(f"check_reminders: {error}")
