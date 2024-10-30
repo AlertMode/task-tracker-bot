@@ -6,7 +6,6 @@ from aiogram.types import (
 )
 
 from aiogram3_calendar import SimpleCalendar
-from aiogram3_calendar.calendar_types import SimpleCalendarCallback
 
 from modules.alter.task_alteration_callback import (
     TaskAlterationAction,
@@ -81,16 +80,15 @@ async def handle_task_information(
         await callback.message.delete()
         await callback.message.answer(
             text=(msg_task_completed % (
-                    task.creation_date,
                     task.description,
                     task.completion_date
                 )
                 if task.completion_date
                 else msg_task_ongoing
                 % (
-                    task.creation_date,
                     task.description,
-                    task.reminder_date
+                    task.reminder_date,
+                    task.reminder_utc
                 )),
             reply_markup=task_completed_kb(task.id)
                 if task.completion_date
@@ -124,6 +122,7 @@ async def handle_task_information_alteration(
         await callback.message.delete()
         user = await db.get_user(callback.from_user.id)
         task_id = callback_data.id
+        task = await db.get_task_by_id(task_id=callback_data.id)
         message = None
 
         if (callback_data.action == TaskAlterationAction.DONE):
@@ -134,7 +133,12 @@ async def handle_task_information_alteration(
             message = msg_task_setting_undone_completed
         elif (callback_data.action == TaskAlterationAction.EDIT):
             await callback.message.answer(
-                text=msg_edit_task,
+                text=msg_task_ongoing
+                % (
+                    task.description,
+                    task.reminder_date,
+                    task.reminder_utc
+                ),
                 reply_markup=task_edit_kb(task_id)
             )
             return
@@ -218,64 +222,3 @@ async def handle_task_edit(
     except Exception as error:
         logger.error(f'handle_task_edit: {error}')
         await callback.message.answer(msg_error)
-
-
-@router.message(AlterTaskState.edit_description, F.text)
-async def handle_edit_description(
-    message: Message,
-    bot: Bot,
-    state: FSMContext
-) -> None:
-    """
-    Handles the task description edit.
-
-    Args:
-        message (Message): The incoming message object.
-        bot (Bot): The bot instance.
-        state (FSMContext): The state machine context.
-
-    Returns:
-        None
-    """
-    try:
-        message.delete()
-        task_id = (await state.get_data()).get('task_id')
-        await db.edit_task_description(
-            task_id=task_id,
-            new_description=message.text
-        )
-        await state.clear()
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=(f'{msg_task_description_change_completed}\n\n{message.text}'),
-            reply_markup=task_edit_kb(task_id)
-        )
-    except Exception as error:
-        logger.error(f'handle_edit_description: {error}')
-        await message.answer(msg_error)
-        await state.clear()
-
-
-@router.message(AlterTaskState.edit_description)
-async def handle_invalid_description_content_type(
-    message: Message,
-    bot: Bot
-) -> None:
-    """
-    Handles the invalid content type for the task description.
-
-    Args:
-        message (Message): The incoming message object.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
-    try:
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=msg_task_createion_invalid_content_type,
-            reply_markup=None
-        )
-    except Exception as error:
-        logger.error(f'handle_invalid_description_content_type: {error}')

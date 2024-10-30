@@ -10,7 +10,6 @@ from modules.list.task_list_callback import (
     TaskStatusCallbackData,
 )
 from database.database import DataBase
-from modules.alter.task_alteration_handler import router as task_alteration_router
 from modules.list.task_list_kb import *
 from utils.dictionary import *
 from utils.logging_config import logger
@@ -18,7 +17,6 @@ from utils.logging_config import logger
 
 db = DataBase()
 router = Router(name=__name__)
-router.include_router(task_alteration_router)
 
 
 async def handle_task_type_selection(user_id: int, bot: Bot) -> None:
