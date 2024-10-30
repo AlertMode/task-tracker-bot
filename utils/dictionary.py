@@ -50,14 +50,12 @@ msg_ongoing_tasks = '▶️ Ongoing'
 msg_completed_tasks = '⏹️ Completed'
 
 msg_task_ongoing = (
-    '📅 <b>Creation date:</b> %s\n'
-    '📜 <b>Description:</b> %s\n'
-    '▶️ <b>Reminder date:</b> %s\n'
+    '📜 <b>Description:</b> \n%s\n\n'
+    '▶️ <b>Reminder date:</b> \n%s %s\n\n'
 )
 msg_task_completed = (
-    '📅 <b>Creation date:</b> %s\n'
-    '📜 <b>Description:</b> %s\n'
-    '✅ <b>Completion date:</b> %s\n'
+    '📜 <b>Description:</b> %s\n\n'
+    '✅ <b>Completion date:</b> %s\n\n'
 )
 msg_task_void = '🚧 No tasks were found! 🚧'
 
@@ -77,8 +75,6 @@ btn_task_edit_description = '✏️ Edit description'
 btn_task_edit_time = '🕒 Edit time'
 btn_task_edit_timezone = '🌐 Edit timezone'
 btn_task_edit_date = '📅 Edit date'
-
-msg_edit_task = '📝 Chose the edit option:'
 
 msg_task_description_change_completed = '✅ Description has been changed'
 msg_task_date_change_completed = '✅ Date has been changed'

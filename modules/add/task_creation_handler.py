@@ -7,7 +7,6 @@ from aiogram.types import (
     CallbackQuery
 )
 from aiogram3_calendar import SimpleCalendar
-from aiogram3_calendar.calendar_types import SimpleCalendarCallback
 
 from database.database import DataBase
 from modules.add.task_creation_callback import *
@@ -19,13 +18,11 @@ from modules.common.commands_callback import (
     MenuCommandsCallback
 )
 from modules.list.task_list_callback import TaskStatus
-from modules.set.calendar_handler import router as calendar_handler_router
 from modules.start.start_kb import start_kb
 from utils.dictionary import *
 
 
 router = Router(name=__name__)
-router.include_router(calendar_handler_router)
 
 
 @router.message(F.text==MenuNames.MAIN_MENU)
@@ -148,62 +145,6 @@ async def create_task_callback(
         )
     except Exception as error:
         logger.error(f"create_task_callback: {error}")
-    
-
-@router.message(CreateTaskState.description, F.text)
-async def handle_task_description_input(
-    message: Message,
-    bot: Bot,
-    state: FSMContext
-) -> None:
-    """
-    Handles the input of the task description.
-
-    Args:
-        message (Message): The incoming message object.
-        state (FSMContext): The FSM context object.
-        bot (Bot): The bot instance.
-
-    Returns:
-        None
-    """
-    try:
-        await message.delete()
-        await state.update_data(description_task=message.text)
-        await state.set_state(CreateTaskState.date)
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=msg_date_selection,
-            reply_markup = await SimpleCalendar().start_calendar()
-        )
-    except Exception as error:
-        logger.error(f"handle_task_description_input: {error}")
-        await state.clear()
-
-
-@router.message(CreateTaskState.description)
-async def handle_invalid_description_content_type(
-    message: Message,
-    bot: Bot
-) -> None:
-    """
-    Handles the invalid content type for the task description.
-
-    Args:
-        message (Message): The incoming message object.
-        bot (Bot): The bot instance.
-    
-    Returns:
-        None
-    """
-    try:
-        await bot.send_message(
-            chat_id=message.from_user.id,
-            text=msg_task_createion_invalid_content_type,
-            reply_markup=None
-        )
-    except Exception as error:
-        logger.error(f"handle_invalid_description_content_type: {error}")
 
 
 @router.callback_query(
