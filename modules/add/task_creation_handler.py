@@ -6,7 +6,6 @@ from aiogram.types import (
     Message,
     CallbackQuery
 )
-from aiogram3_calendar import SimpleCalendar
 
 from database.database import DataBase
 from modules.add.task_creation_callback import *
@@ -57,9 +56,14 @@ async def return_to_main_menu_handler(
     except Exception as error:
         logger.error(f"return_to_main_menu_handler: {error}")
 
-
+@router.message(F.text == MenuCommands.CREATE_TASK.value)
+@router.callback_query(
+        MenuCommandsCallback.filter(
+            F.option == MenuCommands.CREATE_TASK
+        )
+)
 async def handle_task_creation(
-        user_id: int,
+        answer: CallbackQuery | Message,
         state: FSMContext,
         bot: Bot
 ) -> None:
@@ -75,8 +79,14 @@ async def handle_task_creation(
         None
     """
     try:
+        if isinstance(answer, CallbackQuery):
+            await answer.answer()
+            await answer.message.delete()
+        elif isinstance(answer, Message):
+            await answer.delete()
+
         await bot.send_message(
-            chat_id=user_id,
+            chat_id=answer.from_user.id,
             text=msg_task_creation_description_prompt,
             reply_markup=return_to_main_menu_kb
         )
@@ -84,67 +94,6 @@ async def handle_task_creation(
         await state.set_state(CreateTaskState.description)
     except Exception as error:
         logger.error(f"handle_task_creation: {error}")
-
-
-@router.message(F.text == MenuCommands.CREATE_TASK.value)
-async def create_task_command(
-    message: Message,
-    state: FSMContext,
-    bot: Bot
-) -> None:
-    """
-    Handles the command to create a new task.
-
-    Args:
-        message (Message): The message object representing the command.
-        state (FSMContext): The state object for the conversation.
-        bot (Bot): The bot object for sending messages.
-
-    Returns:
-        None
-    """
-    try:
-        message.delete()
-        await handle_task_creation(
-            user_id = message.from_user.id,
-            state=state,
-            bot=bot
-        )
-    except Exception as error:
-        logger.error(f"create_task_command: {error}")
-
-
-@router.callback_query(
-        MenuCommandsCallback.filter(
-            F.option == MenuCommands.CREATE_TASK
-        )
-)
-async def create_task_callback(
-    callback: CallbackQuery,
-    state: FSMContext,
-    bot: Bot
-) -> None:
-    """
-    Callback function for handling the creation of a task.
-
-    Args:
-        callback (CallbackQuery): The callback query object.
-        state (FSMContext): The FSM context object.
-        bot (Bot): The bot object.
-
-    Returns:
-        None
-    """
-    try:
-        await callback.answer()
-        await callback.message.delete()
-        await handle_task_creation(
-            user_id=callback.from_user.id,
-            state=state,
-            bot=bot    
-        )
-    except Exception as error:
-        logger.error(f"create_task_callback: {error}")
 
 
 @router.callback_query(
