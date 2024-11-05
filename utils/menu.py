@@ -1,7 +1,7 @@
 from aiogram import Bot
 from aiogram.types import BotCommand, BotCommandScopeDefault
 
-from core.dictionary import MenuCommands
+from modules.common.commands_callback import MenuCommands
 
 
 async def set_menu(bot: Bot):
@@ -18,7 +18,7 @@ async def set_menu(bot: Bot):
 
         BotCommand(
             command=MenuCommands.GET_TASKS,
-            description='Show all the lists with tasks'
+            description='Show tasks'
         )
     ]
 
