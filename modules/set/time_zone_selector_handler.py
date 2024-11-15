@@ -7,7 +7,6 @@ from modules.add.task_creation_state import CreateTaskState
 from modules.alter.task_alteration_kb import task_edit_kb
 from modules.alter.task_alteration_state import AlterTaskState
 from modules.common.auxilary_handler import *
-from modules.set.time_picker_handler import router as time_picker_router
 from modules.set.time_picker_kb import create_time_picker_keyboard
 from modules.set.time_zone_selector_callback import *
 from utils.dictionary import *
@@ -16,7 +15,6 @@ from utils.logging_config import logger
 
 db = DataBase()
 router = Router(name=__name__)
-router.include_router(time_picker_router)
 
 
 @router.callback_query(
@@ -58,16 +56,6 @@ async def handle_time_zone_selector(
         elif current_state == AlterTaskState.edit_time_zone.state:
             data = await state.get_data()
             task_id = data.get("task_id")
-            # task = await db.get_task_by_id(task_id)
-
-            # original_datetime = task.reminder_date
-            # time_zone = convert_string_to_timezone(selected_time_zone)
-            # new_datetime = original_datetime.replace(tzinfo=time_zone)
-
-            # await db.update_task_reminder_date(
-            #     task_id=task_id,
-            #     reminder_date=new_datetime
-            # )
             await db.update_task_reminder_utc(task_id, selected_time_zone)
             await db.set_task_not_reminded(task_id)
             await state.clear()
