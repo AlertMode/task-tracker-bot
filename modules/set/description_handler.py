@@ -9,13 +9,11 @@ from modules.list.task_list_kb import *
 from modules.add.task_creation_state import CreateTaskState
 from modules.alter.task_alteration_kb import *
 from modules.alter.task_alteration_state import AlterTaskState
-from modules.set.calendar_handler import router as calendar_handler_router
 from utils.dictionary import *
 from utils.logging_config import logger
 
 
 router = Router(name=__name__)
-router.include_router(calendar_handler_router)
 
 
 @router.message(CreateTaskState.description, F.text)

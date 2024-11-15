@@ -10,13 +10,11 @@ from modules.add.task_creation_state import CreateTaskState
 from modules.add.task_creation_kb import *
 from modules.alter.task_alteration_kb import task_edit_kb
 from modules.alter.task_alteration_state import AlterTaskState
-from modules.set.time_zone_selector_handler import router as time_zone_selector_router
 from modules.set.time_zone_selector_kb import create_time_zone_keyboard
 from utils.dictionary import *
 
 db = DataBase()
 router = Router(name=__name__)
-router.include_router(time_zone_selector_router)
 
 
 @router.callback_query(
